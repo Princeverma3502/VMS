@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "development"
+  ],
+  "hints": {
+    "detect-css-reflows/composite": "off",
+    "manifest-file-extension": "off"
+  },
+  "browserslist": [
+    "defaults",
+    "not ie 11",
+    "not edge <= 132"
+  ]
+}

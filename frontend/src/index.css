@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+:root {
+  --nss-blue: #1d4ed8;
+  --bg-app: #f1f5f9; /* Slate-100 */
+}
+
+/* 1. GLOBAL RESET: Force Dark Text */
+html, body {
+  background-color: var(--bg-app);
+  color: #0f172a; /* Slate-900 (Deep Black) */
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 2. THE "GHOST BUSTER" RULES (Crucial) */
+/* Forces specific elements to be dark, overriding Tailwind utilities if necessary */
+h1, h2, h3, h4, h5, h6, p, span, li, div {
+  color: #0f172a; 
+}
+
+/* 3. EXCEPTIONS: Allow White Text ONLY on Dark Backgrounds */
+/* We target specific dark containers to allow white text inside them */
+.bg-blue-600 *, .bg-slate-900 *, .bg-red-600 *, .text-white {
+  color: #ffffff !important;
+}
+
+/* 4. FIX FAINT ICONS */
+.lucide {
+  stroke: #334155; /* Slate-700 (Dark Gray) */
+  stroke-width: 2px;
+}
+/* Allow colored icons */
+.text-blue-600 .lucide { stroke: #2563eb; }
+.text-red-600 .lucide { stroke: #dc2626; }
+.text-green-600 .lucide { stroke: #16a34a; }
+.text-yellow-500 .lucide { stroke: #eab308; }
+.text-white .lucide { stroke: #ffffff; }
+
+/* 5. INPUT VISIBILITY (Search Bar & Forms) */
+input, textarea, select {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #94a3b8 !important; /* Visible Border */
+  font-weight: 500 !important;
+}
+::placeholder {
+  color: #64748b !important; /* Slate-500 (Visible Gray) */
+  opacity: 1 !important;
+}
+
+/* 6. IMAGE SHARPNESS (Fixes Blurring) */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  transform: translateZ(0);
+}
+
+/* 7. SCROLLBARS */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* 8. ID CARD 3D FLIP */
+.flip-card-container { perspective: 1000px; }
+.flip-card-inner { transition: transform 0.8s; transform-style: preserve-3d; }
+.flip-card-front, .flip-card-back { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+.flip-card-back { transform: rotateY(180deg); }
+.flipped .flip-card-inner { transform: rotateY(180deg); }
