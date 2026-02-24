@@ -9,15 +9,21 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkLoggedIn = async () => {
+      console.log('🟢 AuthContext: Checking if user is logged in');
       const token = localStorage.getItem('token');
       if (token) {
+        console.log('🟢 AuthContext: Token found, validating...');
         try {
           const { data } = await api.get('/auth/me');
+          console.log('🟢 AuthContext: User authenticated:', data?.email);
           setUser(normalizeUserRole(data));
         } catch (error) {
+          console.error('🔴 AuthContext: Failed to validate token:', error.message);
           localStorage.removeItem('token');
           setUser(null);
         }
+      } else {
+        console.log('🟢 AuthContext: No token found, user is anonymous');
       }
       setLoading(false);
     };
@@ -26,12 +32,16 @@ export const AuthProvider = ({ children }) => {
 
   // UPDATED: Back to Email
   const login = async (email, password) => {
+    console.log('🟢 AuthContext: Attempting login for:', email);
     try {
       const { data } = await api.post('/auth/login', { email, password });
+      console.log('🟢 AuthContext: Login successful, setting token and user data');
       localStorage.setItem('token', data.token);
       setUser(normalizeUserRole(data));
+      console.log('🟢 AuthContext: User state updated:', data?.email);
       return { success: true, user: data };
     } catch (error) {
+      console.error('🔴 AuthContext: Login failed:', error.message);
       return { 
         success: false, 
         message: error.response?.data?.message || 'Login failed' 

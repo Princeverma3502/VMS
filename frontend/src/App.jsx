@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 // Auth & Context
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-import ProtectedRoute from './components/common/ProtectedRoute'; 
+import ProtectedRoute from './components/common/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Auth Pages
 import Login from './pages/Login';
@@ -48,12 +49,20 @@ import EventDetails from './pages/EventDetails';
 import DemoCertificates from './pages/admin/DemoCertificates';
 import VolunteerCertificates from './pages/volunteer/VolunteerCertificates';
 
-const App = () => {
+const App = ({ onReady }) => {
+  useEffect(() => {
+    if (onReady) {
+      console.log('🟢 App mounted, calling onReady callback');
+      onReady();
+    }
+  }, [onReady]);
+
   return (
-    <Router>
-      <AuthProvider>
-        <ThemeProvider>
-          <Routes>
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <ThemeProvider>
+            <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -242,7 +251,8 @@ const App = () => {
           </Routes>
         </ThemeProvider>
       </AuthProvider>
-    </Router>
+      </Router>
+    </ErrorBoundary>
   );
 };
 

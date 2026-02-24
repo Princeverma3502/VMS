@@ -2,13 +2,12 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
-import { AuthProvider } from './context/AuthContext'
-import { ThemeProvider } from './context/ThemeContext'
 
 // Hide Splash Screen Logic
 const hideSplash = () => {
   const splash = document.getElementById('splash-screen');
   if (splash) {
+    console.log('🟢 Hiding splash screen');
     splash.style.opacity = '0';
     setTimeout(() => splash.remove(), 500);
   }
@@ -46,12 +45,10 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+console.log('🟢 main.jsx: Starting React app initialization');
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <AuthProvider>
-      <ThemeProvider>
-        <App onReady={hideSplash} />
-      </ThemeProvider>
-    </AuthProvider>
+    <App onReady={hideSplash} />
   </React.StrictMode>
 )
