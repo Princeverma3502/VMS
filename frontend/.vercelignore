@@ -1,0 +1,24 @@
+# Ignore local build artifacts - Vercel will rebuild
+dist
+dist-ssr
+node_modules
+.env.local
+.env.*.local
+
+# Coverage reports
+coverage
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
