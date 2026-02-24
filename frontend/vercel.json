@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm ci && npm run build",
+  "buildCommand": "VITE_API_URL=https://vms-6qfs.onrender.com npm ci && npm run build",
   "outputDirectory": "dist",
   "rewrites": [
     {

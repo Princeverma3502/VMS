@@ -1,13 +1,14 @@
 import axios from 'axios';
 
-// Use Environment Variable or fallback to localhost
+// Use Environment Variable or fallback to production backend
 // In Vite, variables must start with VITE_
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://vms-6qfs.onrender.com';
 
 // Log for debugging
 if (typeof window !== 'undefined') {
   console.log('🔵 API Base URL:', BASE_URL);
   console.log('🔵 Environment:', import.meta.env.MODE);
+  console.log('🔵 VITE_API_URL env var:', import.meta.env.VITE_API_URL);
 }
 
 const api = axios.create({
