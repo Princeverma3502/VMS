@@ -75,11 +75,33 @@ const app = express();
 app.use(helmet());
 
 // 2. CORS Configuration
+const allowedOrigins = [
+  'https://vms-pearl.vercel.app',  // Production Frontend
+  'http://localhost:5173',          // Dev Frontend (Vite)
+  'http://localhost:5174',          // Dev Frontend (Vite alternate)
+  'http://localhost:3000',          // Dev Frontend (alternative)
+];
+
+// Add FRONTEND_URL if set in environment
+if (process.env.FRONTEND_URL && !allowedOrigins.includes(process.env.FRONTEND_URL)) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL || 'https://yourdomain.vercel.app' 
-    : ['http://localhost:5173', 'http://localhost:5174'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`⚠️ CORS blocked request from: ${origin}`);
+      callback(new Error('CORS policy violation'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   credentials: true,
   optionsSuccessStatus: 200
 };
