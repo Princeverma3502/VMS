@@ -2,25 +2,6 @@
   "short_name": "NSS VMS",
   "name": "NSS Volunteer Management System",
   "description": "Official NSS Portal for Task Management and Volunteer XP Tracking.",
-  "icons": [
-    {
-      "src": "/nss-logo.png",
-      "sizes": "192x192",
-      "type": "image/svg+xml"
-    },
-    {
-      "src": "/logo192.png",
-      "type": "image/svg+xml",
-      "sizes": "192x192",
-      "purpose": "any"
-    },
-    {
-      "src": "/logo512.png",
-      "type": "image/svg+xml",
-      "sizes": "512x512",
-      "purpose": "any"
-    }
-  ],
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#1d4ed8",
