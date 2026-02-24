@@ -4,6 +4,12 @@ import axios from 'axios';
 // In Vite, variables must start with VITE_
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+// Log for debugging
+if (typeof window !== 'undefined') {
+  console.log('🔵 API Base URL:', BASE_URL);
+  console.log('🔵 Environment:', import.meta.env.MODE);
+}
+
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
