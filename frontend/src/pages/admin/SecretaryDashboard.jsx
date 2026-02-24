@@ -51,6 +51,7 @@ const SecretaryDashboard = () => {
   const [ngos, setNgos] = useState([]);
   const [pendingUsers, setPendingUsers] = useState([]);
   const [allVolunteers, setAllVolunteers] = useState([]);
+  const [allDomainHeads, setAllDomainHeads] = useState([]);
   const [events, setEvents] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
@@ -67,16 +68,21 @@ const SecretaryDashboard = () => {
       setTasks(taskRes.data);
 
       if (isSecretary) {
-        const [ngoRes, pendingRes, volRes, auditRes] = await Promise.all([
+        const [ngoRes, pendingRes, volRes, auditRes, usersRes] = await Promise.all([
           api.get('/ngos'),
           api.get('/auth/pending'),
           api.get('/users/leaderboard'),
-          api.get('/audit/logs')
+          api.get('/audit/logs'),
+          api.get('/users')
         ]);
         setNgos(ngoRes.data);
         setPendingUsers(pendingRes.data);
         setAllVolunteers(volRes.data);
         setAuditLogs(auditRes.data || []);
+        
+        // Filter domain heads from users list
+        const domainHeads = usersRes.data?.filter(u => u.role === 'Domain Head') || [];
+        setAllDomainHeads(domainHeads);
         
         setStats({
           ngos: ngoRes.data.length,
