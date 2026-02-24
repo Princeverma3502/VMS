@@ -189,7 +189,7 @@ const SecretaryDashboard = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-8">
               <RegisterNGOForm onSuccess={fetchData} />
-              <DomainForm users={allVolunteers} onSubmit={handleCreateDomain} />
+              <DomainForm users={allDomainHeads} onSubmit={handleCreateDomain} />
             </div>
             <div className="space-y-8">
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
