@@ -3,7 +3,7 @@ import DiscussionPost from '../models/DiscussionPost.js';
 import Event from '../models/Event.js';
 
 // @desc    Get all posts for an event
-// @route   GET /api/discussions/:eventId
+// @route   GET /discussions/:eventId
 // @access  Private
 export const getPostsForEvent = asyncHandler(async (req, res) => {
   const { eventId } = req.params;
@@ -40,7 +40,7 @@ export const getPostsForEvent = asyncHandler(async (req, res) => {
 });
 
 // @desc    Create a new post
-// @route   POST /api/discussions/:eventId
+// @route   POST /discussions/:eventId
 // @access  Private
 export const createPost = asyncHandler(async (req, res) => {
   const { eventId } = req.params;
@@ -71,7 +71,7 @@ export const createPost = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete a post
-// @route   DELETE /api/discussions/posts/:postId
+// @route   DELETE /discussions/posts/:postId
 // @access  Private (Author or Admin)
 export const deletePost = asyncHandler(async (req, res) => {
   const { postId } = req.params;

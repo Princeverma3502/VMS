@@ -18,6 +18,7 @@ const Settings = () => {
   const [notification, setNotification] = useState(null);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [newName, setNewName] = useState('');
+  const [bloodGroup, setBloodGroup] = useState('');
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -26,6 +27,7 @@ const Settings = () => {
     fetchPreferences();
     if (user) {
       setNewName(user.name);
+      setBloodGroup(user.bloodGroup || '');
     }
   }, [user]);
 
@@ -86,7 +88,7 @@ const Settings = () => {
   const handleUpdateProfile = async () => {
     setSaving(true);
     try {
-      const { data } = await api.put('/users/profile', { name: newName });
+      const { data } = await api.put('/users/profile', { name: newName, bloodGroup });
       updateUser(data); // Update user in AuthContext
       showNotification('Profile updated successfully', 'success');
       setIsEditProfileModalOpen(false);
@@ -211,6 +213,24 @@ const Settings = () => {
                   onChange={(e) => setNewName(e.target.value)}
                   className="w-full p-2 border rounded-md"
                 />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
+                <select
+                  value={bloodGroup}
+                  onChange={(e) => setBloodGroup(e.target.value)}
+                  className="w-full p-2 border rounded-md"
+                >
+                  <option value="">Not Set</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                </select>
               </div>
               <div className="flex justify-end gap-2">
                 <button onClick={() => setIsEditProfileModalOpen(false)} className="px-4 py-2 rounded-md text-sm font-medium bg-gray-200">Cancel</button>

@@ -9,13 +9,15 @@ import IDCardRenderer from '../../components/digital-id/IDCardRenderer'; // Adju
 // Default Design Config matching your new Blue Theme
 const DEFAULT_CONFIG = {
   templateId: 'executive-pro',
-  orgName: "NATIONAL SERVICE SCHEME", 
-  subHeader: "Indian Institute of Technology, Bombay", 
-  collegeLogo: "", // Top-Right
-  councilLogo: "", // Top-Left
-  signatureName: "Dr. A. Sharma",
-  signatureRole: "Program Officer",
-  validThru: "DEC 2025",
+  orgName: "NATIONAL SERVICE SCHEME",
+  subHeader: "Indian Institute of Technology, Bombay",
+  collegeLogo: "", // Top-Left
+  councilLogo: "", // Top-Right
+  secretarySig: "",
+  secretaryName: "A. S. Patel",
+  officerSig: "",
+  officerName: "Dr. R. K. Singh",
+  validThru: "DEC 2026",
   // Legacy color support (optional)
   roleColors: {
     'Secretary': '#dc2626',
@@ -173,90 +175,97 @@ const SecretaryCustomizer = ({ userSample }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Authority Name</label>
-                <input 
-                  type="text" 
-                  value={config.signatureName} 
-                  onChange={(e) => setConfig({...config, signatureName: e.target.value})} 
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Secretary Name</label>
+                <input
+                  type="text"
+                  value={config.secretaryName}
+                  onChange={(e) => setConfig({...config, secretaryName: e.target.value})}
                   className="w-full mt-1 p-3 border border-slate-300 rounded-xl text-sm font-bold text-slate-900"
                 />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Designation</label>
-                <input 
-                  type="text" 
-                  value={config.signatureRole} 
-                  onChange={(e) => setConfig({...config, signatureRole: e.target.value})} 
-                  className="w-full mt-1 p-3 border border-slate-300 rounded-xl text-sm font-bold text-slate-900"
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Secretary Signature</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileUpload(e, 'secretarySig')}
+                  className="w-full mt-1 p-3 border border-slate-300 rounded-xl text-sm"
                 />
+                {config.secretarySig && (
+                  <img src={config.secretarySig} alt="Secretary Signature" className="mt-2 h-8 object-contain" />
+                )}
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                  <Calendar size={12}/> Valid Thru Date
-                </label>
-                <input 
-                  type="text" 
-                  value={config.validThru} 
-                  onChange={(e) => setConfig({...config, validThru: e.target.value})} 
-                  placeholder="e.g. DEC 2025"
-                  className="w-full mt-1 p-3 border border-slate-300 rounded-xl text-sm font-black text-slate-900 uppercase"
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Program Officer Name</label>
+                <input
+                  type="text"
+                  value={config.officerName}
+                  onChange={(e) => setConfig({...config, officerName: e.target.value})}
+                  className="w-full mt-1 p-3 border border-slate-300 rounded-xl text-sm font-bold text-slate-900"
                 />
               </div>
-              
-              {/* Optional: Signature Image Upload */}
               <div>
-                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 block">Digital Signature (Optional)</label>
-                 <div className="relative flex items-center gap-3">
-                    {config.councilLogo ? (
-                        // Reusing councilLogo slot for signature in renderer if needed, or create new key
-                        // For now we assume 'councilLogo' is the image rendered at bottom right based on previous renderer logic
-                        // If you want a specific signature image separate from logos:
-                        <div className="text-xs text-green-600 font-bold bg-green-50 px-2 py-1 rounded">
-                           Image Set in Renderer
-                        </div>
-                    ) : (
-                        <p className="text-[10px] text-slate-400">Uses text if no image provided</p>
-                    )}
-                 </div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Program Officer Signature</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileUpload(e, 'officerSig')}
+                  className="w-full mt-1 p-3 border border-slate-300 rounded-xl text-sm"
+                />
+                {config.officerSig && (
+                  <img src={config.officerSig} alt="Officer Signature" className="mt-2 h-8 object-contain" />
+                )}
               </div>
             </div>
           </div>
-        </div>
 
-      </div>
-
-      {/* --- RIGHT COLUMN: LIVE PREVIEW --- */}
-      <div className="xl:col-span-5">
-        <div className="sticky top-6">
-          <div className="flex flex-col items-center justify-center p-8 bg-slate-200 rounded-[3rem] border-4 border-white shadow-xl min-h-[600px] relative overflow-hidden">
-            
-            <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" 
-                 style={{ backgroundImage: 'radial-gradient(#94a3b8 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
-            </div>
-
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-8 flex items-center gap-2 z-10 bg-white/50 px-4 py-1 rounded-full">
-               <Eye size={14}/> Live Preview
-            </p>
-            
-            {/* The Actual ID Card Component */}
-            <div className="scale-110 sm:scale-125 transform transition-transform duration-500 hover:scale-105">
-                <IDCardFrame>
-                    {{
-                    front: <IDCardRenderer user={previewUser} config={config} verified={true} />,
-                    back: <IDCardRenderer user={previewUser} config={config} verified={true} isBack={true} />
-                    }}
-                </IDCardFrame>
-            </div>
-
-            <p className="mt-12 text-center text-[10px] font-bold text-slate-500 max-w-[200px] z-10">
-              Flip the card to see the QR Code and Return Info.
-            </p>
+          <div className="mt-6">
+            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+              <Calendar size={12}/> Valid Thru Date
+            </label>
+            <input
+              type="text"
+              value={config.validThru}
+              onChange={(e) => setConfig({...config, validThru: e.target.value})}
+              placeholder="e.g. DEC 2026"
+              className="w-full mt-1 p-3 border border-slate-300 rounded-xl text-sm font-black text-slate-900 uppercase"
+            />
           </div>
         </div>
+
       </div>
+
+      <div className="xl:col-span-5">
+          <div className="sticky top-6">
+            <div className="flex flex-col items-center justify-center p-8 bg-slate-200 rounded-[3rem] border-4 border-white shadow-xl min-h-[600px] relative overflow-hidden">
+              
+              <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" 
+                   style={{ backgroundImage: 'radial-gradient(#94a3b8 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
+              </div>
+
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-8 flex items-center gap-2 z-10 bg-white/50 px-4 py-1 rounded-full">
+                 <Eye size={14}/> Live Preview
+              </p>
+              
+              {/* The Actual ID Card Component */}
+              <div className="scale-110 sm:scale-125 transform transition-transform duration-500 hover:scale-105">
+                  <IDCardFrame>
+                      {{
+                      front: <IDCardRenderer user={previewUser} config={config} verified={true} />,
+                      back: <IDCardRenderer user={previewUser} config={config} verified={true} isBack={true} />
+                      }}
+                  </IDCardFrame>
+              </div>
+
+              <p className="mt-12 text-center text-[10px] font-bold text-slate-500 max-w-[200px] z-10">
+                Flip the card to see the QR Code and Return Info.
+              </p>
+            </div>
+          </div>
+        </div>
 
     </div>
   );

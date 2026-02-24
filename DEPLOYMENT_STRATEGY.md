@@ -48,3 +48,22 @@ The deployment process is as follows:
 For a project of this scale, a **Rolling Deployment** strategy is likely the most practical and cost-effective option. Many cloud providers and container orchestration platforms (like Kubernetes) have built-in support for rolling updates, which can simplify the process significantly.
 
 To implement a rolling deployment, you would typically containerize your frontend and backend applications (using Docker) and then use a platform like a cloud provider's App Service or a container orchestrator to manage the deployment.
+
+## Quick Deploy Guides
+
+### Frontend (Vercel)
+- Connect the repository to Vercel and set the project root to `frontend`.
+- Build command: `npm run build` (run in the `frontend` folder).
+- Output directory: `dist`.
+- Ensure any client environment variables are prefixed with `VITE_` and set them in Vercel's Environment Variables dashboard.
+
+### Backend (Render)
+- Use the provided `backend/Dockerfile` to deploy the backend as a Docker web service on Render.
+- Alternatively, create a new Web Service on Render using the Node environment and set the start command to `node server.js`.
+- Add required environment variables in Render's dashboard (use the keys from `backend/.env.example`).
+
+### Security and secrets
+- NEVER commit real secrets. Replace the repo's `backend/.env` with environment variables in the host.
+- Create `backend/.env.example` (already added) and remove `backend/.env` from the repository. Rotate any exposed secrets immediately.
+
+See `render.yaml` at the repository root for a sample Render configuration.

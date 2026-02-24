@@ -3,7 +3,7 @@ import Poll from '../models/Poll.js';
 import User from '../models/User.js';
 
 // @desc    Create a new poll
-// @route   POST /api/polls
+// @route   POST /polls
 // @access  Private (Secretary/Domain Head only)
 export const createPoll = asyncHandler(async (req, res) => {
   const { title, description, options, expiresAt, domainId, visibility } = req.body;
@@ -36,7 +36,7 @@ export const createPoll = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all active polls (Context-Aware)
-// @route   GET /api/polls
+// @route   GET /polls
 // @access  Public
 export const getPolls = asyncHandler(async (req, res) => {
   const { visibility } = req.query;
@@ -82,7 +82,7 @@ export const getPolls = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get single poll by ID
-// @route   GET /api/polls/:id
+// @route   GET /polls/:id
 // @access  Public
 export const getPollById = asyncHandler(async (req, res) => {
   const poll = await Poll.findOne({ _id: req.params.id, collegeId: req.user.collegeId })
@@ -100,7 +100,7 @@ export const getPollById = asyncHandler(async (req, res) => {
 });
 
 // @desc    Vote on a poll
-// @route   PUT /api/polls/:pollId/vote
+// @route   PUT /polls/:pollId/vote
 // @access  Private
 export const voteOnPoll = asyncHandler(async (req, res) => {
   const { optionIndex } = req.body;
@@ -148,7 +148,7 @@ export const voteOnPoll = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get poll results
-// @route   GET /api/polls/:pollId/results
+// @route   GET /polls/:pollId/results
 // @access  Public
 export const getPollResults = asyncHandler(async (req, res) => {
   const poll = await Poll.findOne({ _id: req.params.pollId, collegeId: req.user.collegeId }).lean();
@@ -173,7 +173,7 @@ export const getPollResults = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete a poll
-// @route   DELETE /api/polls/:id
+// @route   DELETE /polls/:id
 // @access  Private (Creator/Admin only)
 export const deletePoll = asyncHandler(async (req, res) => {
   const poll = await Poll.findById(req.params.id);

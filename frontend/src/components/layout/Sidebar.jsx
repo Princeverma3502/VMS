@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { 
   LayoutDashboard, Building2, Users, Settings, Gamepad2, 
-  CheckSquare, QrCode, LogOut, Trophy, UserCircle, ShieldAlert, Heart, FileText
+  CheckSquare, QrCode, LogOut, Trophy, UserCircle, ShieldAlert, Heart, FileText, Award
 } from 'lucide-react';
 
 const Sidebar = ({ userRole = 'Volunteer' }) => {
@@ -13,14 +13,16 @@ const Sidebar = ({ userRole = 'Volunteer' }) => {
   const menus = {
     Secretary: [
       { name: 'Dashboard', path: '/secretary/dashboard', icon: <LayoutDashboard size={20} /> },
-      { name: 'NGOs', path: '/secretary/ngos', icon: <Building2 size={20} /> },
-      { name: 'Domains', path: '/secretary/domains', icon: <Users size={20} /> },
+      { name: 'NGOs', path: '/secretary/dashboard', icon: <Building2 size={20} /> },
+      { name: 'Domains', path: '/admin/users', icon: <Users size={20} /> },
+      { name: 'Certificates', path: '/admin/certificates', icon: <Award size={20} /> },
       { name: 'Impact Hub', path: '/impact', icon: <Heart size={20} /> },
-      { name: 'Global Settings', path: '/secretary/settings', icon: <Settings size={20} /> },
+      { name: 'Global Settings', path: '/settings', icon: <Settings size={20} /> },
     ],
     Volunteer: [
       { name: 'Dashboard', path: '/volunteer/dashboard', icon: <LayoutDashboard size={20} /> },
       { name: 'My Resume', path: '/volunteer/resume', icon: <FileText size={20} /> },
+      { name: 'Certificates', path: '/volunteer/certificates', icon: <Award size={20} /> },
       { name: 'Leaderboard', path: '/volunteer/leaderboard', icon: <Trophy size={20} /> },
       { name: 'My Profile', path: '/volunteer/profile', icon: <UserCircle size={20} /> },
       { name: 'Tasks', path: '/volunteer/tasks', icon: <CheckSquare size={20} /> },
@@ -37,9 +39,7 @@ const Sidebar = ({ userRole = 'Volunteer' }) => {
       
       {/* Header */}
       <div className="p-6 border-b border-slate-700 flex items-center gap-3">
-        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/30">
-          V
-        </div>
+        <img src="/nss-logo.png" alt="NSS Logo" className="w-8 h-8 object-contain" />
         <div>
           <h1 className="text-lg font-bold tracking-wide text-white">NSS Portal</h1>
           <p className="text-[10px] text-slate-400 uppercase tracking-wider">Volunteer System</p>

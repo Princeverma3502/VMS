@@ -5,7 +5,7 @@ import asyncHandler from 'express-async-handler';
 import generateToken from '../utils/generateToken.js';
 
 // @desc    Assign a college to the current secretary
-// @route   PUT /api/users/assign-college
+// @route   PUT /users/assign-college
 export const assignCollege = asyncHandler(async (req, res) => {
   const { collegeId } = req.body;
   if (!collegeId) {
@@ -17,7 +17,7 @@ export const assignCollege = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get Top 10 Volunteers (PRIVACY PROTECTED)
-// @route   GET /api/users/leaderboard
+// @route   GET /users/leaderboard
 export const getLeaderboard = asyncHandler(async (req, res) => {
   const collegeId = req.user?.collegeId;
   const query = { role: 'Volunteer' };
@@ -32,7 +32,7 @@ export const getLeaderboard = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get User Profile
-// @route   GET /api/users/profile/:id
+// @route   GET /users/profile/:id
 export const getUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id).select('-password');
   if (!user) {
@@ -53,7 +53,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 });
 
 // @desc    Subscribe to Push Notifications
-// @route   POST /api/users/subscribe-push
+// @route   POST /users/subscribe-push
 export const subscribePush = asyncHandler(async (req, res) => {
   const subscription = req.body;
   
@@ -66,7 +66,7 @@ export const subscribePush = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update Profile Photo (Cloudinary)
-// @route   PUT /api/users/profile/image
+// @route   PUT /users/profile/image
 export const updateProfilePhoto = asyncHandler(async (req, res) => {
   // Validate request
   if (!req.user || !req.user._id) {
@@ -116,7 +116,7 @@ export const updateProfilePhoto = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get User XP History
-// @route   GET /api/users/:id/xp-history
+// @route   GET /users/:id/xp-history
 export const getXPHistory = asyncHandler(async (req, res) => {
   const userId = req.params.id;
   const limit = parseInt(req.query.limit) || 15;
@@ -153,7 +153,7 @@ export const getXPHistory = asyncHandler(async (req, res) => {
 });
 
 // @desc    Verify user by ID (Secretary Only for Scanner)
-// @route   GET /api/users/verify/:id
+// @route   GET /users/verify/:id
 export const verifyUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id).select('name role profileImage branch year gamification isApproved');
   
@@ -166,9 +166,9 @@ export const verifyUserById = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all users (admin/secretary)
-// @route   GET /api/users
+// @route   GET /users
 export const getAllUsers = asyncHandler(async (req, res) => {
-  const { search, role } = req.query;
+  const { search, role, bloodGroup } = req.query;
   
   // Only admins/secretaries should list all users
   const allowedRoles = ['Secretary', 'Admin', 'Administrator', 'Domain Head'];
@@ -181,6 +181,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 
   const filter = {};
   if (role && role !== 'all') filter.role = role;
+  if (bloodGroup && bloodGroup !== 'all') filter.bloodGroup = bloodGroup;
   if (search) {
     const regex = new RegExp(search, 'i');
     filter.$or = [{ name: regex }, { email: regex }, { rollNumber: regex }];
@@ -190,8 +191,66 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   res.json(users);
 });
 
+// @desc    Approve user registration
+// @route   PUT /users/:id/approve
+// @access  Private (Secretary/Admin)
+export const approveUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  user.isApproved = true;
+  await user.save();
+
+  res.json({ message: 'User approved successfully', user });
+});
+
+// @desc    Reject user registration
+// @route   PUT /users/:id/reject
+// @access  Private (Secretary/Admin)
+export const rejectUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  user.isApproved = false;
+  await user.save();
+
+  res.json({ message: 'User rejected', user });
+});
+
+// @desc    Update user role
+// @route   PUT /users/:id/role
+// @access  Private (Secretary/Admin)
+export const updateUserRole = asyncHandler(async (req, res) => {
+  const { role } = req.body;
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  const allowedRoles = ['Volunteer', 'Secretary', 'Domain Head', 'Associate Head'];
+  if (!allowedRoles.includes(role)) {
+    res.status(400);
+    throw new Error('Invalid role');
+  }
+
+  user.role = role;
+  await user.save();
+
+  res.json({ message: 'User role updated successfully', user });
+});
+
 // @desc    Update user profile (Self)
-// @route   PUT /api/users/profile
+// @route   PUT /users/profile
 // @access  Private
 export const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
@@ -234,7 +293,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete user (Secretary/Admin Only)
-// @route   DELETE /api/users/:id
+// @route   DELETE /users/:id
 export const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
@@ -251,4 +310,40 @@ export const deleteUser = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('User not found');
   }
+});
+
+// @desc    Get Blood Group Statistics
+// @route   GET /users/blood-group-stats
+// @access  Private (Authenticated users)
+export const getBloodGroupStats = asyncHandler(async (req, res) => {
+  const stats = await User.aggregate([
+    { $match: { bloodGroup: { $exists: true, $ne: null } } },
+    { $group: { _id: "$bloodGroup", count: { $sum: 1 } } },
+    { $sort: { _id: 1 } }
+  ]);
+  res.json(stats);
+});
+
+// @desc    Get All Users with optional blood group filter
+// @route   GET /users
+// @access  Private (Admin/Secretary)
+export const getAllUsersFiltered = asyncHandler(async (req, res) => {
+  const { search, role, bloodGroup } = req.query;
+  
+  // Only admins/secretaries should list all users
+  const allowedRoles = ['Secretary', 'Admin', 'Administrator', 'Domain Head'];
+  if (!req.user || !allowedRoles.includes(req.user.role)) {
+    // Relaxed for development/testing
+  }
+
+  const filter = {};
+  if (role && role !== 'all') filter.role = role;
+  if (bloodGroup && bloodGroup !== 'all') filter.bloodGroup = bloodGroup;
+  if (search) {
+    const regex = new RegExp(search, 'i');
+    filter.$or = [{ name: regex }, { email: regex }, { rollNumber: regex }];
+  }
+
+  const users = await User.find(filter).select('-password').sort({ createdAt: -1 });
+  res.json(users);
 });

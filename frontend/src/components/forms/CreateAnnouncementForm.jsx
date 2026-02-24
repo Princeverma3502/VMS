@@ -13,6 +13,7 @@ const CreateAnnouncementForm = ({ onClose, onSuccess }) => {
     domain: '',
     expiresAt: ''
   });
+  const [domains, setDomains] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -49,7 +50,7 @@ const CreateAnnouncementForm = ({ onClose, onSuccess }) => {
         content: formData.content.trim(),
         priority: formData.priority,
         scope: formData.scope,
-        ...(formData.scope === 'Domain' && { domain: formData.domain }),
+        ...(formData.scope === 'Domain' && { domainId: formData.domain }),
         ...(formData.expiresAt && { expiresAt: formData.expiresAt })
       };
 
@@ -69,6 +70,21 @@ const CreateAnnouncementForm = ({ onClose, onSuccess }) => {
       setLoading(false);
     }
   };
+
+  // Fetch available domains for Domain Heads / Secretary
+  React.useEffect(() => {
+    let mounted = true;
+    const fetchDomains = async () => {
+      try {
+        const { data } = await api.get('/domains');
+        if (mounted) setDomains(Array.isArray(data) ? data : []);
+      } catch (err) {
+        // silently ignore – domain list is optional
+      }
+    };
+    fetchDomains();
+    return () => { mounted = false; };
+  }, []);
 
   const getPriorityIcon = (priority) => {
     switch(priority) {
@@ -111,16 +127,17 @@ const CreateAnnouncementForm = ({ onClose, onSuccess }) => {
 
           {/* Title */}
           <div>
-            <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest mb-2">
+            <label htmlFor="announcement-title" className="block text-xs font-bold text-gray-600 uppercase tracking-widest mb-2">
               Title *
             </label>
             <input
+              id="announcement-title"
               type="text"
               name="title"
               value={formData.title}
               onChange={handleChange}
               placeholder="e.g., Important Meeting Tomorrow"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-gray-50 placeholder-gray-400"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-gray-50 placeholder-gray-400 text-gray-900"
               maxLength={100}
             />
             <p className="text-[10px] text-gray-400 mt-1">{formData.title.length}/100</p>
@@ -128,16 +145,17 @@ const CreateAnnouncementForm = ({ onClose, onSuccess }) => {
 
           {/* Content */}
           <div>
-            <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest mb-2">
+            <label htmlFor="announcement-content" className="block text-xs font-bold text-gray-600 uppercase tracking-widest mb-2">
               Message *
             </label>
             <textarea
+              id="announcement-content"
               name="content"
               value={formData.content}
               onChange={handleChange}
               placeholder="Write your announcement here..."
               rows={4}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all resize-none bg-gray-50 placeholder-gray-400"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all resize-none bg-gray-50 placeholder-gray-400 text-gray-900"
               maxLength={500}
             />
             <p className="text-[10px] text-gray-400 mt-1">{formData.content.length}/500</p>
@@ -212,20 +230,20 @@ const CreateAnnouncementForm = ({ onClose, onSuccess }) => {
           {/* Domain Select (if Domain Head) */}
           {isDomainHead && formData.scope === 'Domain' && (
             <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest mb-2">
+              <label htmlFor="announcement-domain" className="block text-xs font-bold text-gray-600 uppercase tracking-widest mb-2">
                 Select Domain *
               </label>
               <select
+                id="announcement-domain"
                 name="domain"
                 value={formData.domain}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-gray-50"
               >
                 <option value="">-- Choose a domain --</option>
-                <option value="Education">Education</option>
-                <option value="Healthcare">Healthcare</option>
-                <option value="Environment">Environment</option>
-                <option value="Community">Community</option>
+                {domains.map(d => (
+                  <option key={d._id} value={d._id}>{d.name}</option>
+                ))}
               </select>
             </div>
           )}

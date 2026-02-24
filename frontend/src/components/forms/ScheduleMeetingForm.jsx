@@ -16,6 +16,7 @@ const ScheduleMeetingForm = ({ onClose, onSuccess }) => {
     meetScope: 'All',
     domain: ''
   });
+  const [domains, setDomains] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -72,7 +73,7 @@ const ScheduleMeetingForm = ({ onClose, onSuccess }) => {
         location: formData.meetingType === 'Offline' ? formData.location.trim() : undefined,
         meetLink: formData.meetingType === 'Online' ? formData.meetLink.trim() : undefined,
         meetScope: formData.meetScope,
-        ...(formData.meetScope === 'Domain' && { domain: formData.domain })
+        ...(formData.meetScope === 'Domain' && { domainId: formData.domain })
       };
 
       await api.post('/meetings', payload);
@@ -94,6 +95,21 @@ const ScheduleMeetingForm = ({ onClose, onSuccess }) => {
       setLoading(false);
     }
   };
+
+  // Fetch domains for meeting selection
+  React.useEffect(() => {
+    let mounted = true;
+    const fetchDomains = async () => {
+      try {
+        const { data } = await api.get('/domains');
+        if (mounted) setDomains(Array.isArray(data) ? data : []);
+      } catch (err) {
+        // ignore
+      }
+    };
+    fetchDomains();
+    return () => { mounted = false; };
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
@@ -129,7 +145,7 @@ const ScheduleMeetingForm = ({ onClose, onSuccess }) => {
               value={formData.title}
               onChange={handleChange}
               placeholder="e.g., Core Team Sync"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all bg-gray-50 placeholder-gray-400"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all bg-gray-50 placeholder-gray-400 text-gray-900"
               maxLength={100}
             />
           </div>
@@ -145,7 +161,7 @@ const ScheduleMeetingForm = ({ onClose, onSuccess }) => {
               onChange={handleChange}
               placeholder="Add details about the meeting (optional)"
               rows={3}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all resize-none bg-gray-50 placeholder-gray-400"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all resize-none bg-gray-50 placeholder-gray-400 text-gray-900"
               maxLength={300}
             />
           </div>
@@ -160,7 +176,7 @@ const ScheduleMeetingForm = ({ onClose, onSuccess }) => {
               name="scheduledAt"
               value={formData.scheduledAt}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all bg-gray-50"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all bg-gray-50 text-gray-900"
             />
           </div>
 
@@ -308,11 +324,10 @@ const ScheduleMeetingForm = ({ onClose, onSuccess }) => {
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all bg-gray-50"
               >
-                <option value="">-- Choose a domain --</option>
-                <option value="Education">Education</option>
-                <option value="Healthcare">Healthcare</option>
-                <option value="Environment">Environment</option>
-                <option value="Community">Community</option>
+                    <option value="">-- Choose a domain --</option>
+                    {domains.map(d => (
+                      <option key={d._id} value={d._id}>{d.name}</option>
+                    ))}
               </select>
             </div>
           )}

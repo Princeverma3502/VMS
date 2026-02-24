@@ -55,7 +55,7 @@ export const ThemeProvider = ({ children }) => {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/preferences', {
+      const response = await fetch('http://localhost:5000/preferences', {
         headers: {
           Authorization: `Bearer ${token}`,
         },

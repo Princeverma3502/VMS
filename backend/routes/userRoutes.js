@@ -9,7 +9,11 @@ import {
   updateProfilePhoto,
   getXPHistory,
   verifyUserById,
-  deleteUser
+  deleteUser,
+  approveUser,
+  rejectUser,
+  updateUserRole,
+  getBloodGroupStats
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -17,6 +21,7 @@ const router = express.Router();
 
 // --- PUBLIC / SEMI-PROTECTED ROUTES ---
 router.get('/leaderboard', protect, getLeaderboard);
+router.get('/blood-group-stats', protect, getBloodGroupStats);
 
 // --- PROFILE MANAGEMENT ---
 // This was missing/broken, causing the "Not Found" error
@@ -40,6 +45,10 @@ router.route('/')
 
 router.route('/:id')
   .delete(protect, admin, deleteUser);
+
+router.put('/:id/approve', protect, admin, approveUser);
+router.put('/:id/reject', protect, admin, rejectUser);
+router.put('/:id/role', protect, admin, updateUserRole);
 
 router.put('/assign-college', protect, assignCollege);
 

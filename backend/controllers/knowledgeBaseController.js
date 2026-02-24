@@ -2,7 +2,7 @@ import asyncHandler from 'express-async-handler';
 import KnowledgeBase from '../models/KnowledgeBase.js';
 
 // @desc    Create a KB article
-// @route   POST /api/knowledge-base
+// @route   POST /knowledge-base
 // @access  Private (Secretary/Domain Head only)
 export const createArticle = asyncHandler(async (req, res) => {
   const { title, slug, content, category, description, videoUrl, tags, attachments } = req.body;
@@ -41,7 +41,7 @@ export const createArticle = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all KB articles (Scoped to College)
-// @route   GET /api/knowledge-base
+// @route   GET /knowledge-base
 // @access  Public
 export const getArticles = asyncHandler(async (req, res) => {
   const { category, search, tags, limit = 20, skip = 0 } = req.query;
@@ -83,7 +83,7 @@ export const getArticles = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get article by slug
-// @route   GET /api/knowledge-base/:slug
+// @route   GET /knowledge-base/:slug
 // @access  Public
 export const getArticleBySlug = asyncHandler(async (req, res) => {
   const { slug } = req.params;
@@ -112,7 +112,7 @@ export const getArticleBySlug = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get articles by category
-// @route   GET /api/knowledge-base/category/:category
+// @route   GET /knowledge-base/category/:category
 // @access  Public
 export const getArticlesByCategory = asyncHandler(async (req, res) => {
   const { category } = req.params;
@@ -142,7 +142,7 @@ export const getArticlesByCategory = asyncHandler(async (req, res) => {
 });
 
 // @desc    Search KB articles (Full Text)
-// @route   GET /api/knowledge-base/search/:query
+// @route   GET /knowledge-base/search/:query
 // @access  Public
 export const searchArticles = asyncHandler(async (req, res) => {
   const { query } = req.params;
@@ -173,7 +173,7 @@ export const searchArticles = asyncHandler(async (req, res) => {
 });
 
 // @desc    Mark article as helpful/unhelpful
-// @route   PUT /api/knowledge-base/:slug/helpful
+// @route   PUT /knowledge-base/:slug/helpful
 // @access  Public
 export const markAsHelpful = asyncHandler(async (req, res) => {
   const { slug } = req.params;
@@ -206,7 +206,7 @@ export const markAsHelpful = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update KB article
-// @route   PUT /api/knowledge-base/:id
+// @route   PUT /knowledge-base/:id
 // @access  Private (Author/Admin only)
 export const updateArticle = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -247,7 +247,7 @@ export const updateArticle = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete KB article
-// @route   DELETE /api/knowledge-base/:id
+// @route   DELETE /knowledge-base/:id
 // @access  Private (Author/Admin only)
 export const deleteArticle = asyncHandler(async (req, res) => {
   const { id } = req.params;

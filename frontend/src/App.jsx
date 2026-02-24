@@ -34,13 +34,19 @@ import EventManagement from './pages/admin/EventManagement';
 
 // New Feature Pages
 import KnowledgeBase from './pages/KnowledgeBase';
-import VolunteerResume from './pages/VolunteerResume';
+import VolunteerResume from './pages/volunteer/VolunteerResume';
 import Settings from './pages/Settings';
 import Assistant from './pages/Assistant';
 import SecretaryOnboardingWizard from './pages/SecretaryOnboardingWizard';
 import SecretaryCustomizer from './components/digital-id/SecretaryCustomizer';
 import SuperAdminDashboard from './pages/admin/SuperAdminDashboard';
+import Announcements from './components/announcements/Announcements';
+import Notices from './pages/Notices';
+import Polls from './pages/Polls';
+import Meetings from './components/meetings/Meetings';
 import EventDetails from './pages/EventDetails';
+import DemoCertificates from './pages/admin/DemoCertificates';
+import VolunteerCertificates from './pages/volunteer/VolunteerCertificates';
 
 const App = () => {
   return (
@@ -92,6 +98,11 @@ const App = () => {
             <Route path="/volunteer/qr-scanner" element={
               <ProtectedRoute role="volunteer">
                 <QRScanner />
+              </ProtectedRoute>
+            } />
+            <Route path="/volunteer/certificates" element={
+              <ProtectedRoute role="volunteer">
+                <VolunteerCertificates />
               </ProtectedRoute>
             } />
 
@@ -154,6 +165,11 @@ const App = () => {
                 <EventManagement />
               </ProtectedRoute>
             } />
+            <Route path="/admin/certificates" element={
+              <ProtectedRoute role="secretary">
+                <DemoCertificates />
+              </ProtectedRoute>
+            } />
             <Route path="/super-admin" element={
               <ProtectedRoute role="super-admin">
                 <SuperAdminDashboard />
@@ -183,6 +199,26 @@ const App = () => {
 
             {/* New Feature Routes */}
             <Route path="/knowledge-base" element={<KnowledgeBase />} />
+            <Route path="/announcements" element={
+              <ProtectedRoute>
+                <Announcements />
+              </ProtectedRoute>
+            } />
+            <Route path="/notices" element={
+              <ProtectedRoute>
+                <Notices />
+              </ProtectedRoute>
+            } />
+            <Route path="/polls" element={
+              <ProtectedRoute>
+                <Polls />
+              </ProtectedRoute>
+            } />
+            <Route path="/meetings" element={
+              <ProtectedRoute>
+                <Meetings />
+              </ProtectedRoute>
+            } />
             <Route path="/volunteer-resume" element={
               <ProtectedRoute role="volunteer">
                 <VolunteerResume />

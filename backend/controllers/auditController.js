@@ -1,7 +1,7 @@
 import AuditLog from '../models/AuditLog.js';
 
 // @desc    Get all system audit logs
-// @route   GET /api/audit/logs
+// @route   GET /audit/logs
 // @access  Private/Secretary
 export const getAuditLogs = async (req, res) => {
   try {

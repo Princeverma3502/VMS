@@ -50,7 +50,7 @@ const VolunteerDashboard = () => {
 
   const handleSubmit = async (id) => {
     try {
-      await api.put(`/tasks/${id}/submit`);
+      await api.put(`/tasks/${id}/submit`, { submissionData: '' });
       triggerHaptic('success');
       triggerConfetti(2000); // Celebrate task submission
       fetchTasks();

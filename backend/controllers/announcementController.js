@@ -4,9 +4,9 @@ import Domain from '../models/Domain.js';
 import asyncHandler from 'express-async-handler';
 
 // @desc    Create a new announcement (Secretary or Domain Head only)
-// @route   POST /api/announcements
+// @route   POST /announcements
 export const createAnnouncement = asyncHandler(async (req, res) => {
-  const { title, content, priority, scope, domainId } = req.body;
+  const { title, content, priority, scope, domainId, domain } = req.body;
   const userId = req.user._id;
 
   // Validation
@@ -28,13 +28,26 @@ export const createAnnouncement = asyncHandler(async (req, res) => {
   }
 
   let domainRef = null;
-  if (scope === 'Domain' && domainId) {
-    const domain = await Domain.findById(domainId);
-    if (!domain || domain.head.toString() !== userId.toString()) {
+  if (scope === 'Domain') {
+    // Accept either a domainId or a domain name (from older UI) for compatibility
+    let domainObj = null;
+    if (domainId) {
+      domainObj = await Domain.findById(domainId);
+    } else if (domain) {
+      domainObj = await Domain.findOne({ name: domain, collegeId: req.user.collegeId });
+    }
+
+    if (!domainObj) {
+      res.status(404);
+      throw new Error('Target domain not found');
+    }
+
+    if (domainObj.head.toString() !== userId.toString()) {
       res.status(403);
       throw new Error('You can only create announcements for your domain');
     }
-    domainRef = domainId;
+
+    domainRef = domainObj._id;
   }
 
   const announcement = await Announcement.create({
@@ -51,7 +64,7 @@ export const createAnnouncement = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all announcements for the logged-in user
-// @route   GET /api/announcements
+// @route   GET /announcements
 export const getAnnouncements = asyncHandler(async (req, res) => {
   const { _id: userId, collegeId, role } = req.user;
 
@@ -93,7 +106,7 @@ export const getAnnouncements = asyncHandler(async (req, res) => {
 });
 
 // @desc    Mark announcement as read
-// @route   PUT /api/announcements/:id/read
+// @route   PUT /announcements/:id/read
 export const markAnnouncementRead = asyncHandler(async (req, res) => {
   const announcement = await Announcement.findById(req.params.id);
   
@@ -122,7 +135,7 @@ export const markAnnouncementRead = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get read count for an announcement
-// @route   GET /api/announcements/:id/stats
+// @route   GET /announcements/:id/stats
 export const getAnnouncementStats = asyncHandler(async (req, res) => {
   const announcement = await Announcement.findById(req.params.id);
   
@@ -144,7 +157,7 @@ export const getAnnouncementStats = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete announcement (Creator only)
-// @route   DELETE /api/announcements/:id
+// @route   DELETE /announcements/:id
 export const deleteAnnouncement = asyncHandler(async (req, res) => {
   const announcement = await Announcement.findById(req.params.id);
   

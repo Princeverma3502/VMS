@@ -5,7 +5,7 @@ import { protect, authorize } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 // @desc    Create geofence location
-// @route   POST /api/geofence
+// @route   POST /geofence
 // @access  Private (Secretary/Domain Head)
 router.post('/', protect, authorize('Secretary', 'Domain Head'), async (req, res) => {
   try {
@@ -34,7 +34,7 @@ router.post('/', protect, authorize('Secretary', 'Domain Head'), async (req, res
 });
 
 // @desc    Get geofence by event
-// @route   GET /api/geofence/event/:eventId
+// @route   GET /geofence/event/:eventId
 // @access  Public
 router.get('/event/:eventId', async (req, res) => {
   try {
@@ -54,7 +54,7 @@ router.get('/event/:eventId', async (req, res) => {
 });
 
 // @desc    Check if user is within geofence
-// @route   POST /api/geofence/check-in
+// @route   POST /geofence/check-in
 // @access  Private
 router.post('/check-in', protect, async (req, res) => {
   try {
@@ -94,7 +94,7 @@ router.post('/check-in', protect, async (req, res) => {
 });
 
 // @desc    Update geofence
-// @route   PUT /api/geofence/:id
+// @route   PUT /geofence/:id
 // @access  Private (Secretary/Domain Head)
 router.put('/:id', protect, authorize('Secretary', 'Domain Head'), async (req, res) => {
   try {
@@ -117,7 +117,7 @@ router.put('/:id', protect, authorize('Secretary', 'Domain Head'), async (req, r
 });
 
 // @desc    Delete geofence
-// @route   DELETE /api/geofence/:id
+// @route   DELETE /geofence/:id
 // @access  Private (Secretary/Domain Head)
 router.delete('/:id', protect, authorize('Secretary', 'Domain Head'), async (req, res) => {
   try {

@@ -2,7 +2,7 @@ import asyncHandler from 'express-async-handler';
 import Event from '../models/Event.js';
 
 // @desc    Get all events (with optional filters)
-// @route   GET /api/events
+// @route   GET /events
 // @access  Private
 export const getEvents = asyncHandler(async (req, res) => {
   const { status, type, search } = req.query;
@@ -36,7 +36,7 @@ export const getEvents = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get single event by ID
-// @route   GET /api/events/:id
+// @route   GET /events/:id
 // @access  Private
 export const getEventById = asyncHandler(async (req, res) => {
   const event = await Event.findById(req.params.id).populate('createdBy', 'name');
@@ -55,20 +55,22 @@ export const getEventById = asyncHandler(async (req, res) => {
 });
 
 // @desc    Create a new event
-// @route   POST /api/events
+// @route   POST /events
 // @access  Private (Secretary)
 export const createEvent = asyncHandler(async (req, res) => {
-  const { name, date, time, location, description, type, xpPoints } = req.body;
+  const { name, title, date, time, location, description, type, xpPoints, latitude, longitude, radius } = req.body;
 
-  if (!name || !date || !type) {
+  const eventName = name || title; // Support both field names
+
+  if (!eventName || !date || !type) {
     res.status(400);
-    throw new Error('Please fill in all required fields (Name, Date, Type)');
+    throw new Error('Please fill in all required fields (Name/Title, Date, Type)');
   }
 
-  const event = new Event({
+  const eventData = {
     collegeId: req.user.collegeId,
     createdBy: req.user._id,
-    name,
+    name: eventName,
     date,
     time,
     location,
@@ -76,14 +78,70 @@ export const createEvent = asyncHandler(async (req, res) => {
     type,
     xpPoints: xpPoints || 20, // Default XP
     status: 'Upcoming'
-  });
+  };
 
+  // Add geofence data if provided
+  if (latitude && longitude && radius) {
+    eventData.geofence = {
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+      radius: parseInt(radius) || 100
+    };
+  }
+
+  const event = new Event(eventData);
   const createdEvent = await event.save();
   res.status(201).json(createdEvent);
 });
 
+// @desc    Register for an event
+// @route   POST /events/:id/register
+// @access  Private
+export const registerForEvent = asyncHandler(async (req, res) => {
+  const event = await Event.findById(req.params.id);
+
+  if (!event) {
+    res.status(404);
+    throw new Error('Event not found');
+  }
+
+  // Check if user is already registered
+  if (event.attendees && event.attendees.includes(req.user._id)) {
+    res.status(400);
+    throw new Error('Already registered for this event');
+  }
+
+  // Add user to attendees
+  event.attendees = event.attendees || [];
+  event.attendees.push(req.user._id);
+
+  await event.save();
+  res.json({ message: 'Successfully registered for event' });
+});
+
+// @desc    Unregister from an event
+// @route   DELETE /events/:id/register
+// @access  Private
+export const unregisterFromEvent = asyncHandler(async (req, res) => {
+  const event = await Event.findById(req.params.id);
+
+  if (!event) {
+    res.status(404);
+    throw new Error('Event not found');
+  }
+
+  // Remove user from attendees
+  if (event.attendees) {
+    event.attendees = event.attendees.filter(id => id.toString() !== req.user._id.toString());
+  }
+
+  await event.save();
+  res.json({ message: 'Successfully unregistered from event' });
+});
+
 // @desc    Delete event
-// @route   DELETE /api/events/:id
+// @route   DELETE /events/:id
+// @access  Private
 export const deleteEvent = asyncHandler(async (req, res) => {
   const event = await Event.findById(req.params.id);
 

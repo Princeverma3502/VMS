@@ -3,7 +3,7 @@ import User from '../models/User.js';
 import sendPushNotification from '../utils/pushNotification.js';
 
 // @desc    Create a new task (Secretary/Admin Only)
-// @route   POST /api/tasks
+// @route   POST /tasks
 export const createTask = async (req, res) => {
   try {
     const { title, description, deadline, xpReward, category } = req.body;
@@ -24,7 +24,7 @@ export const createTask = async (req, res) => {
 };
 
 // @desc    Get all tasks
-// @route   GET /api/tasks
+// @route   GET /tasks
 export const getTasks = async (req, res) => {
   try {
     const filter = req.user.collegeId ? { collegeId: req.user.collegeId } : {};
@@ -36,7 +36,7 @@ export const getTasks = async (req, res) => {
 };
 
 // @desc    Delete a task (Secretary/Admin Only)
-// @route   DELETE /api/tasks/:id
+// @route   DELETE /tasks/:id
 export const deleteTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -50,14 +50,15 @@ export const deleteTask = async (req, res) => {
 };
 
 // @desc    Volunteer claims a task
-// @route   PUT /api/tasks/claim/:id
+// @route   PUT /tasks/claim/:id
 export const claimTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
 
-    // Check if user already claimed it
-    if (task.assignedUsers.includes(req.user._id)) {
+    // Check if user already claimed it (compare string representations)
+    const alreadyAssigned = task.assignedUsers.some(a => a.toString() === req.user._id.toString());
+    if (alreadyAssigned) {
       return res.status(400).json({ message: "Task already claimed by you" });
     }
 
@@ -72,10 +73,10 @@ export const claimTask = async (req, res) => {
 };
 
 // @desc    Volunteer submits completed task
-// @route   PUT /api/tasks/submit/:id
+// @route   PUT /tasks/submit/:id
 export const submitTask = async (req, res) => {
   try {
-    const { submissionData } = req.body; // e.g., links or notes
+    const { submissionData } = req.body || {}; // e.g., links or notes
     const task = await Task.findById(req.params.id);
 
     if (!task) return res.status(404).json({ message: "Task not found" });
@@ -91,11 +92,12 @@ export const submitTask = async (req, res) => {
 };
 
 // @desc    Secretary verifies task and awards XP
-// @route   PUT /api/tasks/verify/:taskId
+// @route   PUT /tasks/verify/:taskId
 export const verifyTask = async (req, res) => {
   try {
-    const { taskId } = req.params;
-    
+    // support both route param names (:id or :taskId)
+    const taskId = req.params.taskId || req.params.id;
+
     // 1. Find the task and populate assigned users
     const task = await Task.findById(taskId).populate('assignedUsers');
     if (!task) return res.status(404).json({ message: "Task not found" });

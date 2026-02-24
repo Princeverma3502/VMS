@@ -38,7 +38,7 @@ export const updateStreak = async (user) => {
 };
 
 // @desc    Register new user
-// @route   POST /api/auth/register
+// @route   POST /auth/register
 export const registerUser = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -126,7 +126,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Login User
-// @route   POST /api/auth/login
+// @route   POST /auth/login
 export const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const normalizedEmail = email.toLowerCase();
@@ -212,7 +212,7 @@ export const resetUserPassword = asyncHandler(async (req, res) => {
 });
 
 // @desc    Change user password (Self)
-// @route   PUT /api/auth/change-password
+// @route   PUT /auth/change-password
 // @access  Private
 export const changePassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;

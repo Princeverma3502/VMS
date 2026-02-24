@@ -10,6 +10,7 @@ const CreateEventForm = () => {
     title: '',
     description: '',
     date: '',
+    type: 'Volunteer',
     latitude: '',
     longitude: '',
     radius: 100 // Default 100 meters
@@ -82,14 +83,15 @@ const CreateEventForm = () => {
         />
 
         <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
-            <textarea 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-100 outline-none text-sm"
-                rows="2"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-            />
+          <label htmlFor="event-description" className="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
+          <textarea 
+            id="event-description"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-100 outline-none text-sm text-gray-900 bg-white"
+            rows="2"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+          />
         </div>
 
         <Input 
@@ -101,6 +103,24 @@ const CreateEventForm = () => {
             required 
         />
         
+        {/* Event Type */}
+        <div>
+          <label htmlFor="event-type" className="block text-sm font-medium text-gray-700 mb-1.5">Event Type</label>
+          <select
+            id="event-type"
+            name="type"
+            value={formData.type}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-100 outline-none text-sm text-gray-900 bg-white"
+            required
+          >
+            <option value="Volunteer">Volunteer</option>
+            <option value="Meeting">Meeting</option>
+            <option value="Workshop">Workshop</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        
         {/* Geofence Inputs */}
         <div className="p-4 bg-blue-50 rounded-xl border border-blue-100 relative">
           <label className="block text-sm font-bold text-blue-800 mb-2 flex items-center gap-2">
@@ -109,16 +129,18 @@ const CreateEventForm = () => {
           
           <div className="grid grid-cols-2 gap-3 mb-3">
             <input 
+              id="geofence-latitude"
               placeholder="Latitude" 
-              className="p-2 text-xs rounded border border-blue-200"
+              className="p-2 text-xs rounded border border-blue-200 text-gray-900 bg-white"
               name="latitude"
               value={formData.latitude} 
               onChange={handleChange}
               required
             />
             <input 
+              id="geofence-longitude"
               placeholder="Longitude" 
-              className="p-2 text-xs rounded border border-blue-200"
+              className="p-2 text-xs rounded border border-blue-200 text-gray-900 bg-white"
               name="longitude"
               value={formData.longitude} 
               onChange={handleChange}
@@ -134,7 +156,7 @@ const CreateEventForm = () => {
                     name="radius"
                     value={formData.radius}
                     onChange={handleChange}
-                    className="w-16 p-1 text-xs border border-blue-200 rounded text-center"
+                    className="w-16 p-1 text-xs border border-blue-200 rounded text-center text-gray-900 bg-white"
                 />
             </div>
             <button 

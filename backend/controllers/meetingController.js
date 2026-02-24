@@ -4,7 +4,7 @@ import Domain from '../models/Domain.js';
 import asyncHandler from 'express-async-handler';
 
 // @desc    Create a new meeting (Secretary or Domain Head only)
-// @route   POST /api/meetings
+// @route   POST /meetings
 export const createMeeting = asyncHandler(async (req, res) => {
   const { title, description, scheduledAt, duration, meetingType, meetLink, location, meetScope, domainId, invitedUserIds } = req.body;
   const userId = req.user._id;
@@ -72,7 +72,7 @@ export const createMeeting = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all meetings for the logged-in user
-// @route   GET /api/meetings
+// @route   GET /meetings
 export const getMeetings = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const user = await User.findById(userId);
@@ -112,7 +112,7 @@ export const getMeetings = asyncHandler(async (req, res) => {
 });
 
 // @desc    Mark attendance for a meeting
-// @route   PUT /api/meetings/:id/attend
+// @route   PUT /meetings/:id/attend
 export const markMeetingAttendance = asyncHandler(async (req, res) => {
   const meeting = await Meeting.findById(req.params.id);
   
@@ -151,7 +151,7 @@ export const markMeetingAttendance = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete a meeting (Creator only)
-// @route   DELETE /api/meetings/:id
+// @route   DELETE /meetings/:id
 export const deleteMeeting = asyncHandler(async (req, res) => {
   const meeting = await Meeting.findById(req.params.id);
   
@@ -170,7 +170,7 @@ export const deleteMeeting = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get meeting details
-// @route   GET /api/meetings/:id
+// @route   GET /meetings/:id
 export const getMeetingDetails = asyncHandler(async (req, res) => {
   const meeting = await Meeting.findById(req.params.id)
     .populate('createdBy', 'name role email')

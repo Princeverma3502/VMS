@@ -74,6 +74,16 @@ const userSchema = mongoose.Schema({
     default: false,
   },
 
+  endorsedSkills: [{
+    type: String
+  }],
+
+  bloodGroup: {
+    type: String,
+    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    index: true
+  },
+
   pushSubscription: { type: Object, default: null }
 }, { timestamps: true });
 

@@ -31,6 +31,8 @@ const DigitalIDCard = ({ user, onClose }) => {
       // SIGNATURES: Default to Secretary if missing
       signatureRole: baseConfig.signatureRole || 'Secretary',
       signatureName: baseConfig.signatureName || 'Authorized Signatory',
+      studentSecretaryName: baseConfig.studentSecretaryName || 'John Doe',
+      studentSecretaryRole: baseConfig.studentSecretaryRole || 'Student Secretary',
       validThru: baseConfig.validThru || validString,
 
       // VISIBILITY DEFAULTS

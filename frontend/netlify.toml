@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[dev]
+  command = "npm run dev"
+  port = 5173
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Environment variables
+# Set these in Netlify Dashboard under Site settings > Build & deploy > Environment
+# VITE_API_URL=https://your-backend-api.com

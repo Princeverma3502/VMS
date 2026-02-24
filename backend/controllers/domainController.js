@@ -2,7 +2,7 @@ import Domain from '../models/Domain.js';
 import User from '../models/User.js';
 
 // @desc    Create a new Domain
-// @route   POST /api/domains
+// @route   POST /domains
 export const createDomain = async (req, res) => {
   try {
     const { name, headId } = req.body;
@@ -39,7 +39,7 @@ export const createDomain = async (req, res) => {
 };
 
 // @desc    Get all Domains
-// @route   GET /api/domains
+// @route   GET /domains
 export const getAllDomains = async (req, res) => {
   try {
     const domains = await Domain.find({}).populate('head', 'name email');

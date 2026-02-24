@@ -3,7 +3,7 @@ import Notice from '../models/Notice.js';
 import User from '../models/User.js'; // Imported to calculate read percentages
 
 // @desc    Create a notice
-// @route   POST /api/notices
+// @route   POST /notices
 // @access  Private (Secretary/Domain Head only)
 export const createNotice = asyncHandler(async (req, res) => {
   const { title, content, visibility, domainId, ngoId, attachments, expiresAt } = req.body;
@@ -35,7 +35,7 @@ export const createNotice = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get all notices (Smart Filtering)
-// @route   GET /api/notices
+// @route   GET /notices
 // @access  Public
 export const getNotices = asyncHandler(async (req, res) => {
   const { limit = 20, skip = 0 } = req.query;
@@ -81,7 +81,7 @@ export const getNotices = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get single notice & Mark Read
-// @route   GET /api/notices/:id
+// @route   GET /notices/:id
 // @access  Public
 export const getNoticeById = asyncHandler(async (req, res) => {
   const userId = req.user?.id;
@@ -110,7 +110,7 @@ export const getNoticeById = asyncHandler(async (req, res) => {
 });
 
 // @desc    Manually mark notice as read
-// @route   PUT /api/notices/:id/read
+// @route   PUT /notices/:id/read
 // @access  Private
 export const markNoticeAsRead = asyncHandler(async (req, res) => {
   const userId = req.user.id;
@@ -138,7 +138,7 @@ export const markNoticeAsRead = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get read receipt status (Analytics)
-// @route   GET /api/notices/:id/read-status
+// @route   GET /notices/:id/read-status
 // @access  Private (Admin/Secretary)
 export const getReadStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -180,7 +180,7 @@ export const getReadStatus = asyncHandler(async (req, res) => {
 });
 
 // @desc    Pin/Unpin notice
-// @route   PUT /api/notices/:id/pin
+// @route   PUT /notices/:id/pin
 // @access  Private (Secretary only)
 export const pinNotice = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -208,7 +208,7 @@ export const pinNotice = asyncHandler(async (req, res) => {
 });
 
 // @desc    Delete notice
-// @route   DELETE /api/notices/:id
+// @route   DELETE /notices/:id
 // @access  Private (Creator/Secretary only)
 export const deleteNotice = asyncHandler(async (req, res) => {
   const { id } = req.params;

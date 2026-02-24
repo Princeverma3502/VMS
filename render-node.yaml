@@ -1,0 +1,21 @@
+services:
+  - type: web_service
+    name: vms-backend
+    env: node
+    plan: starter
+    region: oregon
+    branch: main
+    buildCommand: npm ci
+    startCommand: node server.js
+
+  - type: static_site
+    name: vms-frontend
+    env: static
+    staticPublishPath: frontend/dist
+    branch: main
+
+# Notes:
+# - This config uses Node.js environment (alternative to Docker)
+# - buildCommand: np ci installs dependencies
+# - startCommand: node server.js runs the server
+# - Use render.yaml for Docker deployment (usually recommended)

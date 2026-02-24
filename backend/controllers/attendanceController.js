@@ -4,7 +4,7 @@ import User from '../models/User.js';
 import { getDistanceFromLatLonInMeters } from '../utils/geofence.js';
 
 // @desc    Mark Attendance via Geofence
-// @route   POST /api/attendance/mark
+// @route   POST /attendance/mark
 // @access  Private (Volunteer)
 export const markAttendance = asyncHandler(async (req, res) => {
   const { eventId, userLocation } = req.body;
@@ -40,9 +40,14 @@ export const markAttendance = asyncHandler(async (req, res) => {
 
   // 5. Geofence Calculation
   const { latitude: userLat, longitude: userLng } = userLocation;
-  const eventLat = event.geofenceCoordinates.latitude;
-  const eventLng = event.geofenceCoordinates.longitude;
-  const allowedRadius = event.geofenceCoordinates.radiusInMeters || 100;
+  const eventLat = event.geofence?.latitude;
+  const eventLng = event.geofence?.longitude;
+  const allowedRadius = event.geofence?.radius || 100;
+
+  if (!eventLat || !eventLng) {
+    res.status(400);
+    throw new Error('Event does not have geofence coordinates set.');
+  }
 
   const distance = getDistanceFromLatLonInMeters(userLat, userLng, eventLat, eventLng);
 

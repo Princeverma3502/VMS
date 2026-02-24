@@ -2,7 +2,7 @@ const CACHE_NAME = 'nss-portal-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/logo192.png'
+  '/nss-logo.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -30,7 +30,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   // Add this: Let API calls bypass the service worker entirely
-  if (event.request.url.includes('/api/')) {
+  if (event.request.url.includes('localhost:5000')) {
     return;
   }
 
@@ -44,8 +44,8 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   const options = {
     body: event.data ? event.data.text() : 'New notification',
-    icon: '/logo192.png',
-    badge: '/logo192.png',
+    icon: '/nss-logo.png',
+    badge: '/nss-logo.png',
     tag: 'nss-notification',
     requireInteraction: false,
   };

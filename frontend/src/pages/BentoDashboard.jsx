@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Header from '../components/ui/Header';
-import StatCard from '../components/ui/StatCard';
+import GamificationStatCard from '../components/ui/GamificationStatCard';
 import StreakCard from '../components/ui/StreakCard';
 import MeetingPreview from '../components/ui/MeetingPreview';
 import ActivityFeed from '../components/gamification/ActivityFeed';
+import BloodGroupSummary from '../components/ui/BloodGroupSummary';
 import BottomNav from '../components/layout/BottomNav';
 import useBranding from '../hooks/useBranding';
 import api from '../services/api';
@@ -46,7 +47,7 @@ const BentoDashboard = () => {
 
   const handleSubmit = async (id) => {
     try {
-      await api.put(`/tasks/${id}/submit`);
+      await api.put(`/tasks/${id}/submit`, { submissionData: '' });
       fetchTasks();
     } catch (err) { alert(err.response?.data?.message); }
   };
@@ -99,10 +100,10 @@ const BentoDashboard = () => {
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           {/* Left: Stats */}
           <div className="col-span-1 space-y-4">
-            <StatCard 
-                xp={user?.gamification?.xpPoints || 0} 
-                level={user?.gamification?.level || 1} 
-                progress={0.7} // Calculate real progress if needed
+            <GamificationStatCard 
+              xp={user?.gamification?.xpPoints || 0} 
+              level={user?.gamification?.level || 1} 
+              progress={0.7} // Calculate real progress if needed
             />
             <StreakCard days={user?.gamification?.streak || 0} />
           </div>
@@ -110,6 +111,7 @@ const BentoDashboard = () => {
           {/* Right: Meeting & Feed */}
           <div className="col-span-2 space-y-4">
             <MeetingPreview meeting={upcoming} />
+            <BloodGroupSummary />
             <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 border border-white/40 shadow-sm">
                <h3 className="text-gray-800 font-bold mb-3 px-2 text-sm uppercase tracking-wider opacity-70">Live Activity</h3>
                <ActivityFeed limit={3} />

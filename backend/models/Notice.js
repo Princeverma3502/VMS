@@ -23,7 +23,7 @@ const noticeSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Domain',
     },
-    collegeId: { type: mongoose.Schema.Types.ObjectId, ref: 'College', index: true },
+    collegeId: { type: mongoose.Schema.Types.ObjectId, ref: 'College' },
     visibility: {
       type: String,
       enum: ['all', 'domain', 'ngo'],

@@ -22,16 +22,16 @@ const storage = multer.diskStorage({
   },
 });
 
-// File filter (Images only)
+// File filter (Images and PDFs)
 const checkFileType = (file, cb) => {
-  const filetypes = /jpg|jpeg|png/;
+  const filetypes = /jpg|jpeg|png|pdf/;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
 
   if (extname && mimetype) {
     return cb(null, true);
   } else {
-    cb(new Error('Images only! (jpg, jpeg, png)'));
+    cb(new Error('Images and PDFs only! (jpg, jpeg, png, pdf)'));
   }
 };
 

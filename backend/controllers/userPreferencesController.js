@@ -2,7 +2,7 @@ import asyncHandler from 'express-async-handler';
 import UserPreferences from '../models/UserPreferences.js';
 
 // @desc    Get user preferences
-// @route   GET /api/preferences
+// @route   GET /preferences
 // @access  Private
 export const getPreferences = asyncHandler(async (req, res) => {
   const userId = req.user.id;
@@ -49,7 +49,7 @@ export const getPreferences = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update user theme
-// @route   PUT /api/preferences/theme
+// @route   PUT /preferences/theme
 // @access  Private
 export const updateTheme = asyncHandler(async (req, res) => {
   const userId = req.user.id;
@@ -76,7 +76,7 @@ export const updateTheme = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update notification preferences
-// @route   PUT /api/preferences/notifications
+// @route   PUT /preferences/notifications
 // @access  Private
 export const updateNotifications = asyncHandler(async (req, res) => {
   const userId = req.user.id;
@@ -99,7 +99,7 @@ export const updateNotifications = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update privacy preferences
-// @route   PUT /api/preferences/privacy
+// @route   PUT /preferences/privacy
 // @access  Private
 export const updatePrivacy = asyncHandler(async (req, res) => {
   const userId = req.user.id;
@@ -122,7 +122,7 @@ export const updatePrivacy = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update custom colors
-// @route   PUT /api/preferences/colors
+// @route   PUT /preferences/colors
 // @access  Private
 export const updateColors = asyncHandler(async (req, res) => {
   const userId = req.user.id;
@@ -145,7 +145,7 @@ export const updateColors = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update language preference
-// @route   PUT /api/preferences/language
+// @route   PUT /preferences/language
 // @access  Private
 export const updateLanguage = asyncHandler(async (req, res) => {
   const userId = req.user.id;
@@ -172,7 +172,7 @@ export const updateLanguage = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update layout preferences
-// @route   PUT /api/preferences/layout
+// @route   PUT /preferences/layout
 // @access  Private
 export const updateLayout = asyncHandler(async (req, res) => {
   const userId = req.user.id;
@@ -195,7 +195,7 @@ export const updateLayout = asyncHandler(async (req, res) => {
 });
 
 // @desc    Reset preferences to default
-// @route   DELETE /api/preferences/reset
+// @route   DELETE /preferences/reset
 // @access  Private
 export const resetPreferences = asyncHandler(async (req, res) => {
   const userId = req.user.id;

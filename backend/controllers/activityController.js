@@ -3,7 +3,7 @@ import ActivityLog from '../models/ActivityLog.js';
 import User from '../models/User.js';
 
 // @desc    Create activity log entry
-// @route   POST /api/activity
+// @route   POST /activity
 // @access  Private
 export const createActivity = asyncHandler(async (req, res) => {
   const { type, title, description, relatedEntity, metadata, visibility } = req.body;
@@ -29,7 +29,7 @@ export const createActivity = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get activity feed
-// @route   GET /api/activity/feed
+// @route   GET /activity/feed
 // @access  Public
 export const getActivityFeed = asyncHandler(async (req, res) => {
   const { limit = 20, skip = 0, type, userId } = req.query;
@@ -59,7 +59,7 @@ export const getActivityFeed = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get user's activity
-// @route   GET /api/activity/user/:userId
+// @route   GET /activity/user/:userId
 // @access  Public
 export const getUserActivity = asyncHandler(async (req, res) => {
   const { userId } = req.params;
@@ -80,7 +80,7 @@ export const getUserActivity = asyncHandler(async (req, res) => {
 });
 
 // @desc    Like an activity
-// @route   PUT /api/activity/:activityId/like
+// @route   PUT /activity/:activityId/like
 // @access  Private
 export const likeActivity = asyncHandler(async (req, res) => {
   const userId = req.user.id;
@@ -110,7 +110,7 @@ export const likeActivity = asyncHandler(async (req, res) => {
 });
 
 // @desc    Comment on activity
-// @route   PUT /api/activity/:activityId/comment
+// @route   PUT /activity/:activityId/comment
 // @access  Private
 export const commentOnActivity = asyncHandler(async (req, res) => {
   const { text } = req.body;
@@ -146,7 +146,7 @@ export const commentOnActivity = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get trending activities
-// @route   GET /api/activity/trending
+// @route   GET /activity/trending
 // @access  Public
 export const getTrendingActivities = asyncHandler(async (req, res) => {
   const days = req.query.days || 7;

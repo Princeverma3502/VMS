@@ -7,12 +7,12 @@ import { allowRoles } from '../middleware/roleMiddleware.js';
 const router = express.Router();
 
 router.route('/')
-  // @route   GET /api/domains
+  // @route   GET /domains
   // @desc    Get list of domains
   // @access  Private
   .get(protect, getAllDomains)
 
-  // @route   POST /api/domains
+  // @route   POST /domains
   // @desc    Create a new domain and assign a Head
   // @access  Protected (Secretary Only)
   .post(protect, allowRoles('Secretary'), createDomain);

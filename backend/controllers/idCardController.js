@@ -2,7 +2,7 @@ import asyncHandler from 'express-async-handler';
 import CollegeSettings from '../models/CollegeSettings.js';
 
 // @desc    Get ID Card Settings
-// @route   GET /api/settings/id-card
+// @route   GET /settings/id-card
 export const getIDCardSettings = asyncHandler(async (req, res) => {
   const settings = await CollegeSettings.findOne({ collegeId: req.user.collegeId });
   if (settings && settings.idCardOptions) {
@@ -19,7 +19,7 @@ export const getIDCardSettings = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update ID Card Settings
-// @route   PUT /api/settings/id-card
+// @route   PUT /settings/id-card
 export const updateIDCardSettings = asyncHandler(async (req, res) => {
   const { 
     templateId, orgName, subHeader, collegeLogo, councilLogo, 

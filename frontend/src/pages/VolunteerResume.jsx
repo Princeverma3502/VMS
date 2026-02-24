@@ -51,9 +51,58 @@ const VolunteerResume = () => {
     }
   };
 
-  const handleDownloadResume = () => {
-    // Implement PDF download logic
-    alert('Resume download feature coming soon!');
+  const handleDownloadResume = async () => {
+    try {
+      const { jsPDF } = await import('jspdf');
+      const htmlToImage = await import('html-to-image');
+
+      // Get the resume content element
+      const resumeElement = document.getElementById('resume-content');
+      if (!resumeElement) {
+        alert('Resume content not found');
+        return;
+      }
+
+      // Convert HTML to image
+      const canvas = await htmlToImage.toCanvas(resumeElement, {
+        backgroundColor: '#ffffff',
+        width: 800,
+        height: resumeElement.scrollHeight,
+      });
+
+      // Create PDF
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 295; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+
+      let position = 0;
+
+      // Add first page
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      // Add additional pages if needed
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      // Download the PDF
+      pdf.save(`${resume?.userId?.name || 'volunteer'}_resume.pdf`);
+    } catch (error) {
+      console.error('Failed to download resume:', error);
+      alert('Failed to download resume. Please try again.');
+    }
   };
 
   if (loading) {
@@ -67,7 +116,7 @@ const VolunteerResume = () => {
   return (
     <Layout showBackButton={true}>
       
-      <div className="max-w-4xl mx-auto p-4 sm:p-6">
+      <div id="resume-content" className="max-w-4xl mx-auto p-4 sm:p-6">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg p-6 sm:p-8 mb-6">
           <div className="flex items-start justify-between mb-4">

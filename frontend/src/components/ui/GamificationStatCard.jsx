@@ -1,6 +1,6 @@
 import React from 'react';
 
-const StatCard = ({ xp = 420, level = 4, progress = 0.65 }) => {
+const GamificationStatCard = ({ xp = 420, level = 4, progress = 0.65 }) => {
   const stroke = 10;
   const size = 120;
   const radius = (size - stroke) / 2;
@@ -34,4 +34,4 @@ const StatCard = ({ xp = 420, level = 4, progress = 0.65 }) => {
   );
 };
 
-export default StatCard;
+export default GamificationStatCard;

@@ -8,7 +8,11 @@ export const allowRoles = (...roles) => {
       throw new Error('User not authenticated');
     }
 
-    if (!roles.includes(req.user.role)) {
+    // Case-insensitive role matching
+    const userRole = (req.user.role || '').toLowerCase().trim();
+    const allowed = roles.map(r => (r || '').toLowerCase().trim());
+
+    if (!allowed.includes(userRole)) {
       res.status(403); // 403 Forbidden
       throw new Error(`User role '${req.user.role}' is not authorized to access this route.`);
     }
