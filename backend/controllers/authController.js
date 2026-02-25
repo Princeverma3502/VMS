@@ -1,6 +1,7 @@
 import { validationResult } from 'express-validator';
 import asyncHandler from 'express-async-handler';
 import User from '../models/User.js';
+import College from '../models/College.js';
 import generateToken from '../utils/generateToken.js';
 
 // --- HELPER LOGIC: STREAK UPDATE ---
@@ -46,7 +47,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new Error(errors.array()[0].msg);
   }
 
-  const { name, email, password, whatsappNumber, branch, year, role, adminSecret, rollNumber } = req.body;
+  const { name, email, password, whatsappNumber, branch, year, role, adminSecret, rollNumber, collegeName, collegeId } = req.body;
   const normalizedEmail = email.toLowerCase();
 
   // 1. Admin Secret Check
@@ -90,7 +91,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   // NOTE: We do NOT hash password here. The User model's pre('save') hook handles it.
   const isAutoApproved = role === 'Secretary';
 
-  const user = await User.create({
+  const userPayload = {
     name,
     email: normalizedEmail,
     password, // Plain text passed to model -> Model hashes it
@@ -107,7 +108,29 @@ export const registerUser = asyncHandler(async (req, res) => {
       level: 1,
       badges: []
     }
-  });
+  };
+
+  // If a collegeId is provided (from frontend dropdown), attach it directly
+  if (collegeId) {
+    userPayload.collegeId = collegeId;
+  } else if (collegeName) {
+    const existing = await College.findOne({ name: new RegExp('^' + collegeName + '$', 'i') });
+    if (existing) {
+      userPayload.collegeId = existing._id;
+    } else {
+      // create a slug from name
+      const slug = collegeName.toString().toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      let uniqueSlug = slug;
+      let counter = 1;
+      while (await College.findOne({ slug: uniqueSlug })) {
+        uniqueSlug = `${slug}-${counter++}`;
+      }
+      const created = await College.create({ name: collegeName, slug: uniqueSlug });
+      userPayload.collegeId = created._id;
+    }
+  }
+
+  const user = await User.create(userPayload);
 
   if (user) {
     res.status(201).json({

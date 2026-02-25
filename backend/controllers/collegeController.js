@@ -34,4 +34,11 @@ export const getCollegeBySlug = asyncHandler(async (req, res) => {
   res.json(college);
 });
 
-export default { createCollege, getCollegeBySlug };
+// @desc Get all colleges (public)
+// @route GET /colleges
+export const getAllColleges = asyncHandler(async (req, res) => {
+  const colleges = await College.find({}).select('name slug logoUrl primaryColor').sort({ name: 1 }).lean();
+  res.json(colleges || []);
+});
+
+export default { createCollege, getCollegeBySlug, getAllColleges };

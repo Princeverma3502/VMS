@@ -170,9 +170,9 @@ export const verifyUserById = asyncHandler(async (req, res) => {
 export const getAllUsers = asyncHandler(async (req, res) => {
   const { search, role, bloodGroup } = req.query;
   
-  // Only secretaries, admins, and domain heads can list users
-  const allowedRoles = ['Secretary', 'Admin', 'Administrator', 'Domain Head'];
-  if (!req.user || !allowedRoles.includes(req.user.role)) {
+  // Only secretaries, admins, and domain heads can list users (case-insensitive)
+  const allowedRoles = ['secretary', 'admin', 'administrator', 'domain head'];
+  if (!req.user || !allowedRoles.includes((req.user.role || '').toLowerCase())) {
     res.status(403);
     throw new Error('Forbidden: insufficient privileges'); 
   }
@@ -187,6 +187,29 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 
   const users = await User.find(filter).select('-password').sort({ createdAt: -1 });
   res.json(users);
+});
+
+// @desc    Update a user's blood group (Secretary/Admin)
+// @route   PUT /users/:id/blood-group
+export const updateUserBloodGroup = asyncHandler(async (req, res) => {
+  const { bloodGroup } = req.body;
+  const allowedRoles = ['secretary', 'admin', 'administrator', 'domain head'];
+
+  if (!req.user || !allowedRoles.includes((req.user.role || '').toLowerCase())) {
+    res.status(403);
+    throw new Error('Forbidden: insufficient privileges');
+  }
+
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  user.bloodGroup = bloodGroup;
+  await user.save();
+
+  res.json({ message: 'Blood group updated', user });
 });
 
 // @desc    Approve user registration
@@ -328,10 +351,11 @@ export const getBloodGroupStats = asyncHandler(async (req, res) => {
 export const getAllUsersFiltered = asyncHandler(async (req, res) => {
   const { search, role, bloodGroup } = req.query;
   
-  // Only admins/secretaries should list all users
-  const allowedRoles = ['Secretary', 'Admin', 'Administrator', 'Domain Head'];
-  if (!req.user || !allowedRoles.includes(req.user.role)) {
-    // Relaxed for development/testing
+  // Only admins/secretaries should list all users (case-insensitive)
+  const allowedRoles = ['secretary', 'admin', 'administrator', 'domain head'];
+  if (!req.user || !allowedRoles.includes((req.user.role || '').toLowerCase())) {
+    res.status(403);
+    throw new Error('Forbidden: insufficient privileges');
   }
 
   const filter = {};

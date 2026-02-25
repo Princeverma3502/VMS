@@ -62,8 +62,8 @@ const Sidebar = ({ userRole = 'Volunteer' }) => {
               }
             `}
           >
-            {/* Force Icon Color to inherit */}
-            <span className={({ isActive }) => isActive ? 'text-white' : 'text-current'}>
+            {/* Icon (inherit color) */}
+            <span className="text-current">
               {item.icon}
             </span>
             <span className="font-semibold text-sm">{item.name}</span>

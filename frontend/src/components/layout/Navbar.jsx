@@ -2,13 +2,17 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, UserCircle, Settings, ArrowLeft, Search } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
+import { useDebounce } from '../../utils/debounce';
 
 const Navbar = ({ userName = "User", showBackButton = false }) => {
-  const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [realTimeUserName, setRealTimeUserName] = useState(user?.name || "User");
+  const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 300);
+  // navigation hook (declared once)
+  const navigate = useNavigate();
 
   // Fetch real-time user name
   useEffect(() => {
@@ -48,6 +52,9 @@ const Navbar = ({ userName = "User", showBackButton = false }) => {
              <input 
                type="text" 
                placeholder="Search..." 
+               value={query}
+               onChange={(e) => setQuery(e.target.value)}
+               onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/search?q=${encodeURIComponent(query)}`); }}
                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all placeholder:text-slate-400"
              />
           </div>
@@ -110,17 +117,12 @@ const Navbar = ({ userName = "User", showBackButton = false }) => {
               
               <nav className="p-2 space-y-1">
                 <button
-                  onClick={handleProfileClick}
-                  className="w-full text-left px-3 py-2.5 hover:bg-slate-50 rounded-lg transition-colors text-slate-700 text-sm font-bold flex items-center gap-3"
-                >
-                  <UserCircle size={18} className="text-blue-600" /> View Profile
-                </button>
-                <button
-                  onClick={() => navigate('/settings')}
+                  onClick={() => { navigate('/settings'); setShowUserMenu(false); }}
                   className="w-full text-left px-3 py-2.5 hover:bg-slate-50 rounded-lg transition-colors text-slate-700 text-sm font-bold flex items-center gap-3"
                 >
                   <Settings size={18} className="text-slate-500" /> Settings
                 </button>
+                
               </nav>
             </div>
           )}

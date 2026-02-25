@@ -7,6 +7,7 @@ import api from '../../services/api';
 
 // --- LAYOUT & COMPONENTS ---
 import Layout from '../../components/layout/Layout';
+import { toast } from 'react-hot-toast';
 import StatCard from '../../components/common/StatCard';
 
 // --- FORMS ---
@@ -131,6 +132,19 @@ const SecretaryDashboard = () => {
     } catch (error) { alert("Reset failed"); }
   };
 
+  const handleUpdateBloodGroup = async (id, newGroup) => {
+    try {
+      await api.put(`/users/${id}/blood-group`, { bloodGroup: newGroup });
+      toast.success('Blood group updated');
+      // update local volunteers list
+      setAllVolunteers(prev => prev.map(v => v._id === id ? { ...v, bloodGroup: newGroup } : v));
+      fetchData();
+    } catch (err) {
+      console.error('Failed to update blood group', err);
+      toast.error('Failed to update blood group');
+    }
+  };
+
   const handleDeleteTask = async (id) => {
     if (!window.confirm("Delete this task permanently?")) return;
     try {
@@ -213,8 +227,27 @@ const SecretaryDashboard = () => {
                 <div className="max-h-60 overflow-y-auto space-y-2">
                   {allVolunteers.map(v => (
                     <div key={v._id} className="flex justify-between items-center text-sm p-2 hover:bg-gray-50 rounded">
-                      <span>{v.name}</span>
-                      <button onClick={() => handleResetPassword(v._id)} className="text-blue-500 text-[10px] font-bold uppercase"><RefreshCw size={10} className="inline mr-1"/> Reset</button>
+                      <div className="flex items-center gap-3">
+                        <span>{v.name}</span>
+                        <select
+                          value={v.bloodGroup || ''}
+                          onChange={(e) => handleUpdateBloodGroup(v._id, e.target.value)}
+                          className="border px-2 py-1 rounded text-sm"
+                        >
+                          <option value="">Not Set</option>
+                          <option value="A+">A+</option>
+                          <option value="A-">A-</option>
+                          <option value="B+">B+</option>
+                          <option value="B-">B-</option>
+                          <option value="AB+">AB+</option>
+                          <option value="AB-">AB-</option>
+                          <option value="O+">O+</option>
+                          <option value="O-">O-</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button onClick={() => handleResetPassword(v._id)} className="text-blue-500 text-[10px] font-bold uppercase"><RefreshCw size={10} className="inline mr-1"/> Reset</button>
+                      </div>
                     </div>
                   ))}
                 </div>

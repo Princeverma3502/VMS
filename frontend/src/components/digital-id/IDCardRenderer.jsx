@@ -42,20 +42,20 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
       <div className="w-full h-full bg-white relative flex flex-col rounded-3xl overflow-hidden shadow-2xl font-sans pt-6 aspect-[0.63]">
 
         {/* 1. HEADER (Yellow Zone - 35% Height) */}
-      <div className={`${HEADER_COLOR} h-[35%] relative w-full px-6 py-4`}>
+      <div className={`${HEADER_COLOR} h-[40%] relative w-full px-6 py-4 mt-[-2em]`}>
         {/* Top-Left: College Logo */}
-        <div className="absolute top-6 left-6 w-14 h-14 bg-white rounded-lg p-2 shadow-md flex items-center justify-center overflow-hidden border-2 border-white">
+        <div className="absolute top-8 left-6 w-14 h-14 rounded-lg shadow-sm flex items-center justify-center overflow-hidden border-2 border-transparent bg-transparent">
           {config.collegeLogo ? (
-            <img src={config.collegeLogo} alt="College" className="w-full h-full object-contain" />
+            <img src={config.collegeLogo} alt="College" className="w-full h-full object-contain bg-transparent" />
           ) : (
             <span className="text-[#EBF855] font-black text-xs">CLG</span>
           )}
         </div>
 
         {/* Top-Right: NGO/NSS Logo */}
-        <div className="absolute top-6 right-6 w-14 h-14 bg-white rounded-full p-2 shadow-md flex items-center justify-center overflow-hidden border-2 border-white">
+        <div className="absolute top-8 right-6 w-14 h-14 rounded-full shadow-sm flex items-center justify-center overflow-hidden border-2 border-transparent bg-transparent">
           {config.councilLogo ? (
-            <img src={config.councilLogo} alt="NSS" className="w-full h-full object-contain" />
+            <img src={config.councilLogo} alt="NSS" className="w-full h-full object-contain bg-transparent" />
           ) : (
             <span className="text-[#EBF855] font-black text-xs">NSS</span>
           )}
@@ -63,8 +63,8 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
       </div>
 
       {/* 2. PROFILE AVATAR (Overlapping) */}
-      <div className="relative w-full flex justify-center mt-0 mb-4">
-        <div className="w-28 h-28 rounded-full border-[4px] border-white bg-white shadow-lg overflow-hidden relative z-10 flex items-center justify-center">
+      <div className="relative w-full h-35% flex justify-center mt-[-8em] mb-4">
+        <div className="w-45 h-45 rounded-full border-[4px] border-white bg-white shadow-lg overflow-hidden relative z-10 flex items-center justify-center">
           <img
             src={user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=EBF855&color=000`}
             alt="Volunteer"
@@ -97,7 +97,7 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
         <div className="text-right">
           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Volunteer ID</p>
           <p className="text-sm font-black text-slate-800 leading-none truncate">
-            {user.rollNumber || user.enrollmentNumber || 'N/A'}
+            {user.rollNumber || 'N/A'}
           </p>
         </div>
         <div>
@@ -127,6 +127,7 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
           <p className="text-[8px] font-bold text-slate-500 uppercase tracking-wide">
             {config.secretaryName || "Secretary"}
           </p>
+          <p className="text-[10px] ">Student Secretary</p>
         </div>
 
         {/* Bottom-Right: Program Officer Signature */}
@@ -136,10 +137,11 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
               <img src={config.officerSig} alt="Officer Signature" className="h-full object-contain" />
             </div>
           )}
-          <div className="w-20 h-[1px] bg-slate-300 mb-1"></div>
+          <div className="w-27 h-[1px] bg-slate-300 mb-1"></div>
           <p className="text-[8px] font-bold text-slate-500 uppercase tracking-wide">
             {config.officerName || "Program Officer"}
           </p>
+          <p className="text-[10px] ">Program Officer</p>
         </div>
       </div>
 

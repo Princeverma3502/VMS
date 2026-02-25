@@ -1,9 +1,13 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import useBranding from '../../hooks/useBranding';
 
 const Header = ({ onOpenCommand }) => {
-  const { logoUrl, primaryColor, collegeName } = useBranding();
+  const { logoUrl, primaryColor, collegeName, marqueeText } = useBranding();
+
+  const [query, setQuery] = useState('');
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-50 bg-white/30 backdrop-blur-md border-b border-white/10" style={{ borderColor: primaryColor + '20' }}>
@@ -15,6 +19,9 @@ const Header = ({ onOpenCommand }) => {
             <input
               onFocus={onOpenCommand}
               placeholder="Quick actions, search people or commands..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/search?q=${encodeURIComponent(query)}`); }}
               className="flex-1 bg-transparent placeholder-white/70 outline-none text-white"
             />
           </div>
@@ -26,7 +33,7 @@ const Header = ({ onOpenCommand }) => {
       </div>
       <div className="bg-transparent border-t border-white/5 py-2">
         <div className="max-w-5xl mx-auto px-4 text-sm text-white/80 overflow-hidden">
-          <div className="whitespace-nowrap animate-marquee">🔥 Important: Secretary meeting at 5:00 PM — Attendance required!</div>
+          <div className="whitespace-nowrap animate-marquee">{marqueeText || '🔥 No important messages at the moment'}</div>
         </div>
       </div>
     </header>

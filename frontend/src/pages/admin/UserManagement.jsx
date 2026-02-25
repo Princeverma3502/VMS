@@ -12,6 +12,20 @@ const UserManagement = () => {
   const [editForm, setEditForm] = useState({ name: '', email: '', role: '', college: '' });
   const [filters, setFilters] = useState({ search: '', role: 'all', bloodGroup: 'all' });
 
+  // Blood group options and handler
+  const BLOOD_GROUPS = ['', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+  const handleBloodGroupChange = async (userId, newGroup) => {
+    try {
+      await api.put(`/users/${userId}/blood-group`, { bloodGroup: newGroup });
+      setUsers(prev => prev.map(u => u._id === userId ? { ...u, bloodGroup: newGroup } : u));
+      toast.success('Blood group updated');
+    } catch (err) {
+      console.error('Failed to update blood group', err);
+      toast.error('Failed to update blood group');
+    }
+  };
+
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -244,9 +258,11 @@ const UserManagement = () => {
                   </td>
                   <td className="py-2 px-4">{user.college?.name || 'N/A'}</td>
                   <td className="py-2 px-4">
-                    <span className={`px-2 py-1 rounded text-xs ${user.bloodGroup ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600'}`}>
-                      {user.bloodGroup || 'Not Set'}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 rounded text-xs ${user.bloodGroup ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600'}`}>
+                        {user.bloodGroup || 'Not Set'}
+                      </span>
+                    </div>
                   </td>
                   <td className="py-2 px-4">
                     {editingUser === user._id ? (

@@ -35,6 +35,7 @@ import EventManagement from './pages/admin/EventManagement';
 
 // New Feature Pages
 import KnowledgeBase from './pages/KnowledgeBase';
+import SearchResults from './pages/SearchResults';
 import VolunteerResume from './pages/volunteer/VolunteerResume';
 import Settings from './pages/Settings';
 import Assistant from './pages/Assistant';
@@ -208,6 +209,7 @@ const App = ({ onReady }) => {
 
             {/* New Feature Routes */}
             <Route path="/knowledge-base" element={<KnowledgeBase />} />
+            <Route path="/search" element={<SearchResults />} />
             <Route path="/announcements" element={
               <ProtectedRoute>
                 <Announcements />

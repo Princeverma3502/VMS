@@ -18,8 +18,10 @@ const Register = () => {
     branch: '',
     year: '1st',
     role: 'Volunteer', // Default
+    collegeId: '',
     adminSecret: ''
   });
+  const [colleges, setColleges] = useState([]);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +41,22 @@ const Register = () => {
     }
     setFormData(prev => ({ ...prev, role: autoRole }));
   }, [formData.year]);
+
+  useEffect(() => {
+    const fetchColleges = async () => {
+      try {
+        const res = await import('../services/api').then(m => m.default.get('/colleges'));
+        const list = res.data || [];
+        setColleges(list);
+        const hbtu = list.find(c => /harcourt butler/i.test(c.name));
+        if (hbtu) setFormData(prev => ({ ...prev, collegeId: hbtu._id }));
+        else if (list.length > 0) setFormData(prev => ({ ...prev, collegeId: list[0]._id }));
+      } catch (err) {
+        console.error('Failed to load colleges', err);
+      }
+    };
+    fetchColleges();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -116,10 +134,42 @@ const Register = () => {
 
           <Input label="Full Name" name="name" value={formData.name} onChange={handleChange} required />
           <Input label="Email Address" type="email" name="email" value={formData.email} onChange={handleChange} required />
-          <Input label="Roll Number (College ID)" name="rollNumber" value={formData.rollNumber} onChange={handleChange} placeholder="e.g. CSE2025123" />
+          <Input label="Roll Number" name="rollNumber" value={formData.rollNumber} onChange={handleChange} placeholder="e.g. 250108048" />
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1.5">College / University</label>
+            <select name="collegeId" value={formData.collegeId} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none">
+              <option value="">Select College</option>
+              {colleges.map(c => (
+                <option key={c._id} value={c._id}>{c.name}</option>
+              ))}
+            </select>
+          </div>
           
           <div className="grid grid-cols-2 gap-5">
-            <Input label="Branch" name="branch" placeholder="Ex: CSE" value={formData.branch} onChange={handleChange} required />
+            <div className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700 mb-1.5">Branch</label>
+                <select name="branch" value={formData.branch} onChange={handleChange} required className="w-full px-4 py-2.5 border border-gray-300 bg-white rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all cursor-pointer text-gray-700">
+                  <option value="">Select Branch</option>
+                  <option value="CSE">CSE</option>
+                  <option value="IT">IT</option>
+                  <option value="EE">EE</option>
+                  <option value="ET">ET</option>
+                  <option value="ME">ME</option>
+                  <option value="CE">CE</option>
+                  <option value="CHE">CHE</option>
+                  <option value="BE">BE</option>
+                  <option value="PT">PT</option>
+                  <option value="PL">PL</option>
+                  <option value="OT">OT</option>
+                  <option value="FT">FT</option>
+                  <option value="LFT">LFT</option>
+                  <option value="BIOTECH">BIOTECH</option>
+                  <option value="BBA">BBA</option>
+                  <option value="B.PHARMA">B.PHARMA</option>
+                  <option value="BS-MS">BS-MS</option>
+                </select>
+            </div>
             
             <div className="flex flex-col">
                 <label className="text-sm font-medium text-gray-700 mb-1.5">Year</label>

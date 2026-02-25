@@ -9,7 +9,8 @@ const useBranding = () => {
     primaryColor: '#1d4ed8',
     secondaryColor: '#10b981',
     accentColor: '#f59e0b',
-    collegeName: ''
+    collegeName: '',
+    marqueeText: ''
   });
 
   useEffect(() => {
@@ -38,7 +39,8 @@ const useBranding = () => {
           primaryColor: primary,
           secondaryColor: secondary,
           accentColor: accent,
-          collegeName: data.brandName || data.name || ''
+          collegeName: data.brandName || data.name || '',
+          marqueeText: data.marqueeText || ''
         });
       } catch (error) {
         console.error('Failed to fetch branding:', error);

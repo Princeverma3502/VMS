@@ -251,7 +251,7 @@ const SecretaryCustomizer = ({ userSample }) => {
               </p>
               
               {/* The Actual ID Card Component */}
-              <div className="scale-110 sm:scale-125 transform transition-transform duration-500 hover:scale-105">
+              <div className="scale-80 sm:scale-90 transform transition-transform duration-500 hover:scale-105">
                   <IDCardFrame>
                       {{
                       front: <IDCardRenderer user={previewUser} config={config} verified={true} />,

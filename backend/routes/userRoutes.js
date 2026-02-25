@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   getAllUsers,
+  updateUserBloodGroup,
   getUserProfile,
   updateUserProfile,
   getLeaderboard,
@@ -51,5 +52,8 @@ router.put('/:id/reject', protect, admin, rejectUser);
 router.put('/:id/role', protect, admin, updateUserRole);
 
 router.put('/assign-college', protect, assignCollege);
+
+// Secretary/Admin can update blood group for a user
+router.put('/:id/blood-group', protect, admin, updateUserBloodGroup);
 
 export default router;
