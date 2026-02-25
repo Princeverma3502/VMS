@@ -170,13 +170,11 @@ export const verifyUserById = asyncHandler(async (req, res) => {
 export const getAllUsers = asyncHandler(async (req, res) => {
   const { search, role, bloodGroup } = req.query;
   
-  // Only admins/secretaries should list all users
+  // Only secretaries, admins, and domain heads can list users
   const allowedRoles = ['Secretary', 'Admin', 'Administrator', 'Domain Head'];
-  // We allow Domain Heads to see users to assign them to domains
   if (!req.user || !allowedRoles.includes(req.user.role)) {
-    // res.status(403);
-    // throw new Error('Forbidden: insufficient privileges'); 
-    // Relaxed for development/testing
+    res.status(403);
+    throw new Error('Forbidden: insufficient privileges'); 
   }
 
   const filter = {};

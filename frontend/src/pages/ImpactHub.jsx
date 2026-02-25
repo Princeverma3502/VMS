@@ -30,7 +30,7 @@ const ImpactHub = () => {
     
     setSosLoading(true);
     try {
-      await api.post('/impact/sos', {
+      await api.post('/impact/sos/create', {
         ...sosData,
         location: {
           latitude: location.latitude,

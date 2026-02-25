@@ -41,7 +41,7 @@ router.get('/verify/:id', protect, verifyUserById);
 
 // --- ADMIN / SECRETARY ONLY ---
 router.route('/')
-  .get(protect, admin, getAllUsers);
+  .get(protect, getAllUsers);  // Allow secretaries and admins to list users
 
 router.route('/:id')
   .delete(protect, admin, deleteUser);
