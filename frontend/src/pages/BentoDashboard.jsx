@@ -5,6 +5,7 @@ import StreakCard from '../components/ui/StreakCard';
 import MeetingPreview from '../components/ui/MeetingPreview';
 import ActivityFeed from '../components/gamification/ActivityFeed';
 import BloodGroupSummary from '../components/ui/BloodGroupSummary';
+import NoticeBoard from '../components/notices/NoticeBoard';
 import BottomNav from '../components/layout/BottomNav';
 import useBranding from '../hooks/useBranding';
 import api from '../services/api';
@@ -91,7 +92,7 @@ const BentoDashboard = () => {
   );
 
   return (
-    <div className="min-h-screen text-gray-800" style={{ background: `linear-gradient(to bottom, ${primaryColor}15, #f8fafc)` }}>
+    <div className="min-h-screen text-gray-900 bg-gradient-to-br from-slate-50 via-white to-slate-100">
       <Header />
       
       <main className="max-w-5xl mx-auto px-4 py-6 pb-32">
@@ -112,18 +113,23 @@ const BentoDashboard = () => {
           <div className="col-span-2 space-y-4">
             <MeetingPreview meeting={upcoming} />
             <BloodGroupSummary />
-            <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 border border-white/40 shadow-sm">
-               <h3 className="text-gray-800 font-bold mb-3 px-2 text-sm uppercase tracking-wider opacity-70">Live Activity</h3>
+            <div className="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition">
+               <h3 className="text-gray-700 font-bold mb-3 px-2 text-sm uppercase tracking-wider opacity-75">Live Activity</h3>
                <ActivityFeed limit={3} />
             </div>
           </div>
         </section>
 
+        {/* NOTICE BOARD: ANNOUNCEMENTS, MEETINGS, SOS */}
+        <section className="mb-8">
+          <NoticeBoard />
+        </section>
+
         {/* BOTTOM SECTION: TASK BOARD WIDGET */}
         <section>
             <div className="flex items-center gap-2 mb-4">
-                <h2 className="text-xl font-bold text-gray-800">Task Board</h2>
-                <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded-full">
+                <h2 className="text-2xl font-bold text-gray-900">Task Board</h2>
+                <span className="bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                     {tasks.length} Active
                 </span>
             </div>
@@ -131,34 +137,34 @@ const BentoDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 overflow-x-auto pb-2">
                 
                 {/* 1. AVAILABLE */}
-                <div className="bg-white/80 p-3 rounded-xl border border-gray-200 min-h-[300px]">
-                    <h3 className="font-bold text-xs text-gray-500 mb-3 flex items-center gap-2 uppercase tracking-wider">
-                        <Lock size={14} /> Available
+                <div className="bg-white p-4 rounded-xl border-2 border-gray-300 min-h-[300px] shadow-sm hover:shadow-md transition">
+                    <h3 className="font-bold text-sm text-gray-700 mb-3 flex items-center gap-2 uppercase tracking-wider">
+                        <Lock size={16} className="text-gray-600" /> Available
                     </h3>
                     <div className="space-y-2">
-                        {pendingTasks.length === 0 && <p className="text-xs text-gray-400 text-center py-4">No new tasks</p>}
+                        {pendingTasks.length === 0 && <p className="text-sm text-gray-400 text-center py-4">No new tasks</p>}
                         {pendingTasks.map(task => <TaskCard key={task._id} task={task} />)}
                     </div>
                 </div>
 
                 {/* 2. IN PROGRESS */}
-                <div className="bg-blue-50/80 p-3 rounded-xl border border-blue-100 min-h-[300px]">
-                    <h3 className="font-bold text-xs text-blue-600 mb-3 flex items-center gap-2 uppercase tracking-wider">
-                        <PlayCircle size={14} /> In Progress
+                <div className="bg-indigo-50 p-4 rounded-xl border-2 border-indigo-400 min-h-[300px] shadow-sm hover:shadow-md transition">
+                    <h3 className="font-bold text-sm text-indigo-900 mb-3 flex items-center gap-2 uppercase tracking-wider">
+                        <PlayCircle size={16} className="text-indigo-600" /> In Progress
                     </h3>
                     <div className="space-y-2">
-                        {myTasks.length === 0 && <p className="text-xs text-blue-300 text-center py-4">No active tasks</p>}
+                        {myTasks.length === 0 && <p className="text-sm text-indigo-400 text-center py-4">No active tasks</p>}
                         {myTasks.map(task => <TaskCard key={task._id} task={task} />)}
                     </div>
                 </div>
 
                 {/* 3. UNDER REVIEW */}
-                <div className="bg-green-50/80 p-3 rounded-xl border border-green-100 min-h-[300px]">
-                    <h3 className="font-bold text-xs text-green-600 mb-3 flex items-center gap-2 uppercase tracking-wider">
-                        <CheckCircle size={14} /> Under Review
+                <div className="bg-emerald-50 p-4 rounded-xl border-2 border-emerald-400 min-h-[300px] shadow-sm hover:shadow-md transition">
+                    <h3 className="font-bold text-sm text-emerald-900 mb-3 flex items-center gap-2 uppercase tracking-wider">
+                        <CheckCircle size={16} className="text-emerald-600" /> Under Review
                     </h3>
                     <div className="space-y-2">
-                        {reviewTasks.length === 0 && <p className="text-xs text-green-300 text-center py-4">Nothing in review</p>}
+                        {reviewTasks.length === 0 && <p className="text-sm text-emerald-400 text-center py-4">Nothing in review</p>}
                         {reviewTasks.map(task => <TaskCard key={task._id} task={task} />)}
                     </div>
                 </div>

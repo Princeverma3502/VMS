@@ -55,7 +55,7 @@ const DigitalIDCard = ({ user, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/90 backdrop-blur-xl animate-in fade-in duration-200">
       
       {/* Close Button */}
       <button 
@@ -65,7 +65,7 @@ const DigitalIDCard = ({ user, onClose }) => {
         <X size={32} />
       </button>
 
-      <div className="flex flex-col items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center gap-8">
         <IDCardFrame>
           {{
             front: (

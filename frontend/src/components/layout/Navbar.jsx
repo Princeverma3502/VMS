@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, UserCircle, Settings, LogOut, ArrowLeft, Search } from 'lucide-react';
+import { Bell, UserCircle, Settings, ArrowLeft, Search } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
 
 const Navbar = ({ userName = "User", showBackButton = false }) => {
@@ -8,9 +8,15 @@ const Navbar = ({ userName = "User", showBackButton = false }) => {
   const { user, logout } = useContext(AuthContext);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [realTimeUserName, setRealTimeUserName] = useState(user?.name || "User");
+
+  // Fetch real-time user name
+  useEffect(() => {
+    setRealTimeUserName(user?.name || userName || "User");
+  }, [user?.name, userName]);
 
   // Constants
-  const displayName = userName || user?.name || "User";
+  const displayName = realTimeUserName;
 
   const handleProfileClick = () => {
     const roleRoutes = {
@@ -20,11 +26,6 @@ const Navbar = ({ userName = "User", showBackButton = false }) => {
     };
     const profileRoute = roleRoutes[user?.role] || '/volunteer/profile';
     navigate(profileRoute);
-    setShowUserMenu(false);
-  };
-
-  const handleLogout = () => {
-    logout();
     setShowUserMenu(false);
   };
 
@@ -119,13 +120,6 @@ const Navbar = ({ userName = "User", showBackButton = false }) => {
                   className="w-full text-left px-3 py-2.5 hover:bg-slate-50 rounded-lg transition-colors text-slate-700 text-sm font-bold flex items-center gap-3"
                 >
                   <Settings size={18} className="text-slate-500" /> Settings
-                </button>
-                <div className="h-px bg-slate-100 my-1"></div>
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-3 py-2.5 hover:bg-red-50 rounded-lg transition-colors text-red-600 text-sm font-bold flex items-center gap-3"
-                >
-                  <LogOut size={18} /> Logout
                 </button>
               </nav>
             </div>
