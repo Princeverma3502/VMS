@@ -42,10 +42,10 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
       <div className="w-full h-full bg-white relative flex flex-col rounded-3xl overflow-hidden shadow-2xl font-sans pt-6 aspect-[0.63]">
 
       {/* 1. HEADER (Yellow Zone - 35% Height) */}
-      <div className={`${HEADER_COLOR} h-[40%] relative w-full px-6 py-4 mt-[-2em] flex flex-col items-center justify-center`}>
+      <div className={`${HEADER_COLOR} h-[50%] relative w-full px-3 py-10 mt-[-2em] flex flex-col items-center justify-center`}>
         <div className="flex items-center justify-between w-full mb-2">
           {/* Top-Left: College Logo */}
-          <div className="w-14 h-14 rounded-lg shadow-sm flex items-center justify-center overflow-hidden border-2 border-transparent bg-white flex-shrink-0">
+          <div className="w-14 h-14 rounded-full shadow-sm flex items-center justify-center overflow-hidden border-2 border-transparent bg-white flex-shrink-0">
             {config.collegeLogo ? (
               <img src={config.collegeLogo} alt="College" className="w-full h-full object-contain p-1" />
             ) : (
@@ -64,8 +64,8 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
         </div>
 
         {/* Center: Heading and Subheading */}
-        <div className="flex-1 flex flex-col items-center justify-center px-4 w-full">
-          <p className="text-xs font-black text-slate-900 uppercase tracking-wider text-center leading-tight">
+        <div className="flex-1  flex flex-col items-center justify-center px-4 w-full">
+          <p className="text-xs font-black mt-[-9em] text-slate-900 uppercase tracking-wider text-center leading-tight">
             {config.universityName || "NATIONAL SERVICE SCHEME"}
           </p>
           <p className="text-[9px] font-bold text-slate-700 text-center leading-tight mt-1">
@@ -75,7 +75,7 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
       </div>
 
       {/* 2. PROFILE AVATAR (Overlapping) */}
-      <div className="relative w-full h-35% flex justify-center mt-[-8em] mb-4">
+      <div className="relative w-full h-35% flex justify-center mt-[-4em] mb-4">
         <div className="w-45 h-45 rounded-full border-[4px] border-white bg-white shadow-lg overflow-hidden relative z-10 flex items-center justify-center">
           <img
             src={user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=EBF855&color=000`}
@@ -89,7 +89,7 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
       </div>
 
       {/* 3. NAME & ROLE BADGE */}
-      <div className="text-center px-4 mb-6">
+      <div className="text-center px-4 mb-4 mt-[-1em]">
         <h1 className="text-2xl font-black text-slate-900 leading-tight mb-2 tracking-tight truncate">
           {user.name}
         </h1>
@@ -97,12 +97,6 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
           <span className={`${HEADER_COLOR} text-slate-900 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm`}>
             {user.role || 'VOLUNTEER'}
           </span>
-          <p className="text-[8px] font-bold text-slate-500 uppercase tracking-wider">
-            {user.role === 'Secretary' ? 'Student Secretary' :
-             user.role === 'Domain Head' ? 'Domain Head' :
-             user.role === 'Associate Head' ? 'Associate Head' :
-             'Volunteer Member'}
-          </p>
         </div>
       </div>
 
@@ -135,7 +129,7 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
       </div>
 
       {/* 5. FOOTER (Signatures & Validity) */}
-      <div className="px-8 pb-4 flex justify-between items-end mt-4">
+      <div className="px-8 pb-4 flex justify-between items-end mt-6">
         {/* Bottom-Left: Secretary Signature */}
         <div className="flex flex-col items-start">
           {config.secretarySig && (
@@ -168,7 +162,7 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
       {/* Validity Indicator */}
       <div className="px-8 pb-2 text-center">
         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-          Valid Thru: {config.validThru || 'N/A'}
+          Valid Till: {config.validThru || 'N/A'}
         </p>
       </div>
 
