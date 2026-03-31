@@ -17,7 +17,7 @@ async function login(page, user) {
   await page.locator('button[type="submit"]').click();
   
   // Handle Streak Modal if it appears
-  const streakModalCloseBtn = page.locator('button:has-text("Continue"), button:has-text("Close"), .streak-modal button').first();
+  const streakModalCloseBtn = page.locator('button:has-text("Let\'s Go!"), button:has-text("Continue"), button:has-text("Close")').first();
   try {
     // Wait briefly to see if it pops up
     if (await streakModalCloseBtn.isVisible({ timeout: 5000 })) {
