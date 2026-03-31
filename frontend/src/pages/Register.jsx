@@ -17,7 +17,7 @@ const Register = () => {
     password: '',
     branch: '',
     year: '1st',
-    role: 'Volunteer', // Default
+    role: 'Volunteer',
     collegeId: '',
     adminSecret: ''
   });
@@ -27,16 +27,14 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // --- LOGIC: AUTO-ASSIGN ROLE BASED ON YEAR ---
+  // Removed the 'if Secretary return' check to ensure year changes always reset the role
   useEffect(() => {
-    // If user manually selects Secretary, we don't overwrite it based on year
-    if (formData.role === 'Secretary') return;
-
     let autoRole = 'Volunteer';
     switch(formData.year) {
         case '1st': autoRole = 'Volunteer'; break;
         case '2nd': autoRole = 'Associate Head'; break;
-        case '3rd': autoRole = 'Domain Head'; break;
-        case '4th': autoRole = 'Domain Head'; break; // or Secretary
+        case '3rd': 
+        case '4th': autoRole = 'Domain Head'; break;
         default: autoRole = 'Volunteer';
     }
     setFormData(prev => ({ ...prev, role: autoRole }));
@@ -60,20 +58,7 @@ const Register = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    // Special handler for Role change to allow switching to 'Secretary' manually
-    if (name === 'role' && value === 'Secretary') {
-        setFormData({ ...formData, role: 'Secretary' });
-    } else if (name === 'role' && value !== 'Secretary') {
-        // If they try to switch back from Secretary, re-run year logic
-        const year = formData.year;
-        let autoRole = 'Volunteer';
-        if (year === '2nd') autoRole = 'Associate Head';
-        if (year === '3rd') autoRole = 'Domain Head';
-        setFormData({ ...formData, role: autoRole });
-    } else {
-        setFormData({ ...formData, [name]: value });
-    }
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -195,7 +180,7 @@ const Register = () => {
           <Input label="WhatsApp Number" name="whatsappNumber" value={formData.whatsappNumber} onChange={handleChange} required />
           <Input label="Password" type="password" name="password" value={formData.password} onChange={handleChange} required />
 
-          {/* Role Selection (Locked based on Year) */}
+          {/* Role Selection (Corrected logic to prevent duplicate labels) */}
           <div className="pt-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
                 Assigned Role <span className="text-xs text-gray-400 font-normal">(Based on your Year)</span>
@@ -206,11 +191,17 @@ const Register = () => {
                     value={formData.role} 
                     onChange={handleChange} 
                     className={`w-full px-4 py-3 border border-gray-300 rounded-xl outline-none transition-all font-bold text-gray-800
-                        ${formData.role === 'Secretary' ? 'bg-red-50 border-red-200' : 'bg-gray-100 cursor-not-allowed'}
+                        ${formData.role === 'Secretary' ? 'bg-red-50 border-red-200' : 'bg-gray-100'}
                     `}
                 >
-                    {/* Only show the auto-assigned role OR Secretary */}
-                    <option value={formData.role}>{formData.role}</option>
+                    {(() => {
+                        let autoRole = 'Volunteer';
+                        if (formData.year === '2nd') autoRole = 'Associate Head';
+                        else if (formData.year === '3rd' || formData.year === '4th') autoRole = 'Domain Head';
+                        
+                        return <option value={autoRole}>{autoRole} (Auto-assigned)</option>;
+                    })()}
+                    
                     <option value="Secretary">Secretary (Admin Access)</option>
                 </select>
             </div>
