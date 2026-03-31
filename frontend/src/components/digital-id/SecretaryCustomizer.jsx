@@ -10,6 +10,8 @@ import IDCardRenderer from '../../components/digital-id/IDCardRenderer'; // Adju
 const DEFAULT_CONFIG = {
   templateId: 'executive-pro',
   orgName: "NATIONAL SERVICE SCHEME",
+  universityName: "NATIONAL SERVICE SCHEME",
+  collegeSubheading: "Harcourt Butler Technical University",
   subHeader: "Indian Institute of Technology, Bombay",
   collegeLogo: "", // Top-Left
   councilLogo: "", // Top-Right
@@ -105,39 +107,16 @@ const SecretaryCustomizer = ({ userSample }) => {
           <div className="space-y-5">
             {/* Logos Grid */}
             <div className="grid grid-cols-2 gap-4">
-              {/* Council Logo (Left) */}
+              {/* College Logo (Left) */}
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                  Top-Left Logo (NSS)
-                </label>
-                <div className="relative border-2 border-dashed border-slate-300 rounded-xl p-4 flex flex-col items-center justify-center hover:bg-slate-50 transition cursor-pointer h-32 bg-slate-50">
-                  <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer z-10" onChange={(e) => handleFileUpload(e, 'councilLogo')} />
-                  {config.councilLogo ? (
-                    <>
-                      <img src={config.councilLogo} className="h-20 object-contain" alt="Left Logo" />
-                      <button onClick={(e) => {e.stopPropagation(); handleDeleteImage('councilLogo')}} className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-full z-20 hover:bg-red-200">
-                        <Trash2 size={14} />
-                      </button>
-                    </>
-                  ) : (
-                    <div className="text-center">
-                      <ImageIcon className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                      <span className="text-[10px] font-bold text-slate-400">Upload NSS Logo</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* College Logo (Right) */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                  Top-Right Logo (College)
+                  Left Logo (College)
                 </label>
                 <div className="relative border-2 border-dashed border-slate-300 rounded-xl p-4 flex flex-col items-center justify-center hover:bg-slate-50 transition cursor-pointer h-32 bg-slate-50">
                   <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer z-10" onChange={(e) => handleFileUpload(e, 'collegeLogo')} />
                   {config.collegeLogo ? (
                     <>
-                      <img src={config.collegeLogo} className="h-20 object-contain" alt="Right Logo" />
+                      <img src={config.collegeLogo} className="h-20 object-contain" alt="Left Logo" />
                       <button onClick={(e) => {e.stopPropagation(); handleDeleteImage('collegeLogo')}} className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-full z-20 hover:bg-red-200">
                         <Trash2 size={14} />
                       </button>
@@ -150,13 +129,58 @@ const SecretaryCustomizer = ({ userSample }) => {
                   )}
                 </div>
               </div>
+
+              {/* NSS Logo (Right) */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  Right Logo (NSS)
+                </label>
+                <div className="relative border-2 border-dashed border-slate-300 rounded-xl p-4 flex flex-col items-center justify-center hover:bg-slate-50 transition cursor-pointer h-32 bg-slate-50">
+                  <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer z-10" onChange={(e) => handleFileUpload(e, 'councilLogo')} />
+                  {config.councilLogo ? (
+                    <>
+                      <img src={config.councilLogo} className="h-20 object-contain" alt="Right Logo" />
+                      <button onClick={(e) => {e.stopPropagation(); handleDeleteImage('councilLogo')}} className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-full z-20 hover:bg-red-200">
+                        <Trash2 size={14} />
+                      </button>
+                    </>
+                  ) : (
+                    <div className="text-center">
+                      <ImageIcon className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                      <span className="text-[10px] font-bold text-slate-400">Upload NSS Logo</span>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Text Inputs */}
             <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Sub-Header Text (Back of Card)</label>
-              <input 
-                type="text" 
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Main Heading (Between Logos)</label>
+              <input
+                type="text"
+                value={config.universityName}
+                onChange={(e) => setConfig({...config, universityName: e.target.value})}
+                placeholder="e.g. NATIONAL SERVICE SCHEME"
+                className="w-full mt-1 p-3 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Sub Heading (Below Main Heading)</label>
+              <input
+                type="text"
+                value={config.collegeSubheading}
+                onChange={(e) => setConfig({...config, collegeSubheading: e.target.value})}
+                placeholder="e.g. Harcourt Butler Technical University"
+                className="w-full mt-1 p-3 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Back of Card Subheader</label>
+              <input
+                type="text"
                 value={config.subHeader}
                 onChange={(e) => setConfig({...config, subHeader: e.target.value})}
                 placeholder="e.g. Indian Institute of Technology"

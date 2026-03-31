@@ -19,15 +19,16 @@ const DigitalIDCard = ({ user, onClose }) => {
     // 3. Construct Robust Config
     return {
       templateId: baseConfig.templateId || 'executive-pro',
-      
+
       // HEADER: Fallback to User's College Name if Admin hasn't set one
       orgName: baseConfig.orgName || "NATIONAL SERVICE SCHEME",
+      universityName: baseConfig.universityName || "NSS Unit",
       subHeader: baseConfig.subHeader || user.collegeName || "NSS Unit",
-      
+
       // LOGOS: If empty string, Renderer will hide them (fixing the placeholder issue)
-      collegeLogo: baseConfig.collegeLogo || "", 
-      councilLogo: baseConfig.councilLogo || "", 
-      
+      collegeLogo: baseConfig.collegeLogo || "",
+      councilLogo: baseConfig.councilLogo || "",
+
       // SIGNATURES: Default to Secretary if missing
       signatureRole: baseConfig.signatureRole || 'Secretary',
       signatureName: baseConfig.signatureName || 'Authorized Signatory',
@@ -40,7 +41,7 @@ const DigitalIDCard = ({ user, onClose }) => {
       showBranch: true,
       showYear: true,
       showRole: true,
-      
+
       ...baseConfig // Override with any specific saved admin preferences
     };
   }, [user]);

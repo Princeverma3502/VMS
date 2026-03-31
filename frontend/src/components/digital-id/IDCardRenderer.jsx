@@ -41,24 +41,36 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
   return (
       <div className="w-full h-full bg-white relative flex flex-col rounded-3xl overflow-hidden shadow-2xl font-sans pt-6 aspect-[0.63]">
 
-        {/* 1. HEADER (Yellow Zone - 35% Height) */}
-      <div className={`${HEADER_COLOR} h-[40%] relative w-full px-6 py-4 mt-[-2em]`}>
-        {/* Top-Left: College Logo */}
-        <div className="absolute top-8 left-6 w-14 h-14 rounded-lg shadow-sm flex items-center justify-center overflow-hidden border-2 border-transparent bg-transparent">
-          {config.collegeLogo ? (
-            <img src={config.collegeLogo} alt="College" className="w-full h-full object-contain bg-transparent" />
-          ) : (
-            <span className="text-[#EBF855] font-black text-xs">CLG</span>
-          )}
+      {/* 1. HEADER (Yellow Zone - 35% Height) */}
+      <div className={`${HEADER_COLOR} h-[40%] relative w-full px-6 py-4 mt-[-2em] flex flex-col items-center justify-center`}>
+        <div className="flex items-center justify-between w-full mb-2">
+          {/* Top-Left: College Logo */}
+          <div className="w-14 h-14 rounded-lg shadow-sm flex items-center justify-center overflow-hidden border-2 border-transparent bg-white flex-shrink-0">
+            {config.collegeLogo ? (
+              <img src={config.collegeLogo} alt="College" className="w-full h-full object-contain p-1" />
+            ) : (
+              <span className="text-slate-900 font-black text-xs">CLG</span>
+            )}
+          </div>
+
+          {/* Top-Right: NGO/NSS Logo */}
+          <div className="w-14 h-14 rounded-full shadow-sm flex items-center justify-center overflow-hidden border-2 border-transparent bg-white flex-shrink-0">
+            <img
+              src={config.councilLogo}
+              alt="NSS"
+              className="w-full h-full object-contain p-1"
+            />
+          </div>
         </div>
 
-        {/* Top-Right: NGO/NSS Logo */}
-        <div className="absolute top-8 right-6 w-14 h-14 rounded-full shadow-sm flex items-center justify-center overflow-hidden border-2 border-transparent bg-transparent">
-          <img 
-            src={config.councilLogo || "/logo.png"} 
-            alt="NSS" 
-            className="w-full h-full object-contain bg-transparent" 
-          />
+        {/* Center: Heading and Subheading */}
+        <div className="flex-1 flex flex-col items-center justify-center px-4 w-full">
+          <p className="text-xs font-black text-slate-900 uppercase tracking-wider text-center leading-tight">
+            {config.universityName || "NATIONAL SERVICE SCHEME"}
+          </p>
+          <p className="text-[9px] font-bold text-slate-700 text-center leading-tight mt-1">
+            {config.collegeSubheading || "Harcourt Butler Technical University"}
+          </p>
         </div>
       </div>
 
@@ -81,9 +93,17 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
         <h1 className="text-2xl font-black text-slate-900 leading-tight mb-2 tracking-tight truncate">
           {user.name}
         </h1>
-        <span className={`${HEADER_COLOR} text-slate-900 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm inline-block`}>
-          {user.role || 'VOLUNTEER'}
-        </span>
+        <div className="flex flex-col items-center gap-1">
+          <span className={`${HEADER_COLOR} text-slate-900 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm`}>
+            {user.role || 'VOLUNTEER'}
+          </span>
+          <p className="text-[8px] font-bold text-slate-500 uppercase tracking-wider">
+            {user.role === 'Secretary' ? 'Student Secretary' :
+             user.role === 'Domain Head' ? 'Domain Head' :
+             user.role === 'Associate Head' ? 'Associate Head' :
+             'Volunteer Member'}
+          </p>
+        </div>
       </div>
 
       {/* 4. DATA GRID (2x2) */}
@@ -95,7 +115,7 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
           </p>
         </div>
         <div className="text-right">
-          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Volunteer ID</p>
+          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Roll No</p>
           <p className="text-sm font-black text-slate-800 leading-none truncate">
             {user.rollNumber || 'N/A'}
           </p>
@@ -177,6 +197,8 @@ IDCardRenderer.propTypes = {
   config: PropTypes.shape({
     collegeLogo: PropTypes.string,
     councilLogo: PropTypes.string,
+    universityName: PropTypes.string,
+    collegeSubheading: PropTypes.string,
     secretarySig: PropTypes.string,
     secretaryName: PropTypes.string,
     officerSig: PropTypes.string,
