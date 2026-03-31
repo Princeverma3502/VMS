@@ -43,10 +43,21 @@ const Register = () => {
       try {
         const res = await import('../services/api').then(m => m.default.get('/colleges'));
         const list = res.data || [];
-        setColleges(list);
-        const hbtu = list.find(c => /harcourt butler/i.test(c.name));
-        if (hbtu) setFormData(prev => ({ ...prev, collegeId: hbtu._id }));
-        else if (list.length > 0) setFormData(prev => ({ ...prev, collegeId: list[0]._id }));
+        
+        // Filter the list to ONLY include Harcourt Butler Technical University
+        const filteredList = list.filter(c => /harcourt butler/i.test(c.name));
+        
+        // Remove duplicates by name if any exist in the database
+        const uniqueColleges = filteredList.filter((college, index, self) => 
+            index === self.findIndex((c) => c.name === college.name)
+        );
+
+        setColleges(uniqueColleges);
+
+        // Auto-select the college ID if it exists
+        if (uniqueColleges.length > 0) {
+            setFormData(prev => ({ ...prev, collegeId: uniqueColleges[0]._id }));
+        }
       } catch (err) {
         console.error('Failed to load colleges', err);
       }
@@ -124,8 +135,8 @@ const Register = () => {
 
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1.5">College / University</label>
-            <select name="collegeId" value={formData.collegeId} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none">
-              <option value="">Select College</option>
+            <select name="collegeId" value={formData.collegeId} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-not-allowed bg-gray-50" required>
+              {colleges.length === 0 && <option value="">Loading College...</option>}
               {colleges.map(c => (
                 <option key={c._id} value={c._id}>{c.name}</option>
               ))}
