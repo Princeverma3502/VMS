@@ -93,18 +93,18 @@ const Navbar = ({ userName = "User", showBackButton = false }) => {
           )}
         </div>
         
-        {/* Secretary Profile Section (Desktop/Mobile) */}
-        {user?.role === 'Secretary' && (
+        {/* User Profile Section (All Roles) */}
+        {user && (
           <button 
             onClick={handleProfileClick}
             className="flex items-center gap-2 p-1.5 sm:p-2 hover:bg-slate-100 rounded-xl transition-all group"
           >
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-              {user?.name?.charAt(0) || 'S'}
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform uppercase">
+              {user?.name?.charAt(0) || 'U'}
             </div>
             <div className="hidden md:block text-left">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Secretary</p>
-              <p className="text-sm font-bold text-slate-900 leading-none">{user?.name || 'Secretary'}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{user?.role || 'User'}</p>
+              <p className="text-sm font-bold text-slate-900 leading-none">{user?.name || 'User'}</p>
             </div>
           </button>
         )}
