@@ -11,24 +11,43 @@ const USERS = {
 
 // ─── Helper ─────────────────────────────────────────────────────────────────
 async function login(page, user) {
+  console.log(`Starting login for ${user.email}...`);
   await page.goto('/login', { waitUntil: 'domcontentloaded' });
   await page.locator('input[type="email"]').fill(user.email);
   await page.locator('input[type="password"]').fill(PASS);
   await page.locator('button[type="submit"]').click();
   
-  // Handle Streak Modal if it appears
-  const streakModalCloseBtn = page.locator('button:has-text("Let\'s Go!"), button:has-text("Continue"), button:has-text("Close")').first();
+  // Login can result in: (1) Navigation to dashboard, (2) Streak Modal, (3) Error message
+  // We'll wait to see which one arrives first
+  const streakModalBtn = page.locator('button:has-text("Let\'s Go!"), button:has-text("Continue")');
+  const errorAlert = page.locator('.text-red-600, .bg-red-50');
+  
   try {
-    // Wait briefly to see if it pops up
-    if (await streakModalCloseBtn.isVisible({ timeout: 5000 })) {
-      await streakModalCloseBtn.click();
-    }
+    // Race: success navigation vs Streak Modal vs Error
+    await Promise.race([
+        page.waitForURL(u => !u.toString().includes('/login'), { timeout: 30000 }),
+        streakModalBtn.waitFor({ state: 'visible', timeout: 30000 }),
+        errorAlert.waitFor({ state: 'visible', timeout: 30000 })
+    ]);
   } catch (e) {
-    // Modal might not appear, continue
+    // Timeout reached, might still be okay if we check states manually
   }
 
-  // Wait for navigation away from login
-  await page.waitForURL(u => !u.toString().includes('/login'), { timeout: 20000 });
+  // 1. Check for Error
+  if (await errorAlert.isVisible()) {
+      const txt = await errorAlert.innerText();
+      throw new Error(`Login failed for ${user.email}: ${txt}`);
+  }
+
+  // 2. Check for Streak Modal
+  if (await streakModalBtn.isVisible()) {
+      console.log(`Streak Modal detected for ${user.email}, clicking...`);
+      await streakModalBtn.click();
+  }
+
+  // 3. Final wait for navigation away from login
+  await page.waitForURL(u => !u.toString().includes('/login'), { timeout: 30000 });
+  console.log(`Successfully logged in: ${user.email}`);
 }
 
 // ─── Test 1: Login page renders correctly ────────────────────────────────────
