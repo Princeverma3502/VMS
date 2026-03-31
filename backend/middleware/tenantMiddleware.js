@@ -27,4 +27,22 @@ export const requireCollegeForWrite = (req, res, next) => {
   return next(new Error('collegeId required'));
 };
 
-export default { requireCollegeForWrite };
+/**
+ * enforceTenant - Automatically filters all requests (GET query or P/P/D body) 
+ * by the user's own collegeId to ensure strict data isolation.
+ */
+export const enforceTenant = (req, res, next) => {
+    if (!req.user || !req.user.collegeId) {
+        res.status(401);
+        return next(new Error('Authentication required for tenant isolation'));
+    }
+
+    // Inject collegeId into both query (for GET filters) and body (for writes)
+    req.query.collegeId = req.user.collegeId.toString();
+    if (!req.body) req.body = {};
+    req.body.collegeId = req.user.collegeId.toString();
+    
+    next();
+};
+
+export default { requireCollegeForWrite, enforceTenant };

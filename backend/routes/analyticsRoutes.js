@@ -1,6 +1,6 @@
 import express from 'express';
 import { protect } from '../middleware/authMiddleware.js';
-import { requireRoles } from '../middleware/roleMiddleware.js';
+import { allowRoles } from '../middleware/roleMiddleware.js';
 import { enforceTenant } from '../middleware/tenantMiddleware.js';
 import {
   getVolunteerDemographics,
@@ -13,7 +13,7 @@ const router = express.Router();
 
 // All analytics routes require authentication and specific roles
 router.use(protect);
-router.use(requireRoles('Secretary', 'Domain Head'));
+router.use(allowRoles('Secretary', 'Domain Head'));
 router.use(enforceTenant); // Ensure users only see their college's data
 
 router.get('/demographics', getVolunteerDemographics);
@@ -21,6 +21,6 @@ router.get('/tasks', getTaskMetrics);
 router.get('/events', getEventAnalytics);
 
 // Export restricted to Secretary only
-router.get('/export/volunteers', requireRoles('Secretary'), exportVolunteerCSV);
+router.get('/export/volunteers', allowRoles('Secretary'), exportVolunteerCSV);
 
 export default router;
