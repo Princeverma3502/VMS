@@ -41,11 +41,9 @@ img {
 /* 8. ID CARD 3D FLIP */
 .flip-card-container { 
   perspective: 1000px; 
-  width: 100%;
-  max-width: 340px;
-  aspect-ratio: 0.63;
+  width: 340px;
+  height: 540px;
   cursor: pointer;
-  margin: 0 auto;
 }
 .flip-card-inner { 
   transition: transform 0.8s; 
