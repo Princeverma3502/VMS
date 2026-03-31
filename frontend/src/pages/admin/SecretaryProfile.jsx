@@ -130,6 +130,39 @@ const SecretaryProfile = () => {
             </div>
           </div>
 
+          {/* Personal Details (Blood Group) */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+               <div className="w-1.5 h-4 bg-red-500 rounded-full"></div>
+               Personal Details
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Blood Group</label>
+                <select 
+                  value={profile.bloodGroup || ""}
+                  onChange={async (e) => {
+                    try {
+                      const bg = e.target.value;
+                      await api.put(`/users/profile/${user._id}`, { bloodGroup: bg });
+                      await fetchProfile();
+                      triggerHaptic('success');
+                    } catch (err) {
+                      alert('Failed to update blood group');
+                    }
+                  }}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                >
+                  <option value="">Not Set</option>
+                  {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => (
+                    <option key={bg} value={bg}>{bg}</option>
+                  ))}
+                </select>
+                <p className="text-[9px] text-slate-400 mt-2 font-medium italic">* This will be displayed on your Digital ID Card.</p>
+              </div>
+            </div>
+          </div>
+
           {/* Admin Stats */}
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-red-50 p-4 rounded-xl border-2 border-red-200">

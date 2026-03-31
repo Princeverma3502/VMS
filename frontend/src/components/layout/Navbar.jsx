@@ -81,14 +81,20 @@ const Navbar = ({ userName = "User", showBackButton = false }) => {
 
           {/* Notification Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-xl border border-slate-200 z-50 animate-in fade-in slide-in-from-top-2">
-              <div className="p-4 border-b border-slate-100 flex justify-between items-center">
-                <p className="font-bold text-slate-900 text-sm">Notifications</p>
-                <span className="text-xs font-bold text-blue-600 cursor-pointer">Mark all read</span>
-              </div>
-              <div className="max-h-64 overflow-y-auto p-4">
-                <p className="text-slate-500 text-center text-xs font-medium">No new notifications</p>
-              </div>
+            <div className="absolute right-[-70px] sm:right-0 mt-4 px-4 sm:px-0 z-[60] w-screen max-w-[320px] sm:w-80 transform-gpu animate-in fade-in slide-in-from-top-2 duration-200">
+               <div className="bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-200 overflow-hidden">
+                 <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                   <p className="font-bold text-slate-900 text-sm italic tracking-tight">Notifications</p>
+                   <span className="text-[10px] font-black text-blue-600 cursor-pointer uppercase tracking-widest hover:text-blue-700 transition-colors bg-blue-50 px-2 py-1 rounded-md">Mark all read</span>
+                 </div>
+                 <div className="max-h-80 overflow-y-auto p-6 flex flex-col items-center justify-center min-h-[160px] text-center">
+                   <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                      <Bell className="text-slate-300" size={24} />
+                   </div>
+                   <p className="text-slate-400 text-xs font-bold uppercase tracking-widest leading-relaxed">No new notifications</p>
+                   <p className="text-[10px] text-slate-300 font-medium mt-1">We'll alert you when something happens.</p>
+                 </div>
+               </div>
             </div>
           )}
         </div>
