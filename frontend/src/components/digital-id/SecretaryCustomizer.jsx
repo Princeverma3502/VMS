@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutTemplate, Save, Eye, Type, Image as ImageIcon, 
-  PenTool, Calendar, Trash2, CheckCircle 
+  PenTool, Calendar, Trash2 
 } from 'lucide-react';
-import IDCardFrame from '../../components/digital-id/IDCardFrame'; // Adjust path if needed
-import IDCardRenderer from '../../components/digital-id/IDCardRenderer'; // Adjust path if needed
+import IDCardFrame from '../../components/digital-id/IDCardFrame';
+import IDCardRenderer from '../../components/digital-id/IDCardRenderer';
 
-// Default Design Config matching your new Blue Theme
 const DEFAULT_CONFIG = {
   templateId: 'executive-pro',
   orgName: "NATIONAL SERVICE SCHEME",
   universityName: "NATIONAL SERVICE SCHEME",
   collegeSubheading: "Harcourt Butler Technical University",
   subHeader: "Indian Institute of Technology, Bombay",
-  collegeLogo: "", // Top-Left
-  councilLogo: "", // Top-Right
+  collegeLogo: "",
+  councilLogo: "",
   secretarySig: "",
   secretaryName: "A. S. Patel",
   officerSig: "",
@@ -32,45 +31,30 @@ const SecretaryCustomizer = ({ userSample }) => {
   const [config, setConfig] = useState(DEFAULT_CONFIG);
   const [previewRole, setPreviewRole] = useState('Volunteer');
 
-  // Load saved config on mount
   useEffect(() => {
     const saved = localStorage.getItem('idCardConfig');
     if (saved) {
-      try {
-        setConfig({ ...DEFAULT_CONFIG, ...JSON.parse(saved) });
-      } catch (e) {
-        console.error("Config load error", e);
-      }
+      try { setConfig({ ...DEFAULT_CONFIG, ...JSON.parse(saved) }); }
+      catch (e) { console.error("Config load error", e); }
     }
   }, []);
 
-  // Generic File Uploader
   const handleFileUpload = (e, key) => {
     const file = e.target.files[0];
     if (file) {
-      // Check file size (limit to 500KB for base64 storage safety)
-      if (file.size > 500000) {
-        alert("File too large! Please upload logo under 500KB.");
-        return;
-      }
+      if (file.size > 500000) { alert("File too large!"); return; }
       const reader = new FileReader();
       reader.onloadend = () => setConfig(prev => ({ ...prev, [key]: reader.result }));
       reader.readAsDataURL(file);
     }
   };
 
-  const handleDeleteImage = (key) => {
-    setConfig(prev => ({ ...prev, [key]: "" }));
-  };
-
   const handleSave = () => {
     localStorage.setItem('idCardConfig', JSON.stringify(config));
-    // Trigger a custom event so other tabs/components update instantly
     window.dispatchEvent(new Event('storage')); 
-    alert("✅ ID Card Configuration Published Successfully!");
+    alert("✅ ID Card Configuration Published!");
   };
 
-  // Mock User for Preview - Now more dynamic
   const previewUser = {
     ...userSample,
     name: userSample?.name || "Rahul Sharma",
@@ -90,175 +74,62 @@ const SecretaryCustomizer = ({ userSample }) => {
       <div className="xl:col-span-7 space-y-6">
         
         <div className="flex justify-between items-center mb-2">
-          <h1 className="text-2xl font-black text-slate-900">ID Card Designer</h1>
-          <button 
-            onClick={handleSave} 
-            className="bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:bg-black transition-all active:scale-95"
-          >
-            <Save size={18} /> Publish Changes
+          <h1 className="text-2xl font-black text-slate-900">ID Designer</h1>
+          <button onClick={handleSave} className="bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:bg-black transition-all active:scale-95">
+            <Save size={18} /> Publish
           </button>
         </div>
 
-        {/* 1. HEADER SETTINGS */}
+        {/* 1. HEADER & ORGANIZATION */}
         <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
           <h2 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2 pb-4 border-b border-slate-100">
             <Type className="text-blue-600" /> 1. Header & Organization
           </h2>
           
-          <div className="space-y-5">
-            {/* Logos Grid */}
-            <div className="grid grid-cols-2 gap-4">
-              {/* College Logo (Left) */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                  Left Logo (College)
-                </label>
-                <div className="relative border-2 border-dashed border-slate-300 rounded-xl p-4 flex flex-col items-center justify-center hover:bg-slate-50 transition cursor-pointer h-32 bg-slate-50">
-                  <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer z-10" onChange={(e) => handleFileUpload(e, 'collegeLogo')} />
-                  {config.collegeLogo ? (
-                    <>
-                      <img src={config.collegeLogo} className="h-20 object-contain" alt="Left Logo" />
-                      <button onClick={(e) => {e.stopPropagation(); handleDeleteImage('collegeLogo')}} className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-full z-20 hover:bg-red-200">
-                        <Trash2 size={14} />
-                      </button>
-                    </>
-                  ) : (
-                    <div className="text-center">
-                      <ImageIcon className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                      <span className="text-[10px] font-bold text-slate-400">Upload College Logo</span>
+          <div className="space-y-4">
+             <div className="grid grid-cols-2 gap-4">
+                {['collegeLogo', 'councilLogo'].map(key => (
+                  <div key={key} className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{key === 'collegeLogo' ? 'College Logo' : 'NSS Logo'}</label>
+                    <div className="relative border-2 border-dashed border-slate-300 rounded-xl p-4 flex flex-col items-center justify-center h-24 bg-slate-50">
+                      <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer z-10" onChange={(e) => handleFileUpload(e, key)} />
+                      {config[key] ? (
+                        <img src={config[key]} className="h-16 object-contain" alt="Logo" />
+                      ) : (
+                        <span className="text-[10px] font-bold text-slate-400">Upload {key === 'collegeLogo' ? 'College' : 'NSS'}</span>
+                      )}
                     </div>
-                  )}
-                </div>
-              </div>
+                  </div>
+                ))}
+             </div>
 
-              {/* NSS Logo (Right) */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                  Right Logo (NSS)
-                </label>
-                <div className="relative border-2 border-dashed border-slate-300 rounded-xl p-4 flex flex-col items-center justify-center hover:bg-slate-50 transition cursor-pointer h-32 bg-slate-50">
-                  <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer z-10" onChange={(e) => handleFileUpload(e, 'councilLogo')} />
-                  {config.councilLogo ? (
-                    <>
-                      <img src={config.councilLogo} className="h-20 object-contain" alt="Right Logo" />
-                      <button onClick={(e) => {e.stopPropagation(); handleDeleteImage('councilLogo')}} className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-full z-20 hover:bg-red-200">
-                        <Trash2 size={14} />
-                      </button>
-                    </>
-                  ) : (
-                    <div className="text-center">
-                      <ImageIcon className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                      <span className="text-[10px] font-bold text-slate-400">Upload NSS Logo</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Text Inputs */}
-            <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Main Heading (Between Logos)</label>
-              <input
+             <input
                 type="text"
                 value={config.universityName}
                 onChange={(e) => setConfig({...config, universityName: e.target.value})}
-                placeholder="e.g. NATIONAL SERVICE SCHEME"
-                className="w-full mt-1 p-3 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
+                placeholder="Main Heading"
+                className="w-full p-3 border border-slate-300 rounded-xl text-sm font-bold"
               />
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Sub Heading (Below Main Heading)</label>
               <input
                 type="text"
                 value={config.collegeSubheading}
                 onChange={(e) => setConfig({...config, collegeSubheading: e.target.value})}
-                placeholder="e.g. Harcourt Butler Technical University"
-                className="w-full mt-1 p-3 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
+                placeholder="Sub Heading"
+                className="w-full p-3 border border-slate-300 rounded-xl text-sm font-bold"
               />
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Back of Card Subheader</label>
-              <input
-                type="text"
-                value={config.subHeader}
-                onChange={(e) => setConfig({...config, subHeader: e.target.value})}
-                placeholder="e.g. Indian Institute of Technology"
-                className="w-full mt-1 p-3 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-            </div>
           </div>
         </div>
 
-        {/* 2. AUTH & VALIDITY */}
+        {/* 2. AUTH & FOOTER */}
         <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
           <h2 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2 pb-4 border-b border-slate-100">
             <PenTool className="text-orange-600" /> 2. Authorization & Footer
           </h2>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Secretary Name</label>
-                <input
-                  type="text"
-                  value={config.secretaryName}
-                  onChange={(e) => setConfig({...config, secretaryName: e.target.value})}
-                  className="w-full mt-1 p-3 border border-slate-300 rounded-xl text-sm font-bold text-slate-900"
-                />
-              </div>
-              <div>
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Secretary Signature</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleFileUpload(e, 'secretarySig')}
-                  className="w-full mt-1 p-3 border border-slate-300 rounded-xl text-sm"
-                />
-                {config.secretarySig && (
-                  <img src={config.secretarySig} alt="Secretary Signature" className="mt-2 h-8 object-contain" />
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Program Officer Name</label>
-                <input
-                  type="text"
-                  value={config.officerName}
-                  onChange={(e) => setConfig({...config, officerName: e.target.value})}
-                  className="w-full mt-1 p-3 border border-slate-300 rounded-xl text-sm font-bold text-slate-900"
-                />
-              </div>
-              <div>
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Program Officer Signature</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleFileUpload(e, 'officerSig')}
-                  className="w-full mt-1 p-3 border border-slate-300 rounded-xl text-sm"
-                />
-                {config.officerSig && (
-                  <img src={config.officerSig} alt="Officer Signature" className="mt-2 h-8 object-contain" />
-                )}
-              </div>
-            </div>
+          <div className="grid grid-cols-2 gap-4">
+              <input type="text" value={config.secretaryName} onChange={(e) => setConfig({...config, secretaryName: e.target.value})} placeholder="Secretary Name" className="w-full p-3 border border-slate-300 rounded-xl text-sm font-bold" />
+              <input type="text" value={config.officerName} onChange={(e) => setConfig({...config, officerName: e.target.value})} placeholder="Officer Name" className="w-full p-3 border border-slate-300 rounded-xl text-sm font-bold" />
           </div>
-
-          <div className="mt-6">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-              <Calendar size={12}/> Valid Thru Date
-            </label>
-            <input
-              type="text"
-              value={config.validThru}
-              onChange={(e) => setConfig({...config, validThru: e.target.value})}
-              placeholder="e.g. DEC 2026"
-              className="w-full mt-1 p-3 border border-slate-300 rounded-xl text-sm font-black text-slate-900 uppercase"
-            />
-          </div>
+          <input type="text" value={config.validThru} onChange={(e) => setConfig({...config, validThru: e.target.value})} placeholder="Valid Thru (e.g. DEC 2026)" className="w-full mt-4 p-3 border border-slate-300 rounded-xl text-sm font-bold uppercase" />
         </div>
 
         {/* 3. ROLE-BASED BRANDING */}
@@ -266,90 +137,58 @@ const SecretaryCustomizer = ({ userSample }) => {
           <h2 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2 pb-4 border-b border-slate-100">
             <LayoutTemplate className="text-purple-600" /> 3. Role-Based Branding
           </h2>
-          
           <div className="grid grid-cols-2 gap-4">
             {Object.keys(config.roleColors).map((role) => (
-              <div key={role} className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                  {role.replace(/([A-Z])/g, ' $1').trim()} Color
+              <div key={role} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <input
+                  type="color"
+                  value={config.roleColors[role]}
+                  onChange={(e) => setConfig({ ...config, roleColors: { ...config.roleColors, [role]: e.target.value } })}
+                  className="w-8 h-8 rounded-lg cursor-pointer"
+                />
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">
+                  {role.replace(/([A-Z])/g, ' $1').trim()}
                 </label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="color"
-                    value={config.roleColors[role]}
-                    onChange={(e) => setConfig({
-                      ...config, 
-                      roleColors: { ...config.roleColors, [role]: e.target.value }
-                    })}
-                    className="w-10 h-10 rounded-lg cursor-pointer border-none p-0 bg-transparent"
-                  />
-                  <input
-                    type="text"
-                    value={config.roleColors[role]}
-                    onChange={(e) => setConfig({
-                      ...config, 
-                      roleColors: { ...config.roleColors, [role]: e.target.value }
-                    })}
-                    className="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-bold"
-                  />
-                </div>
               </div>
             ))}
           </div>
         </div>
-
       </div>
 
+      {/* --- RIGHT COLUMN: PREVIEW --- */}
       <div className="xl:col-span-5 h-full">
-          <div className="sticky top-6 h-full min-h-[calc(100vh-3rem)]">
-            <div className="h-full flex flex-col items-center justify-center py-12 px-2 sm:px-8 bg-slate-900 rounded-[3rem] border-4 border-slate-800 shadow-2xl relative overflow-hidden transition-all duration-500">
+          <div className="sticky top-6">
+            <div className="flex flex-col items-center justify-center py-12 px-2 sm:px-8 bg-slate-200 rounded-[3rem] border-4 border-white shadow-xl min-h-[600px] relative overflow-visible">
               
-              {/* Animated Background Overlay */}
-              <div className="absolute inset-0 opacity-20 pointer-events-none" 
-                   style={{ 
-                     backgroundImage: `radial-gradient(circle at 2px 2px, #3b82f6 1px, transparent 0)`, 
-                     backgroundSize: '24px 24px' 
-                   }}>
+              <div className="mb-4 flex gap-2">
+                {['Secretary', 'DomainHead', 'AssociateHead', 'Volunteer'].map(r => (
+                  <button
+                    key={r}
+                    onClick={() => setPreviewRole(r === 'DomainHead' ? 'Domain Head' : r === 'AssociateHead' ? 'Associate Head' : r)}
+                    className={`px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider transition-all ${
+                      (previewRole === r || (r === 'DomainHead' && previewRole === 'Domain Head') || (r === 'AssociateHead' && previewRole === 'Associate Head'))
+                        ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-slate-400'
+                    }`}
+                  >
+                    {r === 'DomainHead' ? 'DH' : r === 'AssociateHead' ? 'AH' : r.charAt(0)}
+                  </button>
+                ))}
               </div>
 
-              {/* Status Badge */}
-              <div className="mb-8 flex flex-col items-center gap-4 z-10">
-                <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] flex items-center gap-2 bg-blue-500/10 px-4 py-1.5 rounded-full border border-blue-500/20">
-                   <Eye size={14}/> Live Design Engine
-                </p>
-                
-                {/* Role Toggle for Preview */}
-                <div className="flex bg-slate-800 p-1 rounded-xl border border-slate-700">
-                  {['Secretary', 'DomainHead', 'AssociateHead', 'Volunteer'].map(r => (
-                    <button
-                      key={r}
-                      onClick={() => setPreviewRole(r === 'DomainHead' ? 'Domain Head' : r === 'AssociateHead' ? 'Associate Head' : r)}
-                      className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all ${
-                        (previewRole === r || (r === 'DomainHead' && previewRole === 'Domain Head') || (r === 'AssociateHead' && previewRole === 'Associate Head'))
-                          ? 'bg-blue-600 text-white shadow-lg' 
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {r === 'DomainHead' ? 'DH' : r === 'AssociateHead' ? 'AH' : r.charAt(0)}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
+                 <Eye size={14}/> ID Preview
+              </p>
               
-              {/* The Actual ID Card Component - Responsive Scaling */}
-              <div className="w-full flex justify-center items-center perspective-1000">
-                  <div className="scale-[0.8] lg:scale-[0.85] xl:scale-[1.1] 2xl:scale-[1.25] transform transition-all duration-700 hover:rotate-1 origin-center">
-                    <IDCardFrame>
-                        {{
-                        front: <IDCardRenderer user={previewUser} config={config} verified={true} />,
-                        back: <IDCardRenderer user={previewUser} config={config} verified={true} isBack={true} />
-                        }}
-                    </IDCardFrame>
-                  </div>
+              <div className="scale-75 sm:scale-90 xl:scale-100 transform transition-transform duration-500 hover:scale-105 origin-center bg-white shadow-2xl rounded-3xl">
+                  <IDCardFrame>
+                      {{
+                      front: <IDCardRenderer user={previewUser} config={config} verified={true} />,
+                      back: <IDCardRenderer user={previewUser} config={config} verified={true} isBack={true} />
+                      }}
+                  </IDCardFrame>
               </div>
-
-              <p className="mt-12 text-center text-[10px] font-bold text-slate-500 max-w-[200px] z-10 leading-relaxed">
-                <span className="text-blue-500">Pro Tip:</span> Flip the card to verify the QR and return details.
+              <p className="mt-8 text-center text-[10px] font-bold text-slate-500">
+                Flip the card to see the QR Code.
               </p>
             </div>
           </div>

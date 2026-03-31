@@ -1,33 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { QRCodeSVG } from 'qrcode.react';
 import { MapPin, Globe } from 'lucide-react';
 
-const IDCardRenderer = ({ user, config, verified, isBack }) => {
+const IDCardRenderer = ({ user, config, verified = false, isBack = false }) => {
   if (!user) return null;
 
   // Design Constants
-  const getHeaderColor = () => {
-    if (!config?.roleColors) return '#EBF855';
-    // Normalize role string (remove spaces, e.g. "Domain Head" -> "DomainHead")
-    const roleKey = user.role?.replace(/\s+/g, '') || 'Volunteer';
-    return config.roleColors[roleKey] || '#EBF855';
-  };
-
-  const HEADER_COLOR = getHeaderColor();
-
-  // Helper for Contrast Text (simple luma check)
-  const getContrastText = (hexcolor) => {
-    if (!hexcolor || typeof hexcolor !== 'string' || hexcolor.length < 6) return 'text-slate-900';
-    const hex = hexcolor.replace("#", "");
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-    return (yiq >= 128) ? 'text-slate-900' : 'text-white';
-  };
-
-  const TEXT_COLOR = getContrastText(HEADER_COLOR);
+  const HEADER_COLOR = 'bg-[#EBF855]'; // NSS Yellow
 
   // --- BACK SIDE ---
   if (isBack) {
@@ -61,11 +40,8 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
   return (
       <div className="w-full h-full bg-white relative flex flex-col rounded-3xl overflow-hidden shadow-2xl font-sans pt-6 aspect-[0.63]">
 
-      {/* 1. HEADER (Dynamic Zone - 35% Height) */}
-      <div 
-        className="h-[50%] relative w-full px-3 py-10 mt-[-2em] flex flex-col items-center justify-center transition-colors duration-500"
-        style={{ backgroundColor: HEADER_COLOR }}
-      >
+      {/* 1. HEADER (Yellow Zone - 35% Height) */}
+      <div className={`${HEADER_COLOR} h-[50%] relative w-full px-3 py-10 mt-[-2em] flex flex-col items-center justify-center`}>
         <div className="flex items-center justify-between w-full mb-2">
           {/* Top-Left: College Logo */}
           <div className="w-14 h-14 rounded-full shadow-sm flex items-center justify-center overflow-hidden border-2 border-transparent bg-white flex-shrink-0">
@@ -88,10 +64,10 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
 
         {/* Center: Heading and Subheading */}
         <div className="flex-1  flex flex-col items-center justify-center px-4 w-full">
-          <p className={`text-xs font-black mt-[-9em] uppercase tracking-wider text-center leading-tight ${TEXT_COLOR}`}>
+          <p className="text-xs font-black mt-[-9em] text-slate-900 uppercase tracking-wider text-center leading-tight">
             {config.universityName || "NATIONAL SERVICE SCHEME"}
           </p>
-          <p className={`text-[9px] font-bold text-center leading-tight mt-1 opacity-80 ${TEXT_COLOR}`}>
+          <p className="text-[9px] font-bold text-slate-700 text-center leading-tight mt-1">
             {config.collegeSubheading || "Harcourt Butler Technical University"}
           </p>
         </div>
@@ -117,10 +93,7 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
           {user.name}
         </h1>
         <div className="flex flex-col items-center gap-1">
-          <span 
-            className={`px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm transition-all duration-500 ${TEXT_COLOR}`}
-            style={{ backgroundColor: HEADER_COLOR }}
-          >
+          <span className={`${HEADER_COLOR} text-slate-900 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm`}>
             {user.role || 'VOLUNTEER'}
           </span>
         </div>
@@ -193,41 +166,9 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
       </div>
 
       {/* Bottom Stripe */}
-      <div className="h-2 w-full absolute bottom-0" style={{ backgroundColor: HEADER_COLOR }}></div>
+      <div className={`${HEADER_COLOR} h-2 w-full absolute bottom-0`}></div>
     </div>
   );
-};
-
-IDCardRenderer.propTypes = {
-  user: PropTypes.shape({
-    _id: PropTypes.string,
-    name: PropTypes.string,
-    email: PropTypes.string,
-    role: PropTypes.string,
-    profileImage: PropTypes.string,
-    bloodGroup: PropTypes.string,
-    rollNumber: PropTypes.string,
-    enrollmentNumber: PropTypes.string,
-    branch: PropTypes.string,
-    department: PropTypes.string,
-    year: PropTypes.string,
-    academicYear: PropTypes.string,
-    isApproved: PropTypes.bool,
-  }),
-  config: PropTypes.shape({
-    collegeLogo: PropTypes.string,
-    councilLogo: PropTypes.string,
-    universityName: PropTypes.string,
-    collegeSubheading: PropTypes.string,
-    secretarySig: PropTypes.string,
-    secretaryName: PropTypes.string,
-    officerSig: PropTypes.string,
-    officerName: PropTypes.string,
-    validThru: PropTypes.string,
-    subHeader: PropTypes.string,
-  }),
-  verified: PropTypes.bool,
-  isBack: PropTypes.bool,
 };
 
 export default IDCardRenderer;
