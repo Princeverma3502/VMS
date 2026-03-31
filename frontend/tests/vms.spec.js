@@ -64,8 +64,8 @@ test('Login page: shows error on wrong credentials', async ({ page }) => {
   await page.locator('input[type="email"]').fill('wrong@email.com');
   await page.locator('input[type="password"]').fill('WrongPass!');
   await page.locator('button[type="submit"]').click();
-  // Should stay on login and show an error
-  await expect(page.locator('text=/Invalid|incorrect|failed/i').first()).toBeVisible({ timeout: 10000 });
+  // Should stay on login and show an error (50s timeout for backend cold-start)
+  await expect(page.locator('text=/Invalid|incorrect|failed/i').first()).toBeVisible({ timeout: 50000 });
 });
 
 // ─── Test 3: Register page renders ───────────────────────────────────────────
