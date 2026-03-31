@@ -61,7 +61,7 @@ const TaskBoard = () => {
                 </button>
             )}
             
-            {task.status === 'In Progress' && task.assignedUsers.some(u => u._id === user._id) && (
+            {task.status === 'In Progress' && task.assignedUsers?.some(u => u._id === user?._id) && (
                 <button onClick={() => setSubmittingTask(task)} className="text-[10px] sm:text-xs bg-blue-600 text-white px-2 sm:px-3 py-0.5 sm:py-1 rounded hover:bg-blue-700 transition flex-shrink-0 min-h-[28px] sm:min-h-[32px] flex items-center">
                     Mark Done
                 </button>
@@ -78,7 +78,7 @@ const TaskBoard = () => {
 
   // Group Tasks
   const pendingTasks = tasks.filter(t => t.status === 'Pending');
-  const myTasks = tasks.filter(t => t.status === 'In Progress' && t.assignedUsers.some(u => u._id === user._id));
+  const myTasks = tasks.filter(t => t.status === 'In Progress' && t.assignedUsers?.some(u => u._id === user?._id));
   const reviewTasks = tasks.filter(t => t.status === 'Completed');
 
   // Modal Component

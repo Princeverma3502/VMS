@@ -365,8 +365,15 @@ export const deleteUser = asyncHandler(async (req, res) => {
 // @route   GET /users/blood-group-stats
 // @access  Private (Authenticated users)
 export const getBloodGroupStats = asyncHandler(async (req, res) => {
+  const matchStage = { bloodGroup: { $exists: true, $ne: null } };
+  
+  // Multi-tenant check
+  if (!req.user.isSuperAdmin && req.user.collegeId) {
+    matchStage.collegeId = req.user.collegeId;
+  }
+
   const stats = await User.aggregate([
-    { $match: { bloodGroup: { $exists: true, $ne: null } } },
+    { $match: matchStage },
     { $group: { _id: "$bloodGroup", count: { $sum: 1 } } },
     { $sort: { _id: 1 } }
   ]);
@@ -431,6 +438,12 @@ export const getAllUsersFiltered = asyncHandler(async (req, res) => {
   }
 
   const filter = {};
+  
+  // Multi-tenant check
+  if (!req.user.isSuperAdmin && req.user.collegeId) {
+    filter.collegeId = req.user.collegeId;
+  }
+  
   if (role && role !== 'all') filter.role = role;
   if (bloodGroup && bloodGroup !== 'all') filter.bloodGroup = bloodGroup;
   if (search) {

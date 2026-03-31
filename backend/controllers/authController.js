@@ -202,7 +202,12 @@ export const getMe = asyncHandler(async (req, res) => {
 
 // @desc    Get Pending Users
 export const getPendingUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({ isApproved: false }).select('-password');
+  const query = { isApproved: false };
+  // Multi-tenant check: only fetch pending users for the admin's college
+  if (!req.user.isSuperAdmin && req.user.collegeId) {
+    query.collegeId = req.user.collegeId;
+  }
+  const users = await User.find(query).select('-password');
   res.json(users);
 });
 

@@ -3,10 +3,20 @@ export const requireCollegeForWrite = (req, res, next) => {
   // For safety, allow read-only routes to stay public; enforce on POST/PUT/DELETE
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
 
-  // If authenticated user exists and has collegeId, inject it into the body if missing
+  // If authenticated user exists and has collegeId, enforce it logically
   if (req.user && req.user.collegeId) {
     if (!req.body) req.body = {};
-    req.body.collegeId = req.body.collegeId || req.user.collegeId;
+    
+    // Prevent overriding to another collegeId unless superAdmin
+    if (req.body.collegeId && 
+        req.body.collegeId.toString() !== req.user.collegeId.toString() && 
+        !req.user.isSuperAdmin) {
+      res.status(403);
+      return next(new Error('Cannot write data for a different college or tenant'));
+    }
+    
+    // Enforce their own collegeId
+    req.body.collegeId = req.user.collegeId;
     return next();
   }
 

@@ -1,11 +1,12 @@
 import express from 'express';
 import { protect } from '../middleware/authMiddleware.js';
+import { superAdminProtect } from '../middleware/superAdminAuth.js';
 import * as superAdminController from '../controllers/superAdminController.js';
 
 const router = express.Router();
 
-// All super-admin routes require auth
-router.use(protect);
+// All super-admin routes require auth AND super-admin privileges
+router.use(protect, superAdminProtect);
 
 // Dashboard & Stats
 router.get('/dashboard', superAdminController.getDashboardStats);

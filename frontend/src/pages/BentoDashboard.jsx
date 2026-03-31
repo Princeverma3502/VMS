@@ -57,7 +57,7 @@ const BentoDashboard = () => {
 
   // --- HELPERS ---
   const pendingTasks = tasks.filter(t => t.status === 'Pending');
-  const myTasks = tasks.filter(t => t.status === 'In Progress' && t.assignedUsers.some(u => u._id === user?._id));
+  const myTasks = tasks.filter(t => t.status === 'In Progress' && t.assignedUsers?.some(u => u._id === user?._id));
   const reviewTasks = tasks.filter(t => t.status === 'Completed');
 
   // --- SUB-COMPONENTS (Scoped to this dashboard) ---
@@ -78,7 +78,7 @@ const BentoDashboard = () => {
                 </button>
             )}
 
-            {task.status === 'In Progress' && task.assignedUsers.some(u => u._id === user?._id) && (
+            {task.status === 'In Progress' && task.assignedUsers?.some(u => u._id === user?._id) && (
                 <button onClick={() => handleSubmit(task._id)} className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded hover:bg-cyan-700 transition">
                     Mark Done
                 </button>

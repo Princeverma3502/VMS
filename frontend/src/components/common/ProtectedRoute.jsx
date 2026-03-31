@@ -4,7 +4,7 @@ import { AuthContext } from '../../context/AuthContext';
 
 const normalizeRoleProp = (r) => (r || '').toString().replace(/-/g, ' ').trim().toLowerCase();
 
-const ProtectedRoute = ({ children, role, adminOnly }) => {
+const ProtectedRoute = ({ children, role, adminOnly, allowedRoles }) => {
   const { user, loading, hasRole } = useContext(AuthContext);
 
   if (loading) {
@@ -27,6 +27,14 @@ const ProtectedRoute = ({ children, role, adminOnly }) => {
     return <Navigate to="/unauthorized" />;
   }
 
+  if (allowedRoles && Array.isArray(allowedRoles)) {
+    const hasAllowedRole = allowedRoles.some(r => hasRole(normalizeRoleProp(r)));
+    if (!hasAllowedRole && !user.isSuperAdmin) {
+      return <Navigate to="/unauthorized" />;
+    }
+    return children;
+  }
+
   if (role) {
     const required = normalizeRoleProp(role);
 
@@ -36,7 +44,7 @@ const ProtectedRoute = ({ children, role, adminOnly }) => {
     }
 
     // If required role is secretary, only allow secretaries
-    if (required === 'secretary' && !hasRole('secretary')) {
+    if (required === 'secretary' && !hasRole('secretary') && !user.isSuperAdmin) {
       return <Navigate to="/unauthorized" />;
     }
 
@@ -46,7 +54,7 @@ const ProtectedRoute = ({ children, role, adminOnly }) => {
     }
 
     // Generic check: if required role is not matched, deny
-    if (!hasRole(required)) {
+    if (!hasRole(required) && !user.isSuperAdmin) {
       return <Navigate to="/unauthorized" />;
     }
   }
