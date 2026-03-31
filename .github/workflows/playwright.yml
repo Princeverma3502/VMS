@@ -1,0 +1,41 @@
+name: VMS End-to-End Tests
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+        cache: 'npm'
+        cache-dependency-path: './frontend/package-lock.json'
+        
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: npm ci
+      
+    - name: Install Playwright Browsers
+      working-directory: ./frontend
+      run: npx playwright install --with-deps chromium
+      
+    - name: Run Playwright tests
+      working-directory: ./frontend
+      run: npm run test:e2e || npx playwright test --reporter=list
+      env:
+        # CI will use the remote backend defined in .env.test inside the playwright config
+        CI: true
+        
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: ./frontend/playwright-report/
+        retention-days: 30

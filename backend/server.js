@@ -60,6 +60,7 @@ import collegeSettingsRoutes from './routes/collegeSettingsRoutes.js';
 import discussionRoutes from './routes/discussionRoutes.js';
 import skillEndorsementRoutes from './routes/skillEndorsementRoutes.js';
 import demoCertificateRoutes from './routes/demoCertificateRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
 
 // Middleware Imports
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
@@ -152,6 +153,7 @@ app.use('/college-settings', collegeSettingsRoutes);
 app.use('/discussions', discussionRoutes);
 app.use('/skill-endorsements', skillEndorsementRoutes);
 app.use('/demo-certificates', demoCertificateRoutes);
+app.use('/analytics', analyticsRoutes);
 
 app.get('/', (req, res) => {
   res.send('VMS API is Secure & Running...');
