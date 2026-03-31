@@ -61,53 +61,55 @@ const Sidebar = ({ userRole = 'Volunteer', hideHeader = false }) => {
 
   return (
     // Force Dark Background (Slate-900) and White Text
-    <aside className="h-full w-full bg-slate-900 text-white flex flex-col shadow-xl">
+    <aside className="h-full w-full bg-slate-900/95 backdrop-blur-xl text-white flex flex-col shadow-[10px_0_40px_rgba(0,0,0,0.2)] border-r border-white/5">
       
-      {/* Senior Branding: Large 'Menu', Subtle 'NSS Portal' (Hidden when inside drawers) */}
+      {/* Senior Branding: Large 'Menu', Subtle 'NSS Portal' */}
       {!hideHeader && (
-        <div className="p-6 border-b border-slate-700 flex items-center gap-4">
-          <div className="bg-white p-1.5 rounded-xl shadow-lg ring-1 ring-white/10">
+        <div className="p-8 border-b border-white/5 flex items-center gap-4 bg-gradient-to-b from-white/5 to-transparent">
+          <div className="bg-white p-2 rounded-2xl shadow-[0_10px_30px_rgba(255,255,255,0.1)] ring-1 ring-white/20 transform hover:scale-110 transition-transform duration-500">
             <img src="/logo.png" alt="NSS Logo" className="w-10 h-10 object-contain" />
           </div>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-white leading-none">Menu</h1>
-            <p className="text-[10px] text-blue-400 font-bold uppercase tracking-[0.2em] mt-2">NSS Portal</p>
+            <h1 className="text-2xl font-black tracking-tight text-white leading-none">Console</h1>
+            <p className="text-[10px] text-blue-400 font-bold uppercase tracking-[0.3em] mt-2 opacity-60">NSS OS v2.0</p>
           </div>
         </div>
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-        <p className="px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Menu</p>
+      <nav className="flex-1 px-4 py-8 space-y-1.5 overflow-y-auto no-scrollbar">
+        <p className="px-4 text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] mb-4 opacity-50">Operational Modules</p>
         
         {currentMenu.map((item, index) => (
           <NavLink
             key={index}
             to={item.path}
             className={({ isActive }) => `
-              flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group
+              flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden
               ${isActive 
-                ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' 
-                : 'text-slate-400 hover:bg-white/10 hover:text-white'
+                ? 'bg-blue-600 text-white shadow-[0_10px_25px_rgba(37,99,235,0.4)] translate-x-1' 
+                : 'text-slate-400 hover:bg-white/5 hover:text-white hover:translate-x-1'
               }
             `}
           >
-            {/* Icon (inherit color) */}
-            <span className="text-current">
+            {/* Active Glow Indicator */}
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-white opacity-0 group-[.active]:opacity-100 transition-opacity" />
+            
+            <span className={`transition-transform duration-300 group-hover:scale-110 ${item.path === window.location.pathname ? 'text-white' : 'text-current opacity-70 group-hover:opacity-100'}`}>
               {item.icon}
             </span>
-            <span className="font-semibold text-sm">{item.name}</span>
+            <span className="font-bold text-sm tracking-tight">{item.name}</span>
           </NavLink>
         ))}
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-slate-800">
+      <div className="p-6 border-t border-white/5 bg-gradient-to-t from-black/20 to-transparent">
         <button 
           onClick={() => { localStorage.clear(); navigate('/login'); }}
-          className="w-full py-3 px-4 text-sm font-bold text-red-400 hover:text-white hover:bg-red-600/20 rounded-xl transition-all flex items-center gap-3"
+          className="w-full py-4 px-5 text-xs font-black text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-2xl transition-all flex items-center gap-3 group uppercase tracking-widest"
         >
-           <LogOut size={18} /> Logout
+           <LogOut size={18} className="group-hover:translate-x-1 transition-transform" /> Sign Out System
         </button>
       </div>
     </aside>

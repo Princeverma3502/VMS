@@ -3,14 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import { AuthContext } from '../../context/AuthContext';
 import DigitalIDCard from '../../components/digital-id/DigitalIDCard';
-import XPHistoryLog from '../../components/gamification/XPHistoryLog';
 import EditBloodGroup from '../../components/common/EditBloodGroup'; 
 import api from '../../services/api';
 import { triggerHaptic } from '../../utils/haptics';
 import { calculateLevel, getProgress } from '../../utils/levels';
 import { 
-  Shield, IdCard, Camera, Smartphone, Edit2, LogOut, Bell, Droplet
+  Shield, IdCard, Camera, Smartphone, Edit2, LogOut, Bell, Droplet,
+  ChevronRight, Award, Box, Zap
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Profile = () => {
   const { user, logout, updateUser } = useContext(AuthContext);
@@ -20,10 +21,9 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [showID, setShowID] = useState(false);
   const [showBloodEdit, setShowBloodEdit] = useState(false);
+  const [uploading, setUploading] = useState(false);
   
-  // Permissions State
   const [perms, setPerms] = useState({ notification: false, camera: false });
-
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const Profile = () => {
       const { data } = await api.get(`/users/profile/${user._id}`);
       setProfileData(data.profile || data);
     } catch (error) {
-      console.error("Fetch failed");
+      toast.error("Cloud synchronization failed");
     } finally {
       setLoading(false);
     }
@@ -51,180 +51,192 @@ const Profile = () => {
 
   const requestPermission = async (type) => {
     triggerHaptic('success');
-    try {
-      if (type === 'notification') {
-          if (!("Notification" in window)) {
-            alert("This browser does not support desktop notifications.");
-            return;
-          }
-          const res = await Notification.requestPermission();
-          if (res === 'granted') {
-            setPerms(p => ({...p, notification: true}));
-            toast.success("Notifications Enabled!");
-          } else if (res === 'denied') {
-            alert("Notification permission denied. Please enable it in your browser settings.");
-          }
-      } else if (type === 'camera') {
-          try {
-              const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-              stream.getTracks().forEach(track => track.stop());
-              setPerms(p => ({...p, camera: true}));
-              toast.success("Camera Access Granted!");
-          } catch (e) {
-              alert("Camera Access Denied: " + e.message);
-          }
-      }
-    } catch (err) {
-      console.error("Permission request failed", err);
+    if (type === 'notification') {
+        if (!("Notification" in window)) {
+          toast.error("Browser unsupported");
+          return;
+        }
+        const res = await Notification.requestPermission();
+        if (res === 'granted') {
+          setPerms(p => ({...p, notification: true}));
+          toast.success("Alerts Synchronized");
+        }
+    } else if (type === 'camera') {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            stream.getTracks().forEach(track => track.stop());
+            setPerms(p => ({...p, camera: true}));
+            toast.success("Optics Authorized");
+        } catch (e) {
+            toast.error("Hardware bypass failed");
+        }
     }
   };
 
-  const handlePhotoClick = () => fileInputRef.current.click();
-  
-  // Image Upload Logic
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    setUploading(true);
     const formData = new FormData();
     formData.append('profileImage', file);
     try {
-        const objectUrl = URL.createObjectURL(file);
-        setProfileData(prev => ({ ...prev, profileImage: objectUrl }));
         const { data } = await api.put('/users/profile/image', formData, { headers: { 'Content-Type': 'multipart/form-data' }});
-        if (data.profileImage) updateUser({ profileImage: data.profileImage });
-    } catch (err) { console.error(err); }
+        if (data.profileImage) {
+          updateUser({ profileImage: data.profileImage });
+          setProfileData(prev => ({ ...prev, profileImage: data.profileImage }));
+          toast.success("Identity Visual Updated");
+        }
+    } catch (err) { toast.error("Upload failed"); }
+    finally { setUploading(false); }
   };
 
-  // REAL-TIME BLOOD GROUP SYNC
   const handleBloodGroupUpdate = (newGroup) => {
-    // 1. Update Local State (Immediate UI Feedback)
     setProfileData(prev => ({ ...prev, bloodGroup: newGroup }));
-    
-    // 2. Update Global Context (Persists to ID Card Modal)
     updateUser({ bloodGroup: newGroup }); 
-    
     triggerHaptic('success');
   };
 
-  const profile = profileData || {};
+  const profile = profileData || user || {};
   const xp = profile?.gamification?.xpPoints || 0;
   const level = calculateLevel(xp);
   const progress = getProgress(xp);
 
-  if (loading) return <div className="p-10 text-center font-bold text-slate-900">Loading Profile...</div>;
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+       <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+       <p className="text-xs font-black uppercase tracking-[0.4em] text-slate-400">Synchronizing Identity...</p>
+    </div>
+  );
 
   return (
     <Layout userRole={profile.role || 'Volunteer'} showBackButton={true}>
       
-      {/* VISIBILITY PATCH: Force dark text on inputs globally for this page */}
-      <style>{`
-        input, select, textarea { color: #0f172a !important; background: #ffffff !important; border-color: #cbd5e1 !important; }
-        ::placeholder { color: #64748b !important; opacity: 1; }
-      `}</style>
-
-      <div className="pb-24 px-4 max-w-2xl mx-auto space-y-6">
+      <div className="pb-32 px-4 max-w-2xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
-        {/* 1. PROFILE HEADER */}
-        <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-200 p-6 text-center relative overflow-hidden">
-           {/* Avatar */}
-           <div className="relative w-32 h-32 mx-auto mb-4 group">
-             <div className="w-full h-full rounded-full border-4 border-blue-50 shadow-xl overflow-hidden">
-               <img src={profile.profileImage || `https://ui-avatars.com/api/?name=${profile.name}`} className="w-full h-full object-cover" />
-             </div>
-             <button onClick={handlePhotoClick} className="absolute bottom-1 right-1 bg-blue-600 text-white p-2 rounded-full shadow-lg z-10 hover:bg-blue-700 transition">
-               <Camera size={16} />
-             </button>
+        {/* 1. ELITE PROFILE CARD */}
+        <div className="group relative bg-white rounded-[3rem] shadow-xl shadow-slate-900/5 border border-slate-100 p-8 text-center overflow-hidden">
+           <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-indigo-50/50 to-transparent"></div>
+           
+           {/* Avatar Section */}
+           <div className="relative z-10 w-40 h-40 mx-auto mb-6">
+              <div className="w-full h-full rounded-[2.5rem] border-8 border-white shadow-2xl shadow-indigo-900/10 overflow-hidden group-hover:scale-105 transition-transform duration-500">
+                <img 
+                  src={profile.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name || 'U')}&background=4f46e5&color=fff`} 
+                  className="w-full h-full object-cover" 
+                  alt="Profile"
+                />
+              </div>
+              <button 
+                onClick={() => fileInputRef.current.click()} 
+                disabled={uploading}
+                className="absolute -bottom-2 -right-2 bg-indigo-600 text-white p-3.5 rounded-2xl shadow-lg hover:bg-slate-950 transition-all active:scale-90 border-4 border-white"
+              >
+                {uploading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <Camera size={20} />}
+              </button>
            </div>
 
-           <h1 className="text-2xl font-black text-slate-900">{profile.name}</h1>
-           <p className="text-sm font-bold text-slate-500 uppercase">{profile.role}</p>
-
-           {/* ACTIONS */}
-           <div className="grid grid-cols-2 gap-3 mt-6">
-             <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex flex-col justify-center">
-               <p className="text-[10px] font-bold text-slate-400 uppercase">ID</p>
-               <p className="text-lg font-black text-slate-900">{profile.rollNumber || '--'}</p>
-             </div>
-             
-             {/* LIVE BLOOD GROUP CARD */}
-             <div 
-               onClick={() => setShowBloodEdit(true)} 
-               className="relative bg-red-50 rounded-2xl p-4 border border-red-100 cursor-pointer hover:bg-red-100 transition-colors group"
-             >
-               {/* Edit Icon (Top Right) */}
-               <div className="absolute top-2 right-2 text-red-300 group-hover:text-red-500 transition-colors">
-                 <Edit2 size={14}/>
-               </div>
-               
-               <p className="text-[10px] font-bold text-red-400 uppercase flex items-center justify-center gap-1">
-                 Blood <Droplet size={10} fill="currentColor"/>
-               </p>
-               {/* Shows Value or 'Set Now' */}
-               <p className="text-xl font-black text-red-600 mt-1">
-                 {profile.bloodGroup || <span className="text-sm">Set Now</span>}
-               </p>
-             </div>
+           <h1 className="text-3xl font-black text-slate-900 tracking-tighter mb-1">{profile.name}</h1>
+           <div className="flex items-center justify-center gap-2 mb-8">
+              <Shield size={14} className="text-indigo-500" />
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">{profile.role} • Unit Asset</span>
            </div>
 
-           <div className="flex gap-3 mt-4">
-             <button onClick={() => setShowID(true)} className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition-all">
-               View ID Card
-             </button>
-             <button onClick={() => navigate('/volunteer/qr-scanner')} className="flex-1 bg-white text-slate-900 border-2 border-slate-900 py-3 rounded-xl font-bold active:scale-95 transition-all">
-               Scan QR
-             </button>
+           {/* Quick Stats Bento */}
+           <div className="grid grid-cols-2 gap-4 mb-8">
+              <div className="bg-slate-50/80 backdrop-blur-sm rounded-3xl p-5 border border-slate-100 flex flex-col items-center">
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">ID Number</p>
+                <p className="text-lg font-black text-slate-900 tracking-tight">{profile.rollNumber || '--'}</p>
+              </div>
+              
+              <div 
+                onClick={() => setShowBloodEdit(true)} 
+                className="relative bg-red-50/80 backdrop-blur-sm rounded-3xl p-5 border border-red-100 cursor-pointer hover:bg-red-100/50 transition-all group/blood flex flex-col items-center"
+              >
+                <Edit2 size={12} className="absolute top-3 right-3 text-red-200 group-hover/blood:text-red-500" />
+                <p className="text-[9px] font-black text-red-400 uppercase tracking-widest mb-1 flex items-center gap-1">
+                  Blood Group <Droplet size={8} fill="currentColor"/>
+                </p>
+                <p className="text-lg font-black text-red-600 tracking-tight">
+                  {profile.bloodGroup || 'Set'}
+                </p>
+              </div>
+           </div>
+
+           <div className="flex flex-col sm:flex-row gap-3">
+              <button onClick={() => setShowID(true)} className="flex-1 bg-slate-900 text-white py-4 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-slate-900/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                <IdCard size={18} /> Digital Identity
+              </button>
+              <button onClick={() => navigate('/volunteer/qr-scanner')} className="flex-1 bg-white text-slate-900 border-2 border-slate-950 py-4 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] active:scale-95 transition-all flex items-center justify-center gap-2">
+                <Smartphone size={18} /> Optic Scan
+              </button>
            </div>
         </div>
 
-        {/* 2. PERMISSIONS (Was Preferences) */}
-        <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-200">
-          <h3 className="font-black text-slate-900 flex items-center gap-2 mb-4">
-            <Shield size={20} className="text-blue-600" /> Permissions
-          </h3>
-          
-          <div className="space-y-3">
-            {/* Notification */}
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-full text-blue-600 shadow-sm"><Bell size={18} /></div>
-                <div className="text-left">
-                  <p className="text-sm font-bold text-slate-900">Notifications</p>
-                  <p className="text-[10px] font-bold text-slate-400">Updates & Alerts</p>
+        {/* 2. PROGRESS & ACHIEVEMENTS */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <div className="bg-indigo-600 text-white p-8 rounded-[3rem] shadow-xl shadow-indigo-900/10 flex flex-col justify-between group overflow-hidden relative">
+              <Award className="absolute -bottom-8 -right-8 opacity-10 group-hover:scale-150 transition-transform duration-1000" size={160} />
+              <div className="relative z-10">
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-2">Operational Level</p>
+                <h3 className="text-4xl font-black tracking-tighter mb-6">Expert <span className="opacity-40">Lvl {level}</span></h3>
+                
+                <div className="w-full bg-white/10 h-3 rounded-full overflow-hidden mb-4">
+                  <div className="h-full bg-white transition-all duration-1000" style={{ width: `${progress}%` }}></div>
+                </div>
+                <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest opacity-60">
+                   <span>{xp} XP Earned</span>
+                   <span>{100 - progress}% to Lvl {level + 1}</span>
                 </div>
               </div>
-              <button onClick={() => requestPermission('notification')} className={`px-4 py-2 rounded-lg text-xs font-bold ${perms.notification ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600'}`}>
-                {perms.notification ? 'Active' : 'Enable'}
-              </button>
-            </div>
+           </div>
 
-            {/* Camera */}
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-full text-purple-600 shadow-sm"><Camera size={18} /></div>
-                <div className="text-left">
-                  <p className="text-sm font-bold text-slate-900">Camera</p>
-                  <p className="text-[10px] font-bold text-slate-400">For QR Scanning</p>
-                </div>
+           <div className="bg-white p-8 rounded-[3rem] shadow-xl shadow-slate-900/5 border border-slate-100 flex flex-col justify-center">
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-6 flex items-center gap-2">
+                 <Shield size={16} className="text-indigo-600" /> Security Clearances
+              </h3>
+              
+              <div className="space-y-4">
+                <button onClick={() => requestPermission('notification')} className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-indigo-50 transition-all group">
+                   <div className="flex items-center gap-3">
+                      <Bell size={18} className="text-slate-400 group-hover:text-indigo-600" />
+                      <span className="text-xs font-bold text-slate-800">Alert System</span>
+                   </div>
+                   <div className={`px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${perms.notification ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600'}`}>
+                     {perms.notification ? 'Online' : 'Initialize'}
+                   </div>
+                </button>
+
+                <button onClick={() => requestPermission('camera')} className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-indigo-50 transition-all group">
+                   <div className="flex items-center gap-3">
+                      <Camera size={18} className="text-slate-400 group-hover:text-indigo-600" />
+                      <span className="text-xs font-bold text-slate-800">Optic Access</span>
+                   </div>
+                   <div className={`px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${perms.camera ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600'}`}>
+                     {perms.camera ? 'Authorized' : 'Grant'}
+                   </div>
+                </button>
               </div>
-              <button onClick={() => requestPermission('camera')} className={`px-4 py-2 rounded-lg text-xs font-bold ${perms.camera ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600'}`}>
-                {perms.camera ? 'Active' : 'Allow'}
-              </button>
-            </div>
-          </div>
+           </div>
         </div>
 
-        {/* 3. LOGOUT (Bottom) */}
-        <button onClick={logout} className="w-full bg-red-50 text-red-600 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 border border-red-100 hover:bg-red-100 transition-colors">
-          <LogOut size={20} /> Logout
+        {/* 3. LOGOUT SYSTEM */}
+        <button 
+           onClick={() => {
+             triggerHaptic('warning');
+             logout();
+           }} 
+           className="w-full bg-slate-50 text-slate-400 py-5 rounded-3xl font-black text-[10px] uppercase tracking-[0.4em] flex items-center justify-center gap-3 border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all duration-300"
+        >
+          <LogOut size={18} /> Sign Out Identity
         </button>
 
       </div>
 
-      {/* Modals */}
+      {/* MODALS */}
       {showID && <DigitalIDCard user={profile} onClose={() => setShowID(false)} />}
       {showBloodEdit && <EditBloodGroup currentGroup={profile.bloodGroup} onUpdate={handleBloodGroupUpdate} onClose={() => setShowBloodEdit(false)} />}
       
-      {/* Hidden Upload Input */}
+      {/* HIDDEN LOGIC */}
       <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
     </Layout>
   );

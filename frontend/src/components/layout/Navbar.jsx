@@ -34,28 +34,30 @@ const Navbar = ({ userName = "User", showBackButton = false }) => {
   };
 
   return (
-    <header className="bg-white border-b border-slate-200 py-3 px-4 sm:px-6 mb-6 shadow-sm flex justify-between items-center sticky top-0 z-40">
+    <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 py-3 px-4 sm:px-8 sticky top-0 z-[60] flex justify-between items-center transition-all duration-300">
       
       {/* 1. LEFT: Back Button or Search */}
-      <div className="flex-1 flex items-center">
-        {showBackButton ? (
+      <div className="flex-1 flex items-center gap-4">
+        {showBackButton && (
           <button 
             onClick={() => navigate(-1)} 
-            className="flex items-center gap-2 text-slate-700 font-bold hover:text-blue-600 transition bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200"
+            className="flex items-center gap-2 text-slate-700 font-black hover:text-blue-600 transition-all bg-white hover:bg-blue-50 px-3 py-2 rounded-xl border border-slate-200 hover:border-blue-200 shadow-sm active:scale-95 group"
           >
-            <ArrowLeft size={18} />
-            <span className="hidden sm:inline text-sm">Back</span>
+            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="text-xs uppercase tracking-widest">Back</span>
           </button>
-        ) : (
+        )}
+
+        {(!showBackButton || window.innerWidth > 1024) && (
           <div className="relative w-full max-w-xs hidden sm:block">
-             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={16} />
              <input 
                type="text" 
-               placeholder="Search..." 
+               placeholder="Search Control..." 
                value={query}
                onChange={(e) => setQuery(e.target.value)}
                onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/search?q=${encodeURIComponent(query)}`); }}
-               className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all placeholder:text-slate-400"
+               className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-300 transition-all placeholder:text-slate-400 placeholder:font-medium"
              />
           </div>
         )}
