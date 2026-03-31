@@ -27,14 +27,12 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // --- LOGIC: AUTO-ASSIGN ROLE BASED ON YEAR ---
-  // Removed the 'if Secretary return' check to ensure year changes always reset the role
   useEffect(() => {
     let autoRole = 'Volunteer';
     switch(formData.year) {
         case '1st': autoRole = 'Volunteer'; break;
         case '2nd': autoRole = 'Associate Head'; break;
-        case '3rd': 
-        case '4th': autoRole = 'Domain Head'; break;
+        case '3rd': autoRole = 'Domain Head'; break;
         default: autoRole = 'Volunteer';
     }
     setFormData(prev => ({ ...prev, role: autoRole }));
@@ -171,7 +169,6 @@ const Register = () => {
                         <option value="1st">1st Year</option>
                         <option value="2nd">2nd Year</option>
                         <option value="3rd">3rd Year</option>
-                        <option value="4th">4th Year</option>
                     </select>
                 </div>
             </div>
@@ -180,7 +177,6 @@ const Register = () => {
           <Input label="WhatsApp Number" name="whatsappNumber" value={formData.whatsappNumber} onChange={handleChange} required />
           <Input label="Password" type="password" name="password" value={formData.password} onChange={handleChange} required />
 
-          {/* Role Selection (Corrected logic to prevent duplicate labels) */}
           <div className="pt-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
                 Assigned Role <span className="text-xs text-gray-400 font-normal">(Based on your Year)</span>
@@ -195,11 +191,11 @@ const Register = () => {
                     `}
                 >
                     {(() => {
-                        let autoRole = 'Volunteer';
-                        if (formData.year === '2nd') autoRole = 'Associate Head';
-                        else if (formData.year === '3rd' || formData.year === '4th') autoRole = 'Domain Head';
+                        let roleValue = 'Volunteer';
+                        if (formData.year === '2nd') roleValue = 'Associate Head';
+                        else if (formData.year === '3rd') roleValue = 'Domain Head';
                         
-                        return <option value={autoRole}>{autoRole} (Auto-assigned)</option>;
+                        return <option value={roleValue}>{roleValue}</option>;
                     })()}
                     
                     <option value="Secretary">Secretary (Admin Access)</option>
