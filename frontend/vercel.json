@@ -1,9 +1,11 @@
 {
-  "buildCommand": "VITE_API_URL=https://vms-6qfs.onrender.com npm ci && npm run build",
+  "version": 2,
+  "buildCommand": "VITE_API_URL=https://vms-6qfs.onrender.com npm run build",
   "outputDirectory": "dist",
+  "framework": "vite",
   "rewrites": [
     {
-      "source": "/(?!.*\\.(js|css|json|svg|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot|map)$)(.*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
