@@ -5,7 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 const useBranding = () => {
   const { user } = useContext(AuthContext);
   const [branding, setBranding] = useState({
-    logoUrl: '',
+    logoUrl: '/logo.png',
     primaryColor: '#1d4ed8',
     secondaryColor: '#10b981',
     accentColor: '#f59e0b',
@@ -35,7 +35,7 @@ const useBranding = () => {
         }
 
         setBranding({
-          logoUrl: data.logoUrl,
+          logoUrl: data.logoUrl || '/logo.png',
           primaryColor: primary,
           secondaryColor: secondary,
           accentColor: accent,
@@ -44,6 +44,7 @@ const useBranding = () => {
         });
       } catch (error) {
         console.error('Failed to fetch branding:', error);
+        setBranding(prev => ({ ...prev, logoUrl: '/logo.png' }));
       }
     };
     fetchBranding();
