@@ -20,15 +20,17 @@ const DEFAULT_CONFIG = {
   officerSig: "",
   officerName: "Dr. R. K. Singh",
   validThru: "DEC 2026",
-  // Legacy color support (optional)
   roleColors: {
-    'Secretary': '#dc2626',
-    'Volunteer': '#2563eb'
+    'Secretary': '#EBF855',
+    'DomainHead': '#EBF855',
+    'AssociateHead': '#EBF855',
+    'Volunteer': '#EBF855'
   }
 };
 
 const SecretaryCustomizer = ({ userSample }) => {
   const [config, setConfig] = useState(DEFAULT_CONFIG);
+  const [previewRole, setPreviewRole] = useState('Volunteer');
 
   // Load saved config on mount
   useEffect(() => {
@@ -68,18 +70,17 @@ const SecretaryCustomizer = ({ userSample }) => {
     alert("✅ ID Card Configuration Published Successfully!");
   };
 
-  // Mock User for Preview
+  // Mock User for Preview - Now more dynamic
   const previewUser = {
     ...userSample,
     name: userSample?.name || "Rahul Sharma",
-    role: "Volunteer",
-    rollNumber: "VOL-2024-001",
-    bloodGroup: "B+",
-    branch: "CSE",
-    year: "2ND",
+    role: previewRole,
+    rollNumber: userSample?.rollNumber || "VOL-2024-001",
+    bloodGroup: userSample?.bloodGroup || "B+",
+    branch: userSample?.branch || userSample?.department || "CSE",
+    year: userSample?.year || userSample?.academicYear || "2ND",
     collegeName: config.subHeader, 
-    // Use a placeholder image if none exists
-    profileImage: userSample?.profileImage || "https://ui-avatars.com/api/?name=Rahul+Sharma&background=random"
+    profileImage: userSample?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(userSample?.name || 'Rahul Sharma')}&background=EBF855&color=000`
   };
 
   return (
@@ -260,32 +261,95 @@ const SecretaryCustomizer = ({ userSample }) => {
           </div>
         </div>
 
+        {/* 3. ROLE-BASED BRANDING */}
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
+          <h2 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2 pb-4 border-b border-slate-100">
+            <LayoutTemplate className="text-purple-600" /> 3. Role-Based Branding
+          </h2>
+          
+          <div className="grid grid-cols-2 gap-4">
+            {Object.keys(config.roleColors).map((role) => (
+              <div key={role} className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  {role.replace(/([A-Z])/g, ' $1').trim()} Color
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={config.roleColors[role]}
+                    onChange={(e) => setConfig({
+                      ...config, 
+                      roleColors: { ...config.roleColors, [role]: e.target.value }
+                    })}
+                    className="w-10 h-10 rounded-lg cursor-pointer border-none p-0 bg-transparent"
+                  />
+                  <input
+                    type="text"
+                    value={config.roleColors[role]}
+                    onChange={(e) => setConfig({
+                      ...config, 
+                      roleColors: { ...config.roleColors, [role]: e.target.value }
+                    })}
+                    className="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-bold"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
 
-      <div className="xl:col-span-5">
-          <div className="sticky top-6">
-            <div className="flex flex-col items-center justify-center py-12 px-2 sm:px-8 bg-slate-200 rounded-[3rem] border-4 border-white shadow-xl min-h-[500px] lg:min-h-[600px] relative overflow-visible">
+      <div className="xl:col-span-5 h-full">
+          <div className="sticky top-6 h-full min-h-[calc(100vh-3rem)]">
+            <div className="h-full flex flex-col items-center justify-center py-12 px-2 sm:px-8 bg-slate-900 rounded-[3rem] border-4 border-slate-800 shadow-2xl relative overflow-hidden transition-all duration-500">
               
-              <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none rounded-[3rem]" 
-                   style={{ backgroundImage: 'radial-gradient(#94a3b8 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
+              {/* Animated Background Overlay */}
+              <div className="absolute inset-0 opacity-20 pointer-events-none" 
+                   style={{ 
+                     backgroundImage: `radial-gradient(circle at 2px 2px, #3b82f6 1px, transparent 0)`, 
+                     backgroundSize: '24px 24px' 
+                   }}>
               </div>
 
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-8 flex items-center gap-2 z-10 bg-white/50 px-4 py-1 rounded-full">
-                 <Eye size={14}/> Live Preview
-              </p>
+              {/* Status Badge */}
+              <div className="mb-8 flex flex-col items-center gap-4 z-10">
+                <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] flex items-center gap-2 bg-blue-500/10 px-4 py-1.5 rounded-full border border-blue-500/20">
+                   <Eye size={14}/> Live Design Engine
+                </p>
+                
+                {/* Role Toggle for Preview */}
+                <div className="flex bg-slate-800 p-1 rounded-xl border border-slate-700">
+                  {['Secretary', 'DomainHead', 'AssociateHead', 'Volunteer'].map(r => (
+                    <button
+                      key={r}
+                      onClick={() => setPreviewRole(r === 'DomainHead' ? 'Domain Head' : r === 'AssociateHead' ? 'Associate Head' : r)}
+                      className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all ${
+                        (previewRole === r || (r === 'DomainHead' && previewRole === 'Domain Head') || (r === 'AssociateHead' && previewRole === 'Associate Head'))
+                          ? 'bg-blue-600 text-white shadow-lg' 
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {r === 'DomainHead' ? 'DH' : r === 'AssociateHead' ? 'AH' : r.charAt(0)}
+                    </button>
+                  ))}
+                </div>
+              </div>
               
-              {/* The Actual ID Card Component */}
-              <div className="scale-75 sm:scale-90 xl:scale-100 transform transition-transform duration-500 hover:scale-105 origin-center">
-                  <IDCardFrame>
-                      {{
-                      front: <IDCardRenderer user={previewUser} config={config} verified={true} />,
-                      back: <IDCardRenderer user={previewUser} config={config} verified={true} isBack={true} />
-                      }}
-                  </IDCardFrame>
+              {/* The Actual ID Card Component - Responsive Scaling */}
+              <div className="w-full flex justify-center items-center perspective-1000">
+                  <div className="scale-[0.8] lg:scale-[0.85] xl:scale-[1.1] 2xl:scale-[1.25] transform transition-all duration-700 hover:rotate-1 origin-center">
+                    <IDCardFrame>
+                        {{
+                        front: <IDCardRenderer user={previewUser} config={config} verified={true} />,
+                        back: <IDCardRenderer user={previewUser} config={config} verified={true} isBack={true} />
+                        }}
+                    </IDCardFrame>
+                  </div>
               </div>
 
-              <p className="mt-8 xl:mt-12 text-center text-[10px] font-bold text-slate-500 max-w-[200px] z-10">
-                Flip the card to see the QR Code and Return Info.
+              <p className="mt-12 text-center text-[10px] font-bold text-slate-500 max-w-[200px] z-10 leading-relaxed">
+                <span className="text-blue-500">Pro Tip:</span> Flip the card to verify the QR and return details.
               </p>
             </div>
           </div>

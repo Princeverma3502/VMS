@@ -7,7 +7,27 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
   if (!user) return null;
 
   // Design Constants
-  const HEADER_COLOR = 'bg-[#EBF855]'; // NSS Yellow
+  const getHeaderColor = () => {
+    if (!config?.roleColors) return '#EBF855';
+    // Normalize role string (remove spaces, e.g. "Domain Head" -> "DomainHead")
+    const roleKey = user.role?.replace(/\s+/g, '') || 'Volunteer';
+    return config.roleColors[roleKey] || '#EBF855';
+  };
+
+  const HEADER_COLOR = getHeaderColor();
+
+  // Helper for Contrast Text (simple luma check)
+  const getContrastText = (hexcolor) => {
+    if (!hexcolor || typeof hexcolor !== 'string' || hexcolor.length < 6) return 'text-slate-900';
+    const hex = hexcolor.replace("#", "");
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return (yiq >= 128) ? 'text-slate-900' : 'text-white';
+  };
+
+  const TEXT_COLOR = getContrastText(HEADER_COLOR);
 
   // --- BACK SIDE ---
   if (isBack) {
@@ -41,8 +61,11 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
   return (
       <div className="w-full h-full bg-white relative flex flex-col rounded-3xl overflow-hidden shadow-2xl font-sans pt-6 aspect-[0.63]">
 
-      {/* 1. HEADER (Yellow Zone - 35% Height) */}
-      <div className={`${HEADER_COLOR} h-[50%] relative w-full px-3 py-10 mt-[-2em] flex flex-col items-center justify-center`}>
+      {/* 1. HEADER (Dynamic Zone - 35% Height) */}
+      <div 
+        className="h-[50%] relative w-full px-3 py-10 mt-[-2em] flex flex-col items-center justify-center transition-colors duration-500"
+        style={{ backgroundColor: HEADER_COLOR }}
+      >
         <div className="flex items-center justify-between w-full mb-2">
           {/* Top-Left: College Logo */}
           <div className="w-14 h-14 rounded-full shadow-sm flex items-center justify-center overflow-hidden border-2 border-transparent bg-white flex-shrink-0">
@@ -65,10 +88,10 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
 
         {/* Center: Heading and Subheading */}
         <div className="flex-1  flex flex-col items-center justify-center px-4 w-full">
-          <p className="text-xs font-black mt-[-9em] text-slate-900 uppercase tracking-wider text-center leading-tight">
+          <p className={`text-xs font-black mt-[-9em] uppercase tracking-wider text-center leading-tight ${TEXT_COLOR}`}>
             {config.universityName || "NATIONAL SERVICE SCHEME"}
           </p>
-          <p className="text-[9px] font-bold text-slate-700 text-center leading-tight mt-1">
+          <p className={`text-[9px] font-bold text-center leading-tight mt-1 opacity-80 ${TEXT_COLOR}`}>
             {config.collegeSubheading || "Harcourt Butler Technical University"}
           </p>
         </div>
@@ -94,7 +117,10 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
           {user.name}
         </h1>
         <div className="flex flex-col items-center gap-1">
-          <span className={`${HEADER_COLOR} text-slate-900 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm`}>
+          <span 
+            className={`px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm transition-all duration-500 ${TEXT_COLOR}`}
+            style={{ backgroundColor: HEADER_COLOR }}
+          >
             {user.role || 'VOLUNTEER'}
           </span>
         </div>
@@ -137,11 +163,11 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
               <img src={config.secretarySig} alt="Secretary Signature" className="h-full object-contain" />
             </div>
           )}
-          <div className="w-20 h-[1px] bg-slate-300 mb-1"></div>
+          <div className="w-20 h-[1px] bg-slate-200 mb-1"></div>
           <p className="text-[8px] font-bold text-slate-500 uppercase tracking-wide">
             {config.secretaryName || "Secretary"}
           </p>
-          <p className="text-[10px] ">Student Secretary</p>
+          <p className="text-[10px] font-medium text-slate-400">Student Secretary</p>
         </div>
 
         {/* Bottom-Right: Program Officer Signature */}
@@ -151,23 +177,23 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
               <img src={config.officerSig} alt="Officer Signature" className="h-full object-contain" />
             </div>
           )}
-          <div className="w-27 h-[1px] bg-slate-300 mb-1"></div>
+          <div className="w-27 h-[1px] bg-slate-200 mb-1"></div>
           <p className="text-[8px] font-bold text-slate-500 uppercase tracking-wide">
             {config.officerName || "Program Officer"}
           </p>
-          <p className="text-[10px] ">Program Officer</p>
+          <p className="text-[10px] font-medium text-slate-400">Program Officer</p>
         </div>
       </div>
 
       {/* Validity Indicator */}
       <div className="px-8 pb-2 text-center">
-        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+        <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">
           Valid Till: {config.validThru || 'N/A'}
         </p>
       </div>
 
       {/* Bottom Stripe */}
-      <div className={`${HEADER_COLOR} h-2 w-full absolute bottom-0`}></div>
+      <div className="h-2 w-full absolute bottom-0" style={{ backgroundColor: HEADER_COLOR }}></div>
     </div>
   );
 };
