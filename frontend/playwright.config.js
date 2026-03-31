@@ -21,11 +21,11 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  // Auto-start the Vite dev server before running tests
+  // Auto-start the Vite dev server before running tests (uses .env.test → live Render backend)
   webServer: {
-    command: 'npm run dev',
+    command: 'npx vite --mode test',
     url: 'http://localhost:5173',
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     timeout: 120000,
   },
 });

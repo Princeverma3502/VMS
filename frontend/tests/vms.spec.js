@@ -15,6 +15,18 @@ async function login(page, user) {
   await page.locator('input[type="email"]').fill(user.email);
   await page.locator('input[type="password"]').fill(PASS);
   await page.locator('button[type="submit"]').click();
+  
+  // Handle Streak Modal if it appears
+  const streakModalCloseBtn = page.locator('button:has-text("Continue"), button:has-text("Close"), .streak-modal button').first();
+  try {
+    // Wait briefly to see if it pops up
+    if (await streakModalCloseBtn.isVisible({ timeout: 5000 })) {
+      await streakModalCloseBtn.click();
+    }
+  } catch (e) {
+    // Modal might not appear, continue
+  }
+
   // Wait for navigation away from login
   await page.waitForURL(u => !u.toString().includes('/login'), { timeout: 20000 });
 }
