@@ -20,7 +20,7 @@ jobs:
         
     - name: Install dependencies
       working-directory: ./frontend
-      run: npm ci
+      run: npm install --no-fund --no-audit
       
     - name: Install Playwright Browsers
       working-directory: ./frontend
