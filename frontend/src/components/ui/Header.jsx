@@ -10,25 +10,27 @@ const Header = ({ onOpenCommand }) => {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-50 bg-white/30 backdrop-blur-md border-b border-white/10" style={{ borderColor: primaryColor + '20' }}>
-      <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-4">
-        {logoUrl && <img src={logoUrl} alt={collegeName} className="h-10 w-auto" />}
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
+      <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-6">
+        {logoUrl && <img src={logoUrl} alt={collegeName} className="h-12 w-auto drop-shadow-sm" />}
         <div className="flex-1">
-          <div className="cmd-palette flex items-center gap-3 p-2 rounded-lg" style={{ backgroundColor: primaryColor + '15' }}>
-            <Search className="text-white/90" />
+          <div className="cmd-palette flex items-center gap-4 px-5 py-3 rounded-2xl bg-slate-100 border border-slate-200 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500">
+            <Search className="text-slate-400" size={18} />
             <input
               onFocus={onOpenCommand}
-              placeholder="Quick actions, search people or commands..."
+              placeholder="Search people, missions or knowledge..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/search?q=${encodeURIComponent(query)}`); }}
-              className="flex-1 bg-transparent placeholder-white/70 outline-none text-white"
+              className="flex-1 bg-transparent placeholder-slate-400 outline-none text-slate-900 font-bold text-sm"
             />
           </div>
         </div>
-        <div className="hidden md:flex items-center gap-4 text-white/90">
-          <div className="text-sm">Welcome back</div>
-          <div className="text-sm font-medium">{new Date().toLocaleDateString()}</div>
+        <div className="hidden md:flex items-center gap-6">
+          <div className="text-right">
+             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Authenticated</p>
+             <p className="text-sm font-black text-slate-900">{new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</p>
+          </div>
         </div>
       </div>
       <div className="bg-transparent border-t border-white/5 py-2">

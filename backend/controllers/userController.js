@@ -178,6 +178,9 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   }
 
   const filter = {};
+  if (!req.user.isSuperAdmin && req.user.collegeId) {
+    filter.collegeId = req.user.collegeId;
+  }
   if (role && role !== 'all') filter.role = role;
   if (bloodGroup && bloodGroup !== 'all') filter.bloodGroup = bloodGroup;
   if (search) {
@@ -206,6 +209,11 @@ export const updateUserBloodGroup = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 
+  if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
+    res.status(403);
+    throw new Error('Forbidden: User does not belong to your college');
+  }
+
   user.bloodGroup = bloodGroup;
   await user.save();
 
@@ -221,6 +229,11 @@ export const approveUser = asyncHandler(async (req, res) => {
   if (!user) {
     res.status(404);
     throw new Error('User not found');
+  }
+
+  if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
+    res.status(403);
+    throw new Error('Forbidden: User does not belong to your college');
   }
 
   user.isApproved = true;
@@ -240,6 +253,11 @@ export const rejectUser = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 
+  if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
+    res.status(403);
+    throw new Error('Forbidden: User does not belong to your college');
+  }
+
   user.isApproved = false;
   await user.save();
 
@@ -256,6 +274,11 @@ export const updateUserRole = asyncHandler(async (req, res) => {
   if (!user) {
     res.status(404);
     throw new Error('User not found');
+  }
+
+  if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
+    res.status(403);
+    throw new Error('Forbidden: User does not belong to your college');
   }
 
   const allowedRoles = ['Volunteer', 'Secretary', 'Domain Head', 'Associate Head'];
@@ -319,6 +342,11 @@ export const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (user) {
+    if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
+      res.status(403);
+      throw new Error('Forbidden: User does not belong to your college');
+    }
+    
     // Prevent deleting SuperAdmin or Self easily
     if (user.isSuperAdmin) {
         res.status(400);
@@ -345,9 +373,53 @@ export const getBloodGroupStats = asyncHandler(async (req, res) => {
   res.json(stats);
 });
 
-// @desc    Get All Users with optional blood group filter
-// @route   GET /users
-// @access  Private (Admin/Secretary)
+// @desc    Update a user administratively (Secretary/Admin)
+// @route   PUT /users/:id
+// @access  Private (Secretary/Admin)
+export const updateUser = asyncHandler(async (req, res) => {
+  const { name, email, role, collegeId } = req.body;
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  // Multi-tenancy check
+  if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
+    res.status(403);
+    throw new Error('Forbidden: User does not belong to your college');
+  }
+
+  // Prevent elevation to Super Admin if requester is not a Super Admin
+  if (role === 'admin' && !req.user.isSuperAdmin) {
+    res.status(403);
+    throw new Error('Only Super Admins can assign the admin role');
+  }
+
+  user.name = name || user.name;
+  user.email = email || user.email;
+  user.role = role || user.role;
+  
+  // Only Super Admin can change a user's college association directly
+  if (req.user.isSuperAdmin && collegeId) {
+    user.collegeId = collegeId;
+  }
+
+  const updatedUser = await user.save();
+
+  res.json({
+    message: 'User updated successfully',
+    user: {
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      collegeId: updatedUser.collegeId
+    }
+  });
+});
+
 export const getAllUsersFiltered = asyncHandler(async (req, res) => {
   const { search, role, bloodGroup } = req.query;
   

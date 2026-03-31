@@ -62,8 +62,13 @@ const Navbar = ({ userName = "User", showBackButton = false }) => {
       </div>
 
       {/* 2. RIGHT: Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-4">
         
+        {/* Unit Branding (Mobile Only) */}
+        <div className="sm:hidden flex items-center gap-2 bg-blue-50 px-2 py-1 rounded-lg border border-blue-100">
+            <img src="/logo.png" alt="NSS" className="w-5 h-5 object-contain" />
+            <span className="text-[10px] font-black text-blue-700 uppercase tracking-tighter italic">NSS Portal</span>
+        </div>
         {/* Notification Icon */}
         <div className="relative">
           <button 
@@ -88,45 +93,21 @@ const Navbar = ({ userName = "User", showBackButton = false }) => {
           )}
         </div>
         
-        {/* User Profile Menu */}
-        <div className="relative">
+        {/* Secretary Profile Section (Desktop/Mobile) */}
+        {user?.role === 'Secretary' && (
           <button 
-            onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center gap-3 pl-3 py-1 hover:bg-slate-50 rounded-xl transition-all border border-transparent hover:border-slate-100"
+            onClick={handleProfileClick}
+            className="flex items-center gap-2 p-1.5 sm:p-2 hover:bg-slate-100 rounded-xl transition-all group"
           >
-            <div className="text-right hidden md:block">
-              <p className="text-sm font-black text-slate-900 leading-none">{displayName}</p>
-              <p className="text-[10px] font-bold text-green-600 uppercase tracking-wider mt-0.5">Online</p>
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+              {user?.name?.charAt(0) || 'S'}
             </div>
-            <div className="w-9 h-9 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-bold overflow-hidden">
-               {user?.profileImage ? (
-                 <img src={user.profileImage} alt="User" className="w-full h-full object-cover" />
-               ) : (
-                 <UserCircle size={24} />
-               )}
+            <div className="hidden md:block text-left">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Secretary</p>
+              <p className="text-sm font-bold text-slate-900 leading-none">{user?.name || 'Secretary'}</p>
             </div>
           </button>
-
-          {/* User Menu Dropdown */}
-          {showUserMenu && (
-            <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-slate-200 z-50 animate-in fade-in slide-in-from-top-2">
-              <div className="p-4 border-b border-slate-100 md:hidden">
-                <p className="font-bold text-slate-900">{displayName}</p>
-                <p className="text-xs text-slate-500">{user?.email}</p>
-              </div>
-              
-              <nav className="p-2 space-y-1">
-                <button
-                  onClick={() => { navigate('/settings'); setShowUserMenu(false); }}
-                  className="w-full text-left px-3 py-2.5 hover:bg-slate-50 rounded-lg transition-colors text-slate-700 text-sm font-bold flex items-center gap-3"
-                >
-                  <Settings size={18} className="text-slate-500" /> Settings
-                </button>
-                
-              </nav>
-            </div>
-          )}
-        </div>
+        )}
 
       </div>
     </header>

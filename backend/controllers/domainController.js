@@ -29,7 +29,8 @@ export const createDomain = async (req, res) => {
     // 3. Create Domain
     const domain = await Domain.create({
       name,
-      head: headId
+      head: headId,
+      collegeId: req.user.collegeId // Multi-tenancy fix
     });
 
     res.status(201).json(domain);
@@ -42,7 +43,11 @@ export const createDomain = async (req, res) => {
 // @route   GET /domains
 export const getAllDomains = async (req, res) => {
   try {
-    const domains = await Domain.find({}).populate('head', 'name email');
+    const filter = {};
+    if (!req.user.isSuperAdmin && req.user.collegeId) {
+      filter.collegeId = req.user.collegeId;
+    }
+    const domains = await Domain.find(filter).populate('head', 'name email');
     res.status(200).json(domains || []);
   } catch (error) {
     console.error('Get Domains Error:', error.message);

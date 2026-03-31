@@ -29,6 +29,7 @@ import ManageTasks from './pages/admin/ManageTasks';
 import SecretaryScanner from './pages/admin/SecretaryScanner';
 import UserManagement from './pages/admin/UserManagement';
 import SecretaryProfile from './pages/admin/SecretaryProfile';
+import DomainHeadDashboard from './pages/admin/DomainHeadDashboard';
 import DomainHeadProfile from './pages/admin/DomainHeadProfile';
 import AssociateHeadProfile from './pages/admin/AssociateHeadProfile';
 import EventManagement from './pages/admin/EventManagement';
@@ -187,6 +188,11 @@ const App = ({ onReady }) => {
             } />
 
             {/* Domain Head Routes */}
+            <Route path="/domain-head/dashboard" element={
+              <ProtectedRoute role="domain-head">
+                <DomainHeadDashboard />
+              </ProtectedRoute>
+            } />
             <Route path="/domain-head/profile" element={
               <ProtectedRoute role="domain-head">
                 <DomainHeadProfile />
@@ -194,6 +200,11 @@ const App = ({ onReady }) => {
             } />
 
             {/* Associate Head Routes */}
+            <Route path="/associate-head/dashboard" element={
+              <ProtectedRoute role="associate-head">
+                <BentoDashboard />
+              </ProtectedRoute>
+            } />
             <Route path="/associate-head/profile" element={
               <ProtectedRoute role="associate-head">
                 <AssociateHeadProfile />

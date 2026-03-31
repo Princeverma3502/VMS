@@ -14,29 +14,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 2. THE "GHOST BUSTER" RULES (Crucial) */
-/* Forces specific elements to be dark, overriding Tailwind utilities if necessary */
-h1, h2, h3, h4, h5, h6, p, span, li, div {
-  color: #0f172a; 
-}
-
-/* 3. EXCEPTIONS: Allow White Text ONLY on Dark Backgrounds */
-/* We target specific dark containers to allow white text inside them */
-.bg-blue-600 *, .bg-slate-900 *, .bg-red-600 *, .text-white {
-  color: #ffffff !important;
-}
-
-/* 4. FIX FAINT ICONS */
-.lucide {
-  stroke: #334155; /* Slate-700 (Dark Gray) */
-  stroke-width: 2px;
-}
-/* Allow colored icons */
-.text-blue-600 .lucide { stroke: #2563eb; }
-.text-red-600 .lucide { stroke: #dc2626; }
-.text-green-600 .lucide { stroke: #16a34a; }
-.text-yellow-500 .lucide { stroke: #eab308; }
-.text-white .lucide { stroke: #ffffff; }
+/* Cleaned up destructive global rules */
 
 /* 5. INPUT VISIBILITY (Search Bar & Forms) */
 input, textarea, select {
@@ -85,3 +63,41 @@ img {
 }
 .flip-card-back { transform: rotateY(180deg); }
 .flipped .flip-card-inner { transform: rotateY(180deg); }
+
+/* 9. ELITE ANIMATIONS */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(0.98); }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+/* 10. PREMIUM UTILITIES */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}

@@ -38,8 +38,8 @@ const UserManagement = () => {
       setUsers(data);
       setLoading(false);
     } catch (err) {
-      setError('Failed to fetch users.');
-      toast.error('Failed to fetch users.');
+      setError(err.message === 'Network Error' || err.code === 'ERR_NETWORK' ? 'Connection lost to server.' : 'Failed to fetch users.');
+      toast.error('Network error. Check if backend is running.');
       setLoading(false);
       console.error(err);
     }
@@ -129,7 +129,21 @@ const UserManagement = () => {
   }
 
   if (error) {
-    return <Layout><div className="text-red-500 text-center">{error}</div></Layout>;
+    return (
+      <Layout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+          <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700 font-bold max-w-md text-center">
+            {error}
+          </div>
+          <button 
+            onClick={() => { setError(null); fetchUsers(); }}
+            className="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all"
+          >
+            Retry Connection
+          </button>
+        </div>
+      </Layout>
+    );
   }
 
   return (

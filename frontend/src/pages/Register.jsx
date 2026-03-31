@@ -122,8 +122,11 @@ const Register = () => {
             <Link to="/login" className="text-sm font-medium">Back</Link>
         </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
-        <p className="text-gray-500 mb-8">Join the National Service Scheme (NSS)</p>
+        <div className="w-20 h-20 mb-6">
+            <img src="/logo.png" alt="NSS Logo" className="w-full h-full object-contain" />
+        </div>
+        <h1 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">Create Account</h1>
+        <p className="text-gray-500 mb-8 font-medium">Join the National Service Scheme (NSS)</p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {error && (

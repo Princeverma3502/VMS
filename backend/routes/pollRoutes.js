@@ -11,10 +11,10 @@ import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Public routes
-router.get('/', getPolls);
-router.get('/:id', getPollById);
-router.get('/:pollId/results', getPollResults);
+// Protected routes
+router.get('/', protect, getPolls);
+router.get('/:id', protect, getPollById);
+router.get('/:pollId/results', protect, getPollResults);
 
 // Protected routes
 router.post('/', protect, authorize('Secretary', 'Domain Head'), createPoll);

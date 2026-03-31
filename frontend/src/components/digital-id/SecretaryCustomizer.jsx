@@ -240,9 +240,9 @@ const SecretaryCustomizer = ({ userSample }) => {
 
       <div className="xl:col-span-5">
           <div className="sticky top-6">
-            <div className="flex flex-col items-center justify-center p-8 bg-slate-200 rounded-[3rem] border-4 border-white shadow-xl min-h-[600px] relative overflow-hidden">
+            <div className="flex flex-col items-center justify-center py-12 px-2 sm:px-8 bg-slate-200 rounded-[3rem] border-4 border-white shadow-xl min-h-[500px] lg:min-h-[600px] relative overflow-visible">
               
-              <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" 
+              <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none rounded-[3rem]" 
                    style={{ backgroundImage: 'radial-gradient(#94a3b8 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
               </div>
 
@@ -251,7 +251,7 @@ const SecretaryCustomizer = ({ userSample }) => {
               </p>
               
               {/* The Actual ID Card Component */}
-              <div className="scale-80 sm:scale-90 transform transition-transform duration-500 hover:scale-105">
+              <div className="scale-75 sm:scale-90 xl:scale-100 transform transition-transform duration-500 hover:scale-105 origin-center">
                   <IDCardFrame>
                       {{
                       front: <IDCardRenderer user={previewUser} config={config} verified={true} />,
@@ -260,7 +260,7 @@ const SecretaryCustomizer = ({ userSample }) => {
                   </IDCardFrame>
               </div>
 
-              <p className="mt-12 text-center text-[10px] font-bold text-slate-500 max-w-[200px] z-10">
+              <p className="mt-8 xl:mt-12 text-center text-[10px] font-bold text-slate-500 max-w-[200px] z-10">
                 Flip the card to see the QR Code and Return Info.
               </p>
             </div>

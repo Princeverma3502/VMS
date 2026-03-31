@@ -107,10 +107,10 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// 3. Prevent Brute Force (Limit: 100 requests per 10 mins)
+// 3. Prevent Brute Force (Limit: 1000 requests per 10 mins for heavy dashboard usage)
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, 
-  max: 100,
+  max: 1000,
   message: 'Too many requests from this IP, please try again after 10 minutes'
 });
 app.use('/', limiter);

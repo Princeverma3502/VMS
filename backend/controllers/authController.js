@@ -210,6 +210,10 @@ export const getPendingUsers = asyncHandler(async (req, res) => {
 export const approveUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
   if (user) {
+    if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
+      res.status(403);
+      throw new Error('Forbidden: User does not belong to your college');
+    }
     user.isApproved = true;
     await user.save();
     res.json({ message: 'User approved successfully' });
@@ -225,6 +229,11 @@ export const resetUserPassword = asyncHandler(async (req, res) => {
   if (!user) {
     res.status(404);
     throw new Error('User not found');
+  }
+
+  if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
+    res.status(403);
+    throw new Error('Forbidden: User does not belong to your college');
   }
   
   // Directly set password; Model pre-save hook will detect modification and hash it

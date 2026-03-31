@@ -61,6 +61,12 @@ const pollSchema = new mongoose.Schema(
       enum: ['all', 'domain', 'ngo'],
       default: 'all',
     },
+    collegeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'College',
+      required: true,
+      index: true
+    },
   },
   { timestamps: true }
 );

@@ -41,6 +41,11 @@ export const deleteTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
+
+    // Multi-tenant check
+    if (!req.user.isSuperAdmin && task.collegeId && req.user.collegeId && task.collegeId.toString() !== req.user.collegeId.toString()) {
+      return res.status(403).json({ message: "Forbidden: Not authorized to modify this task" });
+    }
     
     await task.deleteOne();
     res.json({ message: "Task removed" });
@@ -55,6 +60,11 @@ export const claimTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
+
+    // Multi-tenant check
+    if (!req.user.isSuperAdmin && task.collegeId && req.user.collegeId && task.collegeId.toString() !== req.user.collegeId.toString()) {
+      return res.status(403).json({ message: "Forbidden: Not authorized to interact with this task" });
+    }
 
     // Check if user already claimed it (compare string representations)
     const alreadyAssigned = task.assignedUsers.some(a => a.toString() === req.user._id.toString());
@@ -80,6 +90,11 @@ export const submitTask = async (req, res) => {
     const task = await Task.findById(req.params.id);
 
     if (!task) return res.status(404).json({ message: "Task not found" });
+
+    // Multi-tenant check
+    if (!req.user.isSuperAdmin && task.collegeId && req.user.collegeId && task.collegeId.toString() !== req.user.collegeId.toString()) {
+      return res.status(403).json({ message: "Forbidden: Not authorized to interact with this task" });
+    }
     
     task.status = 'Completed';
     task.submissionDetails = submissionData;
@@ -101,6 +116,11 @@ export const verifyTask = async (req, res) => {
     // 1. Find the task and populate assigned users
     const task = await Task.findById(taskId).populate('assignedUsers');
     if (!task) return res.status(404).json({ message: "Task not found" });
+
+    // Multi-tenant check
+    if (!req.user.isSuperAdmin && task.collegeId && req.user.collegeId && task.collegeId.toString() !== req.user.collegeId.toString()) {
+      return res.status(403).json({ message: "Forbidden: Not authorized to interact with this task" });
+    }
 
     if (task.status !== 'Completed') {
       return res.status(400).json({ message: "Only completed tasks can be verified" });

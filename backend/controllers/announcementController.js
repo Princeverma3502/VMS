@@ -66,11 +66,10 @@ export const createAnnouncement = asyncHandler(async (req, res) => {
 // @desc    Get all announcements for the logged-in user
 // @route   GET /announcements
 export const getAnnouncements = asyncHandler(async (req, res) => {
-  const { _id: userId, collegeId, role } = req.user;
-
-  if (!collegeId) {
-    res.status(400);
-    throw new Error('User is not associated with a college.');
+  const { _id: userId, collegeId, role } = req.user || {};
+  
+  if (!req.user || !collegeId) {
+    return res.json([]);
   }
 
   const query = {
@@ -117,7 +116,7 @@ export const markAnnouncementRead = asyncHandler(async (req, res) => {
 
   // Check if user already marked as read
   const alreadyRead = announcement.readBy.some(
-    r => r.userId.toString() === req.user._id.toString()
+    r => r.userId && r.userId.toString() === req.user._id.toString()
   );
 
   if (!alreadyRead) {
@@ -145,7 +144,7 @@ export const getAnnouncementStats = asyncHandler(async (req, res) => {
   }
 
   // Only creator can see stats
-  if (announcement.createdBy.toString() !== req.user._id.toString()) {
+  if (!announcement.createdBy || announcement.createdBy.toString() !== req.user._id.toString()) {
     res.status(403);
     throw new Error('Only the creator can view stats');
   }
@@ -166,7 +165,7 @@ export const deleteAnnouncement = asyncHandler(async (req, res) => {
     throw new Error('Announcement not found');
   }
 
-  if (announcement.createdBy.toString() !== req.user._id.toString()) {
+  if (!announcement.createdBy || announcement.createdBy.toString() !== req.user._id.toString()) {
     res.status(403);
     throw new Error('You can only delete your own announcements');
   }

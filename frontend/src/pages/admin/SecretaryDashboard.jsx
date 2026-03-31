@@ -163,29 +163,37 @@ const SecretaryDashboard = () => {
 
   return (
     <Layout userRole={user?.role} showBackButton={true}>
-      
+      <div className="mb-10">
+        <h1 className="text-4xl font-black text-purple-900 tracking-tighter flex items-center gap-4">
+          <div className="p-3 bg-purple-600 rounded-2xl shadow-lg shadow-purple-200">
+            <ShieldCheck className="text-white" size={32} />
+          </div>
+          Secretary Command
+        </h1>
+        <p className="mt-2 text-purple-700 font-medium">Unit administration, multi-tenancy controls, and global oversight.</p>
+      </div>
 
       {/* STATS SECTION */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <StatCard label="Tasks to Verify" value={stats.pendingTasks} icon={<ClipboardList size={24}/>} type="purple" />
-        <StatCard label="Total Events" value={stats.events} icon={<Calendar size={24}/>} type="default" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-10">
+        <StatCard label="Tasks Queue" value={stats.pendingTasks} icon={<ClipboardList size={20}/>} type="purple" />
+        <StatCard label="Active Events" value={stats.events} icon={<Calendar size={20}/>} type="default" />
         {isSecretary && (
           <>
-            <StatCard label="NGOs" value={stats.ngos} icon={<Building2 size={24}/>} type="success" />
-            <StatCard label="Pending" value={stats.pendingApprovals} icon={<UserPlus size={24}/>} type="gold" />
+            <StatCard label="Partner NGOs" value={stats.ngos} icon={<Building2 size={20}/>} type="success" />
+            <StatCard label="New Requests" value={stats.pendingApprovals} icon={<UserPlus size={20}/>} type="gold" />
           </>
         )}
       </div>
 
       {/* NAVIGATION TABS */}
-      <div className="flex border-b border-gray-200 mb-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
+      <div className="flex bg-purple-50 p-1.5 rounded-2xl mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide gap-1 border border-purple-200/50">
         {isSecretary && (
-          <button onClick={() => setActiveTab('overview')} className={`px-6 py-3 font-bold transition-all ${activeTab === 'overview' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-500'}`}>Admin Overview</button>
+          <button onClick={() => setActiveTab('overview')} className={`px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'overview' ? 'bg-white text-purple-700 shadow-sm' : 'text-purple-600 hover:text-purple-800'}`}>Admin Overview</button>
         )}
-        <button onClick={() => setActiveTab('tasks')} className={`px-6 py-3 font-bold transition-all ${activeTab === 'tasks' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-500'}`}>Task Mgmt</button>
-        <button onClick={() => setActiveTab('events')} className={`px-6 py-3 font-bold transition-all ${activeTab === 'events' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-500'}`}>Events</button>
+        <button onClick={() => setActiveTab('tasks')} className={`px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'tasks' ? 'bg-white text-purple-700 shadow-sm' : 'text-purple-600 hover:text-purple-800'}`}>Task Mgmt</button>
+        <button onClick={() => setActiveTab('events')} className={`px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'events' ? 'bg-white text-purple-700 shadow-sm' : 'text-purple-600 hover:text-purple-800'}`}>Unit Events</button>
         {isSecretary && (
-          <button onClick={() => setActiveTab('audit')} className={`px-6 py-3 font-bold transition-all ${activeTab === 'audit' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-500'}`}>Audit Logs</button>
+          <button onClick={() => setActiveTab('audit')} className={`px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'audit' ? 'bg-white text-purple-700 shadow-sm' : 'text-purple-600 hover:text-purple-800'}`}>Audit Logs</button>
         )}
       </div>
 
@@ -193,9 +201,9 @@ const SecretaryDashboard = () => {
       {activeTab === 'overview' && isSecretary && (
         <div className="space-y-8 animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <button 
+            <button
               onClick={() => setShowAnnouncementForm(true)}
-              className="bg-blue-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-lg"
+              className="bg-purple-700 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-lg hover:bg-purple-800"
             >
               <Bell size={20} /> New Announcement
             </button>
@@ -212,27 +220,27 @@ const SecretaryDashboard = () => {
               <DomainForm users={allDomainHeads} onSubmit={handleCreateDomain} />
             </div>
             <div className="space-y-8">
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2"><UserPlus size={20}/> Approvals</h3>
-                {pendingUsers.length === 0 && <p className="text-gray-400 text-sm italic">No pending registrations.</p>}
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-purple-100">
+                <h3 className="font-bold text-purple-900 mb-4 flex items-center gap-2"><UserPlus size={20}/> Approvals</h3>
+                {pendingUsers.length === 0 && <p className="text-purple-500 text-sm italic">No pending registrations.</p>}
                 {pendingUsers.map(u => (
-                  <div key={u._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg mb-2">
-                    <span className="text-sm font-medium">{u.name}</span>
-                    <button onClick={() => handleApproveUser(u._id)} className="text-xs bg-blue-600 text-white px-3 py-1 rounded">Approve</button>
+                  <div key={u._id} className="flex items-center justify-between p-3 bg-purple-50 rounded-lg mb-2">
+                    <span className="text-sm font-medium text-purple-900">{u.name}</span>
+                    <button onClick={() => handleApproveUser(u._id)} className="text-xs bg-purple-600 text-white px-3 py-1 rounded">Approve</button>
                   </div>
                 ))}
               </div>
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2"><User size={20}/> Volunteers</h3>
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-purple-100">
+                <h3 className="font-bold text-purple-900 mb-4 flex items-center gap-2"><User size={20}/> Volunteers</h3>
                 <div className="max-h-60 overflow-y-auto space-y-2">
                   {allVolunteers.map(v => (
-                    <div key={v._id} className="flex justify-between items-center text-sm p-2 hover:bg-gray-50 rounded">
+                    <div key={v._id} className="flex justify-between items-center text-sm p-2 hover:bg-purple-50 rounded">
                       <div className="flex items-center gap-3">
-                        <span>{v.name}</span>
+                        <span className="text-purple-900">{v.name}</span>
                         <select
                           value={v.bloodGroup || ''}
                           onChange={(e) => handleUpdateBloodGroup(v._id, e.target.value)}
-                          className="border px-2 py-1 rounded text-sm"
+                          className="border border-purple-200 px-2 py-1 rounded text-sm text-purple-900 bg-white"
                         >
                           <option value="">Not Set</option>
                           <option value="A+">A+</option>
@@ -246,7 +254,7 @@ const SecretaryDashboard = () => {
                         </select>
                       </div>
                       <div className="flex items-center gap-3">
-                        <button onClick={() => handleResetPassword(v._id)} className="text-blue-500 text-[10px] font-bold uppercase"><RefreshCw size={10} className="inline mr-1"/> Reset</button>
+                        <button onClick={() => handleResetPassword(v._id)} className="text-purple-600 text-[10px] font-bold uppercase"><RefreshCw size={10} className="inline mr-1"/> Reset</button>
                       </div>
                     </div>
                   ))}
@@ -263,22 +271,22 @@ const SecretaryDashboard = () => {
           <div className="lg:col-span-1"><CreateTaskForm onTaskCreated={fetchData} /></div>
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-orange-100">
-              <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2"><CheckCircle className="text-orange-500" size={20}/> Verification Queue</h3>
+              <h3 className="font-bold text-orange-900 mb-4 flex items-center gap-2"><CheckCircle className="text-orange-600" size={20}/> Verification Queue</h3>
               {tasks.filter(t => t.status === 'Completed').map(task => (
                 <div key={task._id} className="p-4 border rounded-xl flex justify-between items-center bg-orange-50 mb-3 border-orange-200">
-                  <h4 className="font-bold text-gray-800">{task.title}</h4>
+                  <h4 className="font-bold text-orange-900">{task.title}</h4>
                   <button onClick={() => handleVerifyTask(task._id)} className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Verify</button>
                 </div>
               ))}
-              {tasks.filter(t => t.status === 'Completed').length === 0 && <p className="text-center text-gray-400 py-4 text-sm">Clear!</p>}
+              {tasks.filter(t => t.status === 'Completed').length === 0 && <p className="text-center text-orange-600 py-4 text-sm">Clear!</p>}
             </div>
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <h3 className="font-bold text-gray-800 mb-4">Task List</h3>
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-purple-100">
+              <h3 className="font-bold text-purple-900 mb-4">Task List</h3>
               <div className="space-y-2">
                 {tasks.map(task => (
-                  <div key={task._id} className="p-3 border rounded-xl flex justify-between items-center group">
-                    <span className="text-sm font-medium">{task.title}</span>
-                    <button onClick={() => handleDeleteTask(task._id)} className="text-gray-300 hover:text-red-500 transition-colors"><Trash2 size={16}/></button>
+                  <div key={task._id} className="p-3 border border-purple-200 rounded-xl flex justify-between items-center group hover:bg-purple-50">
+                    <span className="text-sm font-medium text-purple-900">{task.title}</span>
+                    <button onClick={() => handleDeleteTask(task._id)} className="text-purple-300 hover:text-red-500 transition-colors"><Trash2 size={16}/></button>
                   </div>
                 ))}
               </div>
@@ -291,13 +299,13 @@ const SecretaryDashboard = () => {
       {activeTab === 'events' && (
         <div className="space-y-8 animate-fade-in">
           <CreateEventForm onSuccess={fetchData} />
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h3 className="font-bold text-gray-800 mb-6 flex items-center gap-2"><Activity size={20}/> Live Events</h3>
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-purple-100">
+            <h3 className="font-bold text-purple-900 mb-6 flex items-center gap-2"><Activity size={20}/> Live Events</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {events.map(evt => (
-                <div key={evt._id} className="p-4 border rounded-2xl bg-gray-50">
-                  <h4 className="font-bold text-gray-800">{evt.title}</h4>
-                  <p className="text-[10px] text-gray-400 mt-2 font-bold uppercase"><Calendar size={10} className="inline"/> {new Date(evt.date).toLocaleDateString()}</p>
+                <div key={evt._id} className="p-4 border border-purple-200 rounded-2xl bg-purple-50 hover:shadow-lg transition">
+                  <h4 className="font-bold text-purple-900">{evt.title}</h4>
+                  <p className="text-[10px] text-purple-700 mt-2 font-bold uppercase"><Calendar size={10} className="inline"/> {new Date(evt.date).toLocaleDateString()}</p>
                 </div>
               ))}
             </div>
@@ -307,20 +315,20 @@ const SecretaryDashboard = () => {
 
       {/* TAB CONTENT: AUDIT LOGS */}
       {activeTab === 'audit' && isSecretary && (
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 animate-fade-in">
-          <h3 className="font-bold text-gray-800 mb-6 flex items-center gap-2 text-lg"><ShieldCheck className="text-blue-600" size={24}/> System Audit Log</h3>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-purple-100 animate-fade-in">
+          <h3 className="font-bold text-purple-900 mb-6 flex items-center gap-2 text-lg"><ShieldCheck className="text-purple-600" size={24}/> System Audit Log</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-gray-500 uppercase text-[10px] font-bold">
+              <thead className="bg-purple-50 text-purple-700 uppercase text-[10px] font-bold">
                 <tr><th className="p-4">Time</th><th className="p-4">Admin</th><th className="p-4">Action</th><th className="p-4">Entity</th></tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-purple-100">
                 {auditLogs.map(log => (
-                  <tr key={log._id} className="hover:bg-gray-50">
-                    <td className="p-4 text-gray-400 text-xs">{new Date(log.createdAt).toLocaleString()}</td>
-                    <td className="p-4 font-bold">{log.performedBy?.name}</td>
-                    <td className="p-4"><span className="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[10px] font-bold uppercase">{log.action}</span></td>
-                    <td className="p-4 text-gray-700">{log.targetEntity}</td>
+                  <tr key={log._id} className="hover:bg-purple-50">
+                    <td className="p-4 text-purple-600 text-xs">{new Date(log.createdAt).toLocaleString()}</td>
+                    <td className="p-4 font-bold text-purple-900">{log.performedBy?.name}</td>
+                    <td className="p-4"><span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-[10px] font-bold uppercase">{log.action}</span></td>
+                    <td className="p-4 text-purple-800">{log.targetEntity}</td>
                   </tr>
                 ))}
               </tbody>

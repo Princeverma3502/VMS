@@ -1,0 +1,449 @@
+
+> vms@1.0.0 test
+> cross-env NODE_ENV=test jest --runInBand tests/comprehensive.test.js --verbose
+
+  console.log
+    [dotenv@17.2.3] injecting env (8) from .env -- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.log
+    [dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+  console.error
+    SERVER ERROR DETECTED: Poll validation failed: options.0.text: Cast to string failed for value "{ text: 'Room 101' }" (type Object) at path "text", options.1.text: Cast to string failed for value "{ text: 'Auditorium' }" (type Object) at path "text"
+
+    [0m [90m 15 |[39m   })[33m;[39m
+     [90m 16 |[39m   [90m// This also prints the error in your VS Code terminal[39m
+    [31m[1m>[22m[39m[90m 17 |[39m   console[33m.[39merror([32m"SERVER ERROR DETECTED:"[39m[33m,[39m err[33m.[39mmessage)[33m;[39m
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 18 |[39m   console[33m.[39merror(err[33m.[39mstack)[33m;[39m
+     [90m 19 |[39m }[33m;[39m[0m
+
+      at error (middleware/errorMiddleware.js:17:11)
+      at Layer.handleError (node_modules/router/lib/layer.js:116:17)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at Layer.handleError (node_modules/router/lib/layer.js:111:12)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/router/index.js:688:15
+      at next (node_modules/router/index.js:276:14)
+      at next (node_modules/router/lib/route.js:132:14)
+
+  console.error
+    ValidationError: Poll validation failed: options.0.text: Cast to string failed for value "{ text: 'Room 101' }" (type Object) at path "text", options.1.text: Cast to string failed for value "{ text: 'Auditorium' }" (type Object) at path "text"
+        at model.Object.<anonymous>.Document.invalidate (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\document.js:3377:32)
+        at EmbeddedDocument.Object.<anonymous>.Subdocument.invalidate (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\types\subdocument.js:252:12)
+        at EmbeddedDocument.$set (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\document.js:1502:12)
+        at EmbeddedDocument.$set (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\document.js:1154:16)
+        at EmbeddedDocument.Document (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\document.js:178:12)
+        at EmbeddedDocument.Subdocument (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\types\subdocument.js:43:12)
+        at EmbeddedDocument.ArraySubdocument [as constructor] (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\types\arraySubdocument.js:44:15)
+        at new EmbeddedDocument (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\schema\documentArray.js:144:17)
+        at SchemaDocumentArray.Object.<anonymous>.SchemaDocumentArray.cast (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\schema\documentArray.js:478:22)
+        at SchemaDocumentArray.Object.<anonymous>.SchemaType.applySetters (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\schemaType.js:1280:12)
+        at model.$set (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\document.js:1460:22)
+        at model.$set (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\document.js:1154:16)
+        at model.Document (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\document.js:178:12)
+        at model.Model (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\model.js:129:12)
+        at new model (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\model.js:4679:15)
+        at C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\model.js:2719:20
+        at Array.map (<anonymous>)
+        at Function.create (C:\Users\asus\github\React\VMS\backend\node_modules\mongoose\lib\model.js:2707:34)
+        at create (C:\Users\asus\github\React\VMS\backend\controllers\pollController.js:18:27)
+        at asyncUtilWrap (C:\Users\asus\github\React\VMS\backend\node_modules\express-async-handler\index.js:3:20)
+        at Layer.handleRequest (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\layer.js:152:17)
+        at next (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\route.js:157:13)
+        at next (C:\Users\asus\github\React\VMS\backend\middleware\authMiddleware.js:88:5)
+        at Layer.handleRequest (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\layer.js:152:17)
+        at next (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\route.js:157:13)
+        at next (C:\Users\asus\github\React\VMS\backend\middleware\authMiddleware.js:23:7)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+    [0m [90m 16 |[39m   [90m// This also prints the error in your VS Code terminal[39m
+     [90m 17 |[39m   console[33m.[39merror([32m"SERVER ERROR DETECTED:"[39m[33m,[39m err[33m.[39mmessage)[33m;[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   console[33m.[39merror(err[33m.[39mstack)[33m;[39m
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 19 |[39m }[33m;[39m[0m
+
+      at error (middleware/errorMiddleware.js:18:11)
+      at Layer.handleError (node_modules/router/lib/layer.js:116:17)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at Layer.handleError (node_modules/router/lib/layer.js:111:12)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/router/index.js:688:15
+      at next (node_modules/router/index.js:276:14)
+      at next (node_modules/router/lib/route.js:132:14)
+
+  console.error
+    SERVER ERROR DETECTED: Not Found - /polls/undefined/vote
+
+    [0m [90m 15 |[39m   })[33m;[39m
+     [90m 16 |[39m   [90m// This also prints the error in your VS Code terminal[39m
+    [31m[1m>[22m[39m[90m 17 |[39m   console[33m.[39merror([32m"SERVER ERROR DETECTED:"[39m[33m,[39m err[33m.[39mmessage)[33m;[39m
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 18 |[39m   console[33m.[39merror(err[33m.[39mstack)[33m;[39m
+     [90m 19 |[39m }[33m;[39m[0m
+
+      at error (middleware/errorMiddleware.js:17:11)
+      at Layer.handleError (node_modules/router/lib/layer.js:116:17)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at next (middleware/errorMiddleware.js:5:3)
+      at Layer.handleRequest (node_modules/router/lib/layer.js:152:17)
+      at trimPrefix (node_modules/router/index.js:342:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/router/index.js:688:15
+      at next (node_modules/router/index.js:276:14)
+      at Function.handle (node_modules/router/index.js:186:3)
+      at router (node_modules/router/index.js:60:12)
+      at Layer.handleRequest (node_modules/router/lib/layer.js:152:17)
+      at trimPrefix (node_modules/router/index.js:342:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/body-parser/lib/read.js:172:5
+      at invokeCallback (node_modules/raw-body/index.js:238:16)
+      at done (node_modules/raw-body/index.js:227:7)
+      at IncomingMessage.onEnd (node_modules/raw-body/index.js:287:7)
+
+  console.error
+    Error: Not Found - /polls/undefined/vote
+        at notFound (C:\Users\asus\github\React\VMS\backend\middleware\errorMiddleware.js:3:17)
+        at Layer.handleRequest (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:342:13)
+        at C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:297:9
+        at processParams (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:582:12)
+        at next (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:291:5)
+        at C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:688:15
+        at next (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:276:14)
+        at Function.handle (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:186:3)
+        at router (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:60:12)
+        at Layer.handleRequest (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:342:13)
+        at C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:297:9
+        at processParams (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:582:12)
+        at next (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:291:5)
+        at C:\Users\asus\github\React\VMS\backend\node_modules\body-parser\lib\read.js:172:5
+        at AsyncResource.runInAsyncScope (node:async_hooks:214:14)
+        at invokeCallback (C:\Users\asus\github\React\VMS\backend\node_modules\raw-body\index.js:238:16)
+        at done (C:\Users\asus\github\React\VMS\backend\node_modules\raw-body\index.js:227:7)
+        at IncomingMessage.onEnd (C:\Users\asus\github\React\VMS\backend\node_modules\raw-body\index.js:287:7)
+        at IncomingMessage.emit (node:events:518:28)
+        at endReadableNT (node:internal/streams/readable:1698:12)
+        at processTicksAndRejections (node:internal/process/task_queues:90:21)
+
+    [0m [90m 16 |[39m   [90m// This also prints the error in your VS Code terminal[39m
+     [90m 17 |[39m   console[33m.[39merror([32m"SERVER ERROR DETECTED:"[39m[33m,[39m err[33m.[39mmessage)[33m;[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   console[33m.[39merror(err[33m.[39mstack)[33m;[39m
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 19 |[39m }[33m;[39m[0m
+
+      at error (middleware/errorMiddleware.js:18:11)
+      at Layer.handleError (node_modules/router/lib/layer.js:116:17)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at next (middleware/errorMiddleware.js:5:3)
+      at Layer.handleRequest (node_modules/router/lib/layer.js:152:17)
+      at trimPrefix (node_modules/router/index.js:342:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/router/index.js:688:15
+      at next (node_modules/router/index.js:276:14)
+      at Function.handle (node_modules/router/index.js:186:3)
+      at router (node_modules/router/index.js:60:12)
+      at Layer.handleRequest (node_modules/router/lib/layer.js:152:17)
+      at trimPrefix (node_modules/router/index.js:342:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/body-parser/lib/read.js:172:5
+      at invokeCallback (node_modules/raw-body/index.js:238:16)
+      at done (node_modules/raw-body/index.js:227:7)
+      at IncomingMessage.onEnd (node_modules/raw-body/index.js:287:7)
+
+  console.error
+    SERVER ERROR DETECTED: Cannot read properties of undefined (reading 'collegeId')
+
+    [0m [90m 15 |[39m   })[33m;[39m
+     [90m 16 |[39m   [90m// This also prints the error in your VS Code terminal[39m
+    [31m[1m>[22m[39m[90m 17 |[39m   console[33m.[39merror([32m"SERVER ERROR DETECTED:"[39m[33m,[39m err[33m.[39mmessage)[33m;[39m
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 18 |[39m   console[33m.[39merror(err[33m.[39mstack)[33m;[39m
+     [90m 19 |[39m }[33m;[39m[0m
+
+      at error (middleware/errorMiddleware.js:17:11)
+      at Layer.handleError (node_modules/router/lib/layer.js:116:17)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at Layer.handleError (node_modules/router/lib/layer.js:111:12)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/router/index.js:688:15
+      at next (node_modules/router/index.js:276:14)
+      at next (node_modules/router/lib/route.js:132:14)
+
+  console.error
+    TypeError: Cannot read properties of undefined (reading 'collegeId')
+        at collegeId (C:\Users\asus\github\React\VMS\backend\controllers\pollController.js:160:81)
+        at asyncUtilWrap (C:\Users\asus\github\React\VMS\backend\node_modules\express-async-handler\index.js:3:20)
+        at Layer.handleRequest (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\layer.js:152:17)
+        at next (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\route.js:157:13)
+        at Route.dispatch (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\route.js:117:3)
+        at handle (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:435:11)
+        at Layer.handleRequest (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\layer.js:152:17)
+        at C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:295:15
+        at param (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:600:14)
+        at param (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:610:14)
+        at processParams (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:664:3)
+        at next (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:291:5)
+        at Function.handle (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:186:3)
+        at router (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:60:12)
+        at Layer.handleRequest (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:342:13)
+        at C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:297:9
+        at processParams (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:582:12)
+        at next (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:291:5)
+        at read (C:\Users\asus\github\React\VMS\backend\node_modules\body-parser\lib\read.js:54:5)
+        at jsonParser (C:\Users\asus\github\React\VMS\backend\node_modules\body-parser\lib\types\json.js:90:5)
+        at Layer.handleRequest (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:342:13)
+        at C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:297:9
+        at processParams (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:582:12)
+        at next (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:291:5)
+        at Function.handle (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:186:3)
+        at Function.handle (C:\Users\asus\github\React\VMS\backend\node_modules\express\lib\application.js:177:15)
+        at Server.app (C:\Users\asus\github\React\VMS\backend\node_modules\express\lib\express.js:38:9)
+        at Server.emit (node:events:518:28)
+        at parserOnIncoming (node:_http_server:1155:12)
+        at HTTPParser.parserOnHeadersComplete (node:_http_common:117:17)
+
+    [0m [90m 16 |[39m   [90m// This also prints the error in your VS Code terminal[39m
+     [90m 17 |[39m   console[33m.[39merror([32m"SERVER ERROR DETECTED:"[39m[33m,[39m err[33m.[39mmessage)[33m;[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   console[33m.[39merror(err[33m.[39mstack)[33m;[39m
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 19 |[39m }[33m;[39m[0m
+
+      at error (middleware/errorMiddleware.js:18:11)
+      at Layer.handleError (node_modules/router/lib/layer.js:116:17)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at Layer.handleError (node_modules/router/lib/layer.js:111:12)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/router/index.js:688:15
+      at next (node_modules/router/index.js:276:14)
+      at next (node_modules/router/lib/route.js:132:14)
+
+  console.error
+    SERVER ERROR DETECTED: Not Found - /announcements/69c8a7c7db8383965a8534a4/read
+
+    [0m [90m 15 |[39m   })[33m;[39m
+     [90m 16 |[39m   [90m// This also prints the error in your VS Code terminal[39m
+    [31m[1m>[22m[39m[90m 17 |[39m   console[33m.[39merror([32m"SERVER ERROR DETECTED:"[39m[33m,[39m err[33m.[39mmessage)[33m;[39m
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 18 |[39m   console[33m.[39merror(err[33m.[39mstack)[33m;[39m
+     [90m 19 |[39m }[33m;[39m[0m
+
+      at error (middleware/errorMiddleware.js:17:11)
+      at Layer.handleError (node_modules/router/lib/layer.js:116:17)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at next (middleware/errorMiddleware.js:5:3)
+      at Layer.handleRequest (node_modules/router/lib/layer.js:152:17)
+      at trimPrefix (node_modules/router/index.js:342:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/router/index.js:688:15
+      at next (node_modules/router/index.js:276:14)
+      at next (middleware/authMiddleware.js:23:7)
+
+  console.error
+    Error: Not Found - /announcements/69c8a7c7db8383965a8534a4/read
+        at notFound (C:\Users\asus\github\React\VMS\backend\middleware\errorMiddleware.js:3:17)
+        at Layer.handleRequest (C:\Users\asus\github\React\VMS\backend\node_modules\router\lib\layer.js:152:17)
+        at trimPrefix (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:342:13)
+        at C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:297:9
+        at processParams (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:582:12)
+        at next (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:291:5)
+        at C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:688:15
+        at next (C:\Users\asus\github\React\VMS\backend\node_modules\router\index.js:276:14)
+        at next (C:\Users\asus\github\React\VMS\backend\middleware\authMiddleware.js:23:7)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+    [0m [90m 16 |[39m   [90m// This also prints the error in your VS Code terminal[39m
+     [90m 17 |[39m   console[33m.[39merror([32m"SERVER ERROR DETECTED:"[39m[33m,[39m err[33m.[39mmessage)[33m;[39m
+    [31m[1m>[22m[39m[90m 18 |[39m   console[33m.[39merror(err[33m.[39mstack)[33m;[39m
+     [90m    |[39m           [31m[1m^[22m[39m
+     [90m 19 |[39m }[33m;[39m[0m
+
+      at error (middleware/errorMiddleware.js:18:11)
+      at Layer.handleError (node_modules/router/lib/layer.js:116:17)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at next (middleware/errorMiddleware.js:5:3)
+      at Layer.handleRequest (node_modules/router/lib/layer.js:152:17)
+      at trimPrefix (node_modules/router/index.js:342:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/router/index.js:688:15
+      at next (node_modules/router/index.js:276:14)
+      at next (middleware/authMiddleware.js:23:7)
+
+  console.log
+    ------------------------------------------------
+
+      at log (middleware/authMiddleware.js:40:11)
+
+  console.log
+    🛡️ ADMIN CHECK INITIATED
+
+      at log (middleware/authMiddleware.js:41:11)
+
+  console.log
+    User Name: Secretary User
+
+      at log (middleware/authMiddleware.js:42:11)
+
+  console.log
+    User Role (DB): Secretary
+
+      at log (middleware/authMiddleware.js:43:11)
+
+  console.log
+    Is SuperAdmin? false
+
+      at log (middleware/authMiddleware.js:44:11)
+
+  console.log
+    ------------------------------------------------
+
+      at log (middleware/authMiddleware.js:45:11)
+
+  console.log
+    ✅ Access Granted (Role Match)
+
+      at log (middleware/authMiddleware.js:59:15)
+
+FAIL tests/comprehensive.test.js
+  Comprehensive VMS Backend Verification
+    Polls Module
+      × should allow Secretary to create a poll (70 ms)
+      × should allow Volunteer to vote on poll (20 ms)
+      × should get poll results (11 ms)
+    Announcements Module
+      √ should create an announcement (13 ms)
+      × should allow student to mark as read (17 ms)
+    User Management
+      √ should allow Secretary to fetch all users in college (15 ms)
+      √ should update volunteer role (25 ms)
+    Gamification & Profile
+      √ should fetch user profile with XP stats (15 ms)
+
+  ● Comprehensive VMS Backend Verification › Polls Module › should allow Secretary to create a poll
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 500
+
+    [0m [90m 54 |[39m                 })[33m;[39m
+     [90m 55 |[39m             
+    [31m[1m>[22m[39m[90m 56 |[39m             expect(res[33m.[39mstatus)[33m.[39mtoBe([35m201[39m)[33m;[39m
+     [90m    |[39m                                [31m[1m^[22m[39m
+     [90m 57 |[39m             expect(res[33m.[39mbody[33m.[39mtitle)[33m.[39mtoBe([32m'Next meeting venue?'[39m)[33m;[39m
+     [90m 58 |[39m             pollId [33m=[39m res[33m.[39mbody[33m.[39m_id[33m;[39m
+     [90m 59 |[39m         })[33m;[39m[0m
+
+      at Object.toBe (tests/comprehensive.test.js:56:32)
+
+  ● Comprehensive VMS Backend Verification › Polls Module › should allow Volunteer to vote on poll
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 404
+
+    [0m [90m 66 |[39m                 [33m.[39msend({ optionIndex[33m:[39m [35m0[39m })[33m;[39m
+     [90m 67 |[39m             
+    [31m[1m>[22m[39m[90m 68 |[39m             expect(res[33m.[39mstatus)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m    |[39m                                [31m[1m^[22m[39m
+     [90m 69 |[39m             expect(res[33m.[39mbody[33m.[39mmessage)[33m.[39mtoMatch([35m/Vote recorded/[39m)[33m;[39m
+     [90m 70 |[39m         })[33m;[39m
+     [90m 71 |[39m[0m
+
+      at Object.toBe (tests/comprehensive.test.js:68:32)
+
+  ● Comprehensive VMS Backend Verification › Polls Module › should get poll results
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 500
+
+    [0m [90m 75 |[39m                 [33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m [32m`Bearer ${token}`[39m)[33m;[39m
+     [90m 76 |[39m             
+    [31m[1m>[22m[39m[90m 77 |[39m             expect(res[33m.[39mstatus)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m    |[39m                                [31m[1m^[22m[39m
+     [90m 78 |[39m             [90m// In results, it usually returns options with voteCount[39m
+     [90m 79 |[39m             expect(res[33m.[39mbody[33m.[39mresults[33m.[39moptions[[35m0[39m][33m.[39mvoteCount)[33m.[39mtoBe([35m1[39m)[33m;[39m
+     [90m 80 |[39m         })[33m;[39m[0m
+
+      at Object.toBe (tests/comprehensive.test.js:77:32)
+
+  ● Comprehensive VMS Backend Verification › Announcements Module › should allow student to mark as read
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 404
+
+    [0m [90m 105 |[39m                 [33m.[39m[36mset[39m([32m'Authorization'[39m[33m,[39m [32m`Bearer ${volToken}`[39m)[33m;[39m
+     [90m 106 |[39m             
+    [31m[1m>[22m[39m[90m 107 |[39m             expect(res[33m.[39mstatus)[33m.[39mtoBe([35m200[39m)[33m;[39m
+     [90m     |[39m                                [31m[1m^[22m[39m
+     [90m 108 |[39m         })[33m;[39m
+     [90m 109 |[39m     })[33m;[39m
+     [90m 110 |[39m[0m
+
+      at Object.toBe (tests/comprehensive.test.js:107:32)
+
+Test Suites: 1 failed, 1 total
+Tests:       4 failed, 4 passed, 8 total
+Snapshots:   0 total
+Time:        4.021 s, estimated 5 s
+Ran all test suites matching /tests\\comprehensive.test.js/i.

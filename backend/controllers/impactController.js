@@ -117,7 +117,7 @@ const respondToSOS = async (req, res) => {
 // GET: List active SOS broadcasts for college
 const getActiveSOSBroadcasts = async (req, res) => {
   try {
-    const { collegeId } = req.params;
+    const collegeId = req.params.collegeId || req.user.collegeId;
     const { latitude, longitude, maxDistance = 10000 } = req.query; // maxDistance in meters
 
     let query = {

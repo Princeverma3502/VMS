@@ -51,19 +51,31 @@ const Profile = () => {
 
   const requestPermission = async (type) => {
     triggerHaptic('success');
-    if (type === 'notification') {
-        const res = await Notification.requestPermission();
-        if (res === 'granted') setPerms(p => ({...p, notification: true}));
-    } else if (type === 'camera') {
-        try {
-            // Test Camera Access then close immediately to verify permission
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            stream.getTracks().forEach(track => track.stop()); // STOP CAMERA IMMEDIATELY
-            setPerms(p => ({...p, camera: true}));
-            alert("Camera Access Granted & Closed ✅");
-        } catch (e) {
-            alert("Camera Access Denied ❌");
-        }
+    try {
+      if (type === 'notification') {
+          if (!("Notification" in window)) {
+            alert("This browser does not support desktop notifications.");
+            return;
+          }
+          const res = await Notification.requestPermission();
+          if (res === 'granted') {
+            setPerms(p => ({...p, notification: true}));
+            toast.success("Notifications Enabled!");
+          } else if (res === 'denied') {
+            alert("Notification permission denied. Please enable it in your browser settings.");
+          }
+      } else if (type === 'camera') {
+          try {
+              const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+              stream.getTracks().forEach(track => track.stop());
+              setPerms(p => ({...p, camera: true}));
+              toast.success("Camera Access Granted!");
+          } catch (e) {
+              alert("Camera Access Denied: " + e.message);
+          }
+      }
+    } catch (err) {
+      console.error("Permission request failed", err);
     }
   };
 

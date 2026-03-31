@@ -5,14 +5,27 @@ import api from '../../services/api';
 const ActivityFeed = ({ limit = 20 }) => {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(false);
   const [skip, setSkip] = useState(0);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
     fetchActivities();
+    window.addEventListener('online', () => setIsOnline(true));
+    window.addEventListener('offline', () => setIsOnline(false));
+    return () => {
+      window.removeEventListener('online', () => setIsOnline(true));
+      window.removeEventListener('offline', () => setIsOnline(false));
+    };
   }, []);
 
   const fetchActivities = async () => {
+    if (!navigator.onLine) {
+      setError('No internet connection. Check DevTools throttling.');
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const response = await api.get(`/activity?limit=${limit}&skip=${skip}`);
@@ -20,8 +33,10 @@ const ActivityFeed = ({ limit = 20 }) => {
       const newActivities = response.data.data || [];
       setActivities(prev => [...prev, ...newActivities]);
       setHasMore(response.data.hasMore);
+      setError(null);
     } catch (error) {
       console.error('Failed to fetch activity feed:', error);
+      setError('Failed to load activity feed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -76,6 +91,31 @@ const ActivityFeed = ({ limit = 20 }) => {
       <div className="text-center py-8 font-bold text-slate-500">
         <div className="inline-block animate-spin w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full mb-2"></div>
         <p>Loading activity feed...</p>
+      </div>
+    );
+  }
+
+  if (error && activities.length === 0) {
+    return (
+      <div className="bg-red-50 rounded-2xl shadow-sm border border-red-200 p-6">
+        <h2 className="text-xl sm:text-2xl font-black text-slate-900 mb-4 flex items-center gap-2">
+          <TrendingUp size={24} className="text-red-600" />
+          Live Activity Feed
+        </h2>
+        <div className="text-center py-8">
+          <div className="text-red-600 font-bold mb-2">{error}</div>
+          {!isOnline && (
+            <p className="text-xs text-red-500 mb-4">
+              💡 Tip: Open DevTools (F12) → Network tab → Disable throttling if set to "Offline"
+            </p>
+          )}
+          <button
+            onClick={fetchActivities}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-bold"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }

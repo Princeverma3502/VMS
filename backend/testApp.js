@@ -11,6 +11,11 @@ import authRoutes from './routes/authRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
 import announcementRoutes from './routes/announcementRoutes.js';
+import pollRoutes from './routes/pollRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import impactRoutes from './routes/impactRoutes.js';
+import gameRoutes from './routes/gameRoutes.js';
+import meetingRoutes from './routes/meetingRoutes.js';
 
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
@@ -22,6 +27,11 @@ app.use('/auth', authRoutes);
 app.use('/events', eventRoutes);
 app.use('/tasks', taskRoutes);
 app.use('/announcements', announcementRoutes);
+app.use('/polls', pollRoutes);
+app.use('/users', userRoutes);
+app.use('/impact', impactRoutes);
+app.use('/game', gameRoutes);
+app.use('/meetings', meetingRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

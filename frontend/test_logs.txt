@@ -1,0 +1,11 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mC:/Users/asus/github/React/VMS/frontend[39m
+
+ [32m✓[39m src/pages/__tests__/BentoDashboard.test.jsx [2m([22m[2m1 test[22m[2m)[22m[33m 364[2mms[22m[39m
+     [33m[2m✓[22m[39m should render all critical dashboard layout sections correctly [33m 362[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 04:32:01
+[2m   Duration [22m 2.64s[2m (transform 212ms, setup 145ms, import 486ms, tests 364ms, environment 1.31s)[22m
+

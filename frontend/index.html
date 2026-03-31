@@ -2,13 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <meta name="theme-color" content="#1d4ed8" />
-    <meta name="msapplication-TileColor" content="#1d4ed8">
-    <meta name="description" content="NSS Volunteer Management System - Track hours, events, and impact.">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231d4ed8' width='100' height='100'/><text x='50' y='65' font-size='60' font-weight='900' fill='white' text-anchor='middle' font-family='Arial'>N</text></svg>" />
     <title>NSS Portal</title>
   </head>
   <body>
@@ -25,6 +21,23 @@
     </style>
 
     <div id="root"></div>
+    <script>
+      // Senior Check: Detect if browser is in "Offline Mode"
+      window.addEventListener('load', () => {
+        const updateStatus = () => {
+          if (!navigator.onLine) {
+             console.error('🚨 BROWSER OFFLINE MODE DETECTED. Check DevTools Network Tab.');
+             const warning = document.createElement('div');
+             warning.style = 'position:fixed; bottom:20px; right:20px; background:red; color:white; padding:15px; border-radius:10px; z-index:10000; font-weight:bold; box-shadow:0 10px 30px rgba(0,0,0,0.3);';
+             warning.innerHTML = '⚠️ BROWSER IS OFFLINE. Check DevTools!';
+             document.body.appendChild(warning);
+          }
+        };
+        updateStatus();
+        window.addEventListener('online', updateStatus);
+        window.addEventListener('offline', updateStatus);
+      });
+    </script>
     <script type="module" src="/src/main.jsx"></script>
 
     <script>

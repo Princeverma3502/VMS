@@ -14,6 +14,7 @@ import {
   approveUser,
   rejectUser,
   updateUserRole,
+  updateUser,
   getBloodGroupStats
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
@@ -45,6 +46,7 @@ router.route('/')
   .get(protect, getAllUsers);  // Allow secretaries and admins to list users
 
 router.route('/:id')
+  .put(protect, admin, updateUser)
   .delete(protect, admin, deleteUser);
 
 router.put('/:id/approve', protect, admin, approveUser);

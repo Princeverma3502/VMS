@@ -42,15 +42,21 @@ export const getPolls = asyncHandler(async (req, res) => {
   const { visibility } = req.query;
   const user = req.user;
 
-  // Base Filter: Active, Not Expired, Same College
+  // Base Filter: Active, Not Expired
   const query = { 
-    collegeId: user.collegeId,
     isActive: true, 
     expiresAt: { $gt: new Date() } 
   };
 
+  if (user && user.collegeId) {
+    query.collegeId = user.collegeId;
+  } else if (!user || !user.isSuperAdmin) {
+    // Non-superadmins without a collegeId should see nothing to avoid leaks
+    return res.json({ success: true, count: 0, data: [] });
+  }
+
   // Contextual Filtering
-  if (user.role === 'Volunteer') {
+  if (user && user.role === 'Volunteer') {
     // Volunteers see Public polls OR polls for their specific Domain
     query.$or = [
         { visibility: 'public' },
@@ -68,9 +74,9 @@ export const getPolls = asyncHandler(async (req, res) => {
 
   // Add a "hasVoted" flag for the current user
   const pollsWithUserStatus = polls.map(poll => {
-    const hasVoted = poll.options.some(opt => 
-      opt.votes.some(v => v.userId.toString() === user.id)
-    );
+    const hasVoted = user?.id ? poll.options.some(opt => 
+      opt.votes.some(v => v.userId && v.userId.toString() === user.id)
+    ) : false;
     return { ...poll, hasVoted };
   });
 

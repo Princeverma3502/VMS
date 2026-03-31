@@ -5,6 +5,7 @@ import impactController from '../controllers/impactController.js';
 const router = express.Router();
 
 // SOS Blood Donation
+router.get('/sos', protect, impactController.getActiveSOSBroadcasts);
 router.post('/sos/create', protect, impactController.createSOSBroadcast);
 router.post('/sos/:sosId/respond', protect, impactController.respondToSOS);
 router.get('/sos/college/:collegeId/active', protect, impactController.getActiveSOSBroadcasts);

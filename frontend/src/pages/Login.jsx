@@ -10,9 +10,17 @@ const Login = () => {
   const [showStreak, setShowStreak] = useState(false);
   const [newStreakCount, setNewStreakCount] = useState(0);
   
-  const { login, loading } = useContext(AuthContext);
+  const { login, loading, user } = useContext(AuthContext);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  const getRedirectPath = (role) => {
+    const r = role?.toLowerCase();
+    if (r === 'secretary') return '/secretary/dashboard';
+    if (r === 'domain head') return '/domain-head/dashboard';
+    if (r === 'associate head') return '/associate-head/dashboard';
+    return '/volunteer/dashboard';
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,14 +30,12 @@ const Login = () => {
     const result = await login(formData.email, formData.password);
     
     if (result && result.success && result.user) {
-      const user = result.user;
-      
-      // Check if streak increased (Logic: compare server streak with a flag or just check if > 0)
-      if (user.gamification?.streak > 0) {
-        setNewStreakCount(user.gamification.streak);
+      // Check if streak increased
+      if (result.user.gamification?.streak > 0) {
+        setNewStreakCount(result.user.gamification.streak);
         setShowStreak(true);
       } else {
-        navigate('/dashboard');
+        navigate(getRedirectPath(result.user.role));
       }
     } else if (result && !result.success) {
       setError(result.message || 'Login failed');
@@ -38,7 +44,7 @@ const Login = () => {
 
   const handleCloseStreak = () => {
     setShowStreak(false);
-    navigate('/dashboard');
+    navigate(getRedirectPath(user?.role));
   };
 
   return (
@@ -53,8 +59,8 @@ const Login = () => {
       )}
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-blue-600 w-14 sm:w-16 h-14 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg shadow-blue-200">
-          <LogIn className="text-white" size={28} />
+        <div className="w-24 sm:w-32 h-24 sm:h-32 mx-auto mb-4 sm:mb-6">
+          <img src="/logo.png" alt="NSS Logo" className="w-full h-full object-contain animate-pulse-slow" />
         </div>
         <h2 className="text-center text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
           Welcome Back

@@ -105,6 +105,12 @@ export const registerForEvent = asyncHandler(async (req, res) => {
     throw new Error('Event not found');
   }
 
+  // Multi-tenant check
+  if (!req.user.isSuperAdmin && event.collegeId && req.user.collegeId && event.collegeId.toString() !== req.user.collegeId.toString()) {
+    res.status(403);
+    throw new Error('Forbidden: Not authorized to interact with this event');
+  }
+
   // Check if user is already registered
   if (event.attendees && event.attendees.includes(req.user._id)) {
     res.status(400);
@@ -128,6 +134,12 @@ export const unregisterFromEvent = asyncHandler(async (req, res) => {
   if (!event) {
     res.status(404);
     throw new Error('Event not found');
+  }
+
+  // Multi-tenant check
+  if (!req.user.isSuperAdmin && event.collegeId && req.user.collegeId && event.collegeId.toString() !== req.user.collegeId.toString()) {
+    res.status(403);
+    throw new Error('Forbidden: Not authorized to interact with this event');
   }
 
   // Remove user from attendees

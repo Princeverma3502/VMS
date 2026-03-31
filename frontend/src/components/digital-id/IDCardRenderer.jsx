@@ -54,11 +54,11 @@ const IDCardRenderer = ({ user, config, verified, isBack }) => {
 
         {/* Top-Right: NGO/NSS Logo */}
         <div className="absolute top-8 right-6 w-14 h-14 rounded-full shadow-sm flex items-center justify-center overflow-hidden border-2 border-transparent bg-transparent">
-          {config.councilLogo ? (
-            <img src={config.councilLogo} alt="NSS" className="w-full h-full object-contain bg-transparent" />
-          ) : (
-            <span className="text-[#EBF855] font-black text-xs">NSS</span>
-          )}
+          <img 
+            src={config.councilLogo || "/logo.png"} 
+            alt="NSS" 
+            className="w-full h-full object-contain bg-transparent" 
+          />
         </div>
       </div>
 
