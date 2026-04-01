@@ -10,6 +10,8 @@ const Login = () => {
   const [showStreak, setShowStreak] = useState(false);
   const [newStreakCount, setNewStreakCount] = useState(0);
   
+  const [rememberMe, setRememberMe] = useState(true);
+  
   const { login, loading, user } = useContext(AuthContext);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -26,8 +28,8 @@ const Login = () => {
     e.preventDefault();
     setError(null);
     
-    // Try to login
-    const result = await login(formData.email, formData.password);
+    // Try to login with remember me flag
+    const result = await login(formData.email, formData.password, rememberMe);
     
     if (result && result.success && result.user) {
       // Check if streak increased
@@ -48,7 +50,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center px-3 sm:px-6 py-8 sm:py-12">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center px-3 sm:px-6 py-8 sm:py-12 animate-in fade-in duration-700">
       
       {/* STREAK ALERT POPUP */}
       {showStreak && (
@@ -59,30 +61,30 @@ const Login = () => {
       )}
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="w-24 sm:w-32 h-24 sm:h-32 mx-auto mb-4 sm:mb-6">
-          <img src="/logo.png" alt="NSS Logo" className="w-full h-full object-contain animate-pulse-slow" />
+        <div className="w-24 sm:w-32 h-24 sm:h-32 mx-auto mb-4 sm:mb-6 transform hover:rotate-6 transition-transform duration-500">
+          <img src="/logo.png" alt="NSS Logo" className="w-full h-full object-contain filter drop-shadow-2xl" />
         </div>
-        <h2 className="text-center text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
-          Welcome Back
+        <h2 className="text-center text-3xl sm:text-4xl font-black text-slate-900 tracking-tighter">
+          Welcome <span className="text-blue-600">Back</span>
         </h2>
-        <p className="mt-1.5 sm:mt-2 text-center text-xs sm:text-sm text-gray-500 font-medium">
-          Sign in to your NSS account
+        <p className="mt-2 text-center text-[10px] sm:text-xs text-slate-400 font-black uppercase tracking-[0.3em]">
+          Operational Mission Access
         </p>
       </div>
 
-      <div className="mt-6 sm:mt-10 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-6 sm:py-8 px-4 sm:px-6 shadow-sm border border-gray-100 rounded-3xl sm:px-10">
-          <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-10 px-6 sm:px-12 shadow-2xl shadow-slate-900/5 border border-slate-100 rounded-[3rem]">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-[10px] sm:text-xs font-black text-gray-400 uppercase tracking-widest ml-1 mb-1.5 sm:mb-2">
-                Email Address
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 mb-2">
+                Identifier (Email)
               </label>
-              <div className="relative">
-                <Mail className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
                 <input
                   type="email"
                   required
-                  className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 font-medium text-sm sm:text-base"
+                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-blue-600/20 focus:ring-4 focus:ring-blue-600/5 font-bold text-slate-800 transition-all outline-none"
                   placeholder="name@college.edu"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -91,15 +93,15 @@ const Login = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] sm:text-xs font-black text-gray-400 uppercase tracking-widest ml-1 mb-1.5 sm:mb-2">
-                Password
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 mb-2">
+                Access Key
               </label>
-              <div className="relative">
-                <Lock className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
                 <input
                   type="password"
                   required
-                  className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 font-medium text-sm sm:text-base"
+                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-blue-600/20 focus:ring-4 focus:ring-blue-600/5 font-bold text-slate-800 transition-all outline-none"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -107,8 +109,29 @@ const Login = () => {
               </div>
             </div>
 
+            {/* STAY SIGNED IN TOGGLE */}
+            <div className="flex items-center justify-between px-1">
+               <label className="flex items-center cursor-pointer group">
+                  <div className="relative">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only" 
+                      checked={rememberMe}
+                      onChange={() => setRememberMe(!rememberMe)}
+                    />
+                    <div className={`w-10 h-5 rounded-full transition-colors duration-300 ${rememberMe ? 'bg-blue-600' : 'bg-slate-200'}`}></div>
+                    <div className={`absolute left-0.5 top-0.5 bg-white w-4 h-4 rounded-full shadow-md transition-transform duration-300 transform ${rememberMe ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                  </div>
+                  <span className="ml-3 text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-slate-600 transition-colors">Stay signed in</span>
+               </label>
+               <Link to="/forgot-password" size="sm" className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:text-slate-900 transition-colors">
+                 Lost Key?
+               </Link>
+            </div>
+
             {error && (
-              <div className="bg-red-50 text-red-600 p-3 sm:p-4 rounded-xl text-xs sm:text-sm font-bold border border-red-100 animate-shake">
+              <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-red-100 flex items-center gap-3 animate-shake">
+                <span className="w-2 h-2 rounded-full bg-red-600"></span>
                 {error}
               </div>
             )}
@@ -116,11 +139,10 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center items-center gap-2 py-2.5 sm:py-4 px-4 border border-transparent rounded-2xl shadow-lg shadow-blue-100 text-xs sm:text-sm font-black text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-all active:scale-95 min-h-[40px] sm:min-h-[auto]"
+              className="w-full flex justify-center items-center gap-3 py-5 px-4 rounded-[1.5rem] shadow-xl shadow-blue-600/20 text-[10px] font-black uppercase tracking-[0.3em] text-white bg-blue-600 hover:bg-slate-900 focus:outline-none transition-all active:scale-95 disabled:opacity-50"
             >
-              {loading ? <Loader2 className="animate-spin" size={18} /> : <span className="hidden sm:inline">Sign In</span>}
-              {loading && <span className="sm:hidden">Signing in...</span>}
-              {!loading && <span className="sm:hidden">Sign In</span>}
+              {loading ? <Loader2 className="animate-spin" size={20} /> : <LogIn size={18} />}
+              <span>{loading ? 'Authenticating...' : 'Engage System'}</span>
             </button>
           </form>
 

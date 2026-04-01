@@ -20,7 +20,8 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    // Look for token in both persistent and session storage
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,10 +34,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     // Auto-logout if token is expired (401)
-    if (error.response && error.response.status === 401) {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
        // Only redirect if not already on login page
        if (window.location.pathname !== '/login') {
            localStorage.removeItem('token');
+           sessionStorage.removeItem('token');
            localStorage.removeItem('userRole');
            window.location.href = '/login';
        }

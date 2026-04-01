@@ -10,16 +10,22 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkLoggedIn = async () => {
       console.log('🟢 AuthContext: Checking if user is logged in');
-      const token = localStorage.getItem('token');
+      
+      // Check both persistent (localStorage) and session-only (sessionStorage)
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      
       if (token) {
         console.log('🟢 AuthContext: Token found, validating...');
         try {
-          const { data } = await api.get('/auth/me');
+          const { data } = await api.get('/auth/me', {
+             headers: { Authorization: `Bearer ${token}` }
+          });
           console.log('🟢 AuthContext: User authenticated:', data?.email);
           setUser(normalizeUserRole(data));
         } catch (error) {
           console.error('🔴 AuthContext: Failed to validate token:', error.message);
           localStorage.removeItem('token');
+          sessionStorage.removeItem('token');
           setUser(null);
         }
       } else {
@@ -30,13 +36,22 @@ export const AuthProvider = ({ children }) => {
     checkLoggedIn();
   }, []);
 
-  // UPDATED: Back to Email
-  const login = async (email, password) => {
-    console.log('🟢 AuthContext: Attempting login for:', email);
+  // UPDATED: Added rememberMe support
+  const login = async (email, password, rememberMe = true) => {
+    console.log('🟢 AuthContext: Attempting login for:', email, 'RememberMe:', rememberMe);
     try {
       const { data } = await api.post('/auth/login', { email, password });
       console.log('🟢 AuthContext: Login successful, setting token and user data');
-      localStorage.setItem('token', data.token);
+      
+      // Store based on preference
+      if (rememberMe) {
+        localStorage.setItem('token', data.token);
+        sessionStorage.removeItem('token'); // Clean up session storage
+      } else {
+        sessionStorage.setItem('token', data.token);
+        localStorage.removeItem('token'); // Clean up local storage
+      }
+      
       setUser(normalizeUserRole(data));
       console.log('🟢 AuthContext: User state updated:', data?.email);
       return { success: true, user: data };
@@ -49,11 +64,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (userData) => {
+  const register = async (userData, rememberMe = true) => {
     try {
       const { data } = await api.post('/auth/register', userData);
       if (data.token) {
-        localStorage.setItem('token', data.token);
+        if (rememberMe) {
+          localStorage.setItem('token', data.token);
+          sessionStorage.removeItem('token');
+        } else {
+          sessionStorage.setItem('token', data.token);
+          localStorage.removeItem('token');
+        }
         setUser(normalizeUserRole(data));
         return { success: true };
       } else {
@@ -69,6 +90,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     setUser(null);
   };
 

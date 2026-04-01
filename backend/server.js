@@ -5,6 +5,9 @@ import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import rateLimit from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize';
+import xss from 'xss-clean';
+import hpp from 'hpp';
 import connectDB from './config/db.js';
 
 dotenv.config();
@@ -73,7 +76,41 @@ const app = express();
 // --- SECURITY MIDDLEWARE ---
 
 // 1. Set Security Headers
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://vms-pearl.vercel.app", "https://vms-6qfs.onrender.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+      imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://*.cloudinary.com"],
+      connectSrc: ["'self'", "https://vms-6qfs.onrender.com", "http://localhost:5000", "ws://localhost:5173"],
+    },
+  },
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+}));
+
+// 2. Data Sanitization against NoSQL injection
+app.use(mongoSanitize());
+
+// 3. Data Sanitization against XSS
+app.use(xss());
+
+// 4. Prevent HTTP Parameter Pollution
+app.use(hpp());
+
+// Extra: Enforce HSTS (Strict-Transport-Security) in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(helmet.hsts({
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }));
+}
+
+// Extra: Disable X-Powered-By to hide server technology
+app.disable('x-powered-by');
 
 // 2. CORS Configuration
 const corsOptions = {

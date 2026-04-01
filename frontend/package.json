@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "test": "vitest run",
+    "test:elite": "npx playwright test elite.spec.js",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
