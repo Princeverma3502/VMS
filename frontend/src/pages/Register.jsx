@@ -196,6 +196,7 @@ const Register = () => {
               name="password" 
               value={formData.password} 
               onChange={handleChange} 
+              autoComplete="new-password"
               required 
             />
             <button
@@ -245,6 +246,7 @@ const Register = () => {
                         placeholder="Enter Admin Secret Key" 
                         value={formData.adminSecret} 
                         onChange={handleChange} 
+                        autoComplete="new-password"
                         className="bg-white" 
                         required 
                     />
