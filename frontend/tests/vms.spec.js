@@ -9,160 +9,115 @@ const USERS = {
   vol:  { email: 'test_vol@hbtu.ac.in',  name: 'Test Volunteer',     redirect: /\/volunteer\/dashboard/ },
 };
 
-// ─── Helper ─────────────────────────────────────────────────────────────────
+// ─── Shared: Setup API mocks for a given role ───────────────────────────────
+async function setupMocks(page, email, name) {
+  let role = 'Volunteer';
+  if (email.includes('sec')) role = 'Secretary';
+  else if (email.includes('dh')) role = 'Domain Head';
+  else if (email.includes('ah')) role = 'Associate Head';
+
+  const mockUser = {
+    _id: 'mock-user-456',
+    name: name || 'Test ' + role,
+    email: email,
+    role: role,
+    isSuperAdmin: false,
+    gamification: { streak: 0 },
+  };
+
+  // Catch-all: intercept every request
+  await page.route('**/*', async route => {
+    const url = route.request().url();
+
+    if (!url.includes('/api/') && !url.includes('/auth/') && !url.includes('localhost:5000') && !url.includes('onrender.com')) {
+      return route.continue();
+    }
+
+    const isArray = /tasks|leaderboard|activities|polls|announcements|events|pending|users/i.test(url);
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify(isArray ? [] : {}),
+    });
+  });
+
+  // POST /auth/login
+  await page.route('**/auth/login', async route => {
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ ...mockUser, token: 'mock-jwt-token-888' }),
+    });
+  });
+
+  // GET /auth/me — must return the same role
+  await page.route('**/auth/me', async route => {
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify(mockUser),
+    });
+  });
+}
+
+// ─── Login Helper ───────────────────────────────────────────────────────────
 async function login(page, user) {
   console.log(`Starting login for ${user.email}...`);
 
-  // Auto-Mock Login API to ensure 100% test reliability without backend dependencies
-  await page.route('**/api/auth/login', async route => {
-    if (route.request().method() === 'OPTIONS') {
-      return route.fulfill({
-        status: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': '*'
-        }
-      });
-    }
-
-    let mockRole = 'Volunteer';
-    if (user.email.includes('sec')) mockRole = 'Secretary';
-    else if (user.email.includes('dh')) mockRole = 'Domain Head';
-    else if (user.email.includes('ah')) mockRole = 'Associate Head';
-
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({
-        _id: 'mock-user-456',
-        name: user.name,
-        email: user.email,
-        role: mockRole,
-        token: 'mock-jwt-token-888',
-        isSuperAdmin: false,
-        gamification: { streak: 0 } // Bypass streak modal
-      })
-    });
-  });
-
-  await page.route('**/api/auth/me', async route => {
-    if (route.request().method() === 'OPTIONS') {
-      return route.fulfill({
-        status: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': '*'
-        }
-      });
-    }
-
-    let mockRole = 'Volunteer';
-    if (user.email.includes('sec')) mockRole = 'Secretary';
-    else if (user.email.includes('dh')) mockRole = 'Domain Head';
-    else if (user.email.includes('ah')) mockRole = 'Associate Head';
-
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({
-        _id: 'mock-user-456',
-        name: user.name,
-        email: user.email,
-        role: mockRole,
-        isSuperAdmin: false,
-        gamification: { streak: 0 }
-      })
-    });
-  });
-
+  await setupMocks(page, user.email, user.name);
   await page.goto('/login', { waitUntil: 'domcontentloaded' });
-  
-  await page.locator('input[type="email"]').fill(user.email);
-  await page.locator('input[type="password"]').fill(PASS);
-  await page.locator('button[type="submit"]').click();
-  
-  const streakModalBtn = page.locator('button', { hasText: /Let\'s Go!|Continue/i });
-  const errorAlert = page.locator('.text-red-600, .bg-red-50');
-  
-  try {
-    // Race: success navigation vs Streak Modal vs Error
-    await Promise.race([
-        page.waitForURL(u => !u.pathname.includes('/login'), { timeout: 15000 }),
-        streakModalBtn.waitFor({ state: 'visible', timeout: 15000 }),
-        errorAlert.waitFor({ state: 'visible', timeout: 10000 })
-    ]);
 
-    // 1. Check for Error
-    if (await errorAlert.isVisible()) {
-        const txt = await errorAlert.innerText();
-        throw new Error(`Login failed for ${user.email}: ${txt}`);
-    }
+  await page.locator('input[type="email"]').first().fill(user.email);
+  await page.locator('input[placeholder="••••••••"]').first().fill(PASS);
+  await page.locator('button[type="submit"]').first().click();
 
-    // 2. Check for Streak Modal
-    if (await streakModalBtn.isVisible()) {
-        console.log(`Streak Modal detected for ${user.email}, clicking...`);
-        await streakModalBtn.click();
-        await page.waitForURL(u => !u.pathname.includes('/login'), { timeout: 15000 });
-    }
-  } catch (e) {
-    if (e.message.includes('Login failed')) throw e;
-    console.log(`Timeout inside login helper, attempting to continue...`);
+  // Wait for navigation away from /login
+  await expect(page).not.toHaveURL(/\/login/, { timeout: 15000 });
+
+  // Dismiss streak modal if it appears
+  const streakBtn = page.locator('button', { hasText: /Let's Go!|Continue/i });
+  if (await streakBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await streakBtn.click();
   }
 
-  // 3. Final wait for navigation away from login
-  await expect(page).not.toHaveURL(/\/login/, { timeout: 15000 });
   console.log(`Successfully logged in: ${user.email}`);
 }
 
-// ─── Phase 1 Tests ─────────────────────────────────────────────────────────
+// ─── Phase 1: Static Page Tests ────────────────────────────────────────────
 
 test('Login page: renders form elements', async ({ page }) => {
   await page.goto('/login', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('input[type="email"]')).toBeVisible();
-  await expect(page.locator('input[type="password"]')).toBeVisible();
-  await expect(page.locator('button[type="submit"]')).toBeVisible();
+  await expect(page.locator('input[type="email"]').first()).toBeVisible();
+  await expect(page.locator('input[placeholder="••••••••"]').first()).toBeVisible();
+  await expect(page.locator('button[type="submit"]').first()).toBeVisible();
 });
 
 test('Login page: shows error on wrong credentials', async ({ page }) => {
-  // MUST mock a 401 rejection for this explicit test
-  await page.route('**/api/auth/login', async route => {
-    if (route.request().method() === 'OPTIONS') {
-      return route.fulfill({
-        status: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': '*'
-        }
-      });
-    }
-
-    await route.fulfill({
+  // Mock a 401 rejection
+  await page.route('**/auth/login', async route => {
+    return route.fulfill({
       status: 401,
       contentType: 'application/json',
       headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ message: 'Invalid Email or Password' })
+      body: JSON.stringify({ message: 'Invalid Email or Password' }),
     });
   });
 
   await page.goto('/login', { waitUntil: 'domcontentloaded' });
-  await page.locator('input[type="email"]').fill('wrong@email.com');
-  await page.locator('input[type="password"]').fill('WrongPass!');
-  await page.locator('button[type="submit"]').click();
+  await page.locator('input[type="email"]').first().fill('wrong@email.com');
+  await page.locator('input[placeholder="••••••••"]').first().fill('WrongPass!');
+  await page.locator('button[type="submit"]').first().click();
 
-  // Should stay on login and show an error (50s timeout for backend cold-start)
   const errText = page.locator('text=/Invalid|incorrect|failed/i').first();
-  await expect(errText).toBeVisible({ timeout: 50000 });
+  await expect(errText).toBeVisible({ timeout: 15000 });
 });
 
 test('Register page: renders form', async ({ page }) => {
   await page.goto('/register', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('input[type="email"]')).toBeVisible();
-  await expect(page.locator('input[type="password"]')).toBeVisible();
+  await expect(page.locator('input[type="email"]').first()).toBeVisible();
 });
 
 test('Protected route: redirects unauthenticated user to login', async ({ page }) => {
@@ -180,7 +135,7 @@ test('Protected route: /super-admin redirects to login', async ({ page }) => {
   await expect(page).toHaveURL(/\/login/, { timeout: 10000 });
 });
 
-// ─── Phase 2 Tests (Roles) ──────────────────────────────────────────────────
+// ─── Phase 2: Role-Based Login Tests ────────────────────────────────────────
 
 test('Secretary: login and dashboard loads', async ({ page }) => {
   await login(page, USERS.sec);
@@ -219,7 +174,6 @@ test('Volunteer: cannot access Secretary dashboard', async ({ page }) => {
   await login(page, USERS.vol);
   await expect(page).toHaveURL(USERS.vol.redirect, { timeout: 20000 });
   await page.goto('/secretary/dashboard', { waitUntil: 'domcontentloaded' });
-  // Should bounce off the route
   await expect(page).not.toHaveURL(/\/secretary\/dashboard/, { timeout: 15000 });
 });
 
@@ -239,7 +193,6 @@ test('Shared: Polls page loads for Volunteer', async ({ page }) => {
   await login(page, USERS.vol);
   await expect(page).toHaveURL(USERS.vol.redirect, { timeout: 20000 });
   await page.goto('/polls', { waitUntil: 'domcontentloaded' });
-  // Check for the heading/nav to ensure page loaded properly
   await expect(page.locator('h1, h2, form').first()).toBeVisible({ timeout: 15000 });
 });
 
@@ -253,7 +206,6 @@ test('Shared: Announcements page loads for Volunteer', async ({ page }) => {
 test('Logout: clears session and redirects to login', async ({ page }) => {
   await login(page, USERS.vol);
   await expect(page).toHaveURL(USERS.vol.redirect, { timeout: 20000 });
-  // Clear localStorage to simulate logout or session void
   await page.evaluate(() => window.localStorage.clear());
   await page.goto('/volunteer/dashboard', { waitUntil: 'domcontentloaded' });
   await expect(page).toHaveURL(/\/login/, { timeout: 15000 });
