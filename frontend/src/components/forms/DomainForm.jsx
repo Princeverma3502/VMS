@@ -31,7 +31,7 @@ const DomainForm = ({ users = [], onSubmit, isLoading }) => {
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">Assign Domain Head</label>
           <select 
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-nss-blue focus:ring-nss-light bg-white"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-blue-600 focus:ring-blue-300 bg-white"
             value={headId}
             onChange={(e) => setHeadId(e.target.value)}
             required

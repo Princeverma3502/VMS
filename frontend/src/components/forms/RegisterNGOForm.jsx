@@ -41,7 +41,7 @@ const RegisterNGOForm = ({ onSubmit, isLoading }) => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-      <h3 className="text-lg font-bold text-nss-blue mb-4">Register New NGO</h3>
+      <h3 className="text-lg font-bold text-blue-600 mb-4">Register New NGO</h3>
       
       <form onSubmit={handleSubmit}>
         <Input 
@@ -58,7 +58,7 @@ const RegisterNGOForm = ({ onSubmit, isLoading }) => {
           <textarea 
             name="description"
             rows="3"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-nss-blue focus:ring-nss-light transition-all"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-blue-600 focus:ring-blue-300 transition-all"
             placeholder="Brief details..."
             value={formData.description}
             onChange={handleChange}

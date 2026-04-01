@@ -73,13 +73,13 @@ const VolunteerDashboard = () => {
   const TaskCard = ({ task }) => (
     <div className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200 mb-3 active:scale-95 transition-all hover:shadow-md">
       <div className="flex justify-between items-start mb-2 gap-2">
-        <h4 className="font-black text-sm text-slate-900 leading-snug line-clamp-2">{task.title}</h4>
+        <h4 className="font-black text-sm text-black leading-snug line-clamp-2">{task.title}</h4>
         <button onClick={() => handleShare(task)} className="text-slate-400 hover:text-blue-600 p-1 rounded-full hover:bg-blue-50 transition-colors">
           <Share2 size={16} />
         </button>
       </div>
       
-      <p className="text-xs text-slate-600 font-medium mb-3 line-clamp-2 leading-relaxed">
+      <p className="text-xs text-black font-medium mb-3 line-clamp-2 leading-relaxed">
         {task.description}
       </p>
       

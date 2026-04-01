@@ -33,7 +33,7 @@ const CreateTaskForm = ({ onTaskCreated }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
       <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 mb-4 border-b border-gray-100 pb-2">
-        <Plus className="text-nss-blue" size={20}/> Assign New Task
+        <Plus className="text-blue-600" size={20}/> Assign New Task
       </h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">

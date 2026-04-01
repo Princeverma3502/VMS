@@ -17,7 +17,7 @@ const LeaderboardCard = ({ rank, name, xp, isCurrentUser = false }) => {
     <div 
       className={`
         flex items-center justify-between p-3 rounded-lg border mb-2 transition-transform hover:scale-[1.01]
-        ${isCurrentUser ? 'ring-2 ring-nss-blue ring-offset-1' : ''}
+        ${isCurrentUser ? 'ring-2 ring-blue-600 ring-offset-1' : ''}
         ${rank <= 3 ? 'shadow-sm' : ''}
         ${getRankStyle(rank)}
       `}

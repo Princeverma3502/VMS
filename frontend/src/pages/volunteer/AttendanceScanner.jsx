@@ -55,7 +55,7 @@ const AttendanceScanner = () => {
         <div className="bg-white p-6 sm:p-8 rounded-xl sm:rounded-2xl shadow-lg max-w-sm w-full text-center">
             
             <div className="mb-4 sm:mb-6 flex justify-center">
-                <div className="p-3 sm:p-4 bg-blue-50 rounded-full text-nss-blue">
+                <div className="p-3 sm:p-4 bg-blue-50 rounded-full text-blue-600">
                     {status === 'success' ? <CheckCircle size={40} className="text-green-500"/> : <MapPin size={40} />}
                 </div>
             </div>
@@ -66,7 +66,7 @@ const AttendanceScanner = () => {
             {(status === 'idle' || status === 'error') && (
                 <button 
                   onClick={getLocation} 
-                  className="w-full bg-nss-blue text-white py-2.5 sm:py-3 px-4 rounded-lg sm:rounded-lg font-bold hover:bg-blue-700 transition text-sm sm:text-base min-h-[40px] sm:min-h-[auto]"
+                  className="w-full bg-blue-600 text-white py-2.5 sm:py-3 px-4 rounded-lg sm:rounded-lg font-bold hover:bg-blue-700 transition text-sm sm:text-base min-h-[40px] sm:min-h-[auto]"
                   disabled={isLocating}
                 >
                     {isLocating ? 'Acquiring GPS...' : 'Grant Location Access'}

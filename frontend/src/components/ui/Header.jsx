@@ -33,9 +33,9 @@ const Header = ({ onOpenCommand }) => {
           </div>
         </div>
       </div>
-      <div className="bg-transparent border-t border-white/5 py-2">
-        <div className="max-w-5xl mx-auto px-4 text-sm text-white/80 overflow-hidden">
-          <div className="whitespace-nowrap animate-marquee">{marqueeText || '🔥 No important messages at the moment'}</div>
+      <div className="bg-gradient-to-r from-blue-700 to-indigo-700 border-t border-blue-600/30 py-2">
+        <div className="max-w-5xl mx-auto px-4 text-sm text-white overflow-hidden">
+          <div className="whitespace-nowrap animate-marquee font-semibold tracking-wide">{marqueeText || '🔥 No important messages at the moment'}</div>
         </div>
       </div>
     </header>

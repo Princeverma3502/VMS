@@ -64,7 +64,7 @@ const CreateEventForm = () => {
       {/* LEFT: FORM SECTION */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 border-b border-gray-100 pb-2 mb-4">
-          <Calendar className="text-nss-blue" size={20}/> Create New Event
+          <Calendar className="text-blue-600" size={20}/> Create New Event
         </h3>
         
         {error && (

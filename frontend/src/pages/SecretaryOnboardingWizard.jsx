@@ -91,7 +91,7 @@ const SecretaryOnboardingWizard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-nss-blue to-blue-900 p-6 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-900 p-6 flex items-center justify-center">
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8">
         {step === 1 ? (
           <>
@@ -107,7 +107,7 @@ const SecretaryOnboardingWizard = () => {
                   value={collegeData.name}
                   onChange={handleCollegeChange}
                   placeholder="e.g., IIT Delhi"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nss-blue outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none"
                 />
               </div>
 
@@ -119,16 +119,16 @@ const SecretaryOnboardingWizard = () => {
                   value={collegeData.slug}
                   onChange={handleCollegeChange}
                   placeholder="e.g., iit-delhi"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nss-blue outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Upload Logo</label>
-                <label className="flex items-center justify-center w-full px-4 py-3 border-2 border-dashed border-nss-blue rounded-lg cursor-pointer hover:bg-blue-50">
+                <label className="flex items-center justify-center w-full px-4 py-3 border-2 border-dashed border-blue-600 rounded-lg cursor-pointer hover:bg-blue-50">
                   <div className="flex items-center gap-2">
-                    <Upload size={20} className="text-nss-blue" />
-                    <span className="text-nss-blue font-medium">Click to upload</span>
+                    <Upload size={20} className="text-blue-600" />
+                    <span className="text-blue-600 font-medium">Click to upload</span>
                   </div>
                   <input
                     type="file"
@@ -153,7 +153,7 @@ const SecretaryOnboardingWizard = () => {
               <button
                 onClick={createCollege}
                 disabled={!collegeData.name || !collegeData.slug || loading}
-                className="w-full bg-nss-blue text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? 'Creating...' : 'Continue to Session Setup'} <ChevronRight size={20} />
               </button>
@@ -173,7 +173,7 @@ const SecretaryOnboardingWizard = () => {
                   value={sessionData.name}
                   onChange={handleSessionChange}
                   placeholder="e.g., 2024-25"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nss-blue outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none"
                 />
               </div>
 
@@ -185,7 +185,7 @@ const SecretaryOnboardingWizard = () => {
                     name="startDate"
                     value={sessionData.startDate}
                     onChange={handleSessionChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nss-blue outline-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none"
                   />
                 </div>
                 <div>
@@ -195,7 +195,7 @@ const SecretaryOnboardingWizard = () => {
                     name="endDate"
                     value={sessionData.endDate}
                     onChange={handleSessionChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-nss-blue outline-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none"
                   />
                 </div>
               </div>
@@ -210,7 +210,7 @@ const SecretaryOnboardingWizard = () => {
                 <button
                   onClick={createSession}
                   disabled={!sessionData.name || !sessionData.startDate || !sessionData.endDate || loading}
-                  className="flex-1 bg-nss-blue text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition disabled:opacity-50"
+                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition disabled:opacity-50"
                 >
                   {loading ? 'Creating...' : 'Complete Setup'}
                 </button>

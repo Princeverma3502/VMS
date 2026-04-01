@@ -55,7 +55,7 @@ const Arcade = () => {
             ) : (
                 <button 
                     onClick={handleSpin}
-                    className="bg-nss-blue text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold hover:bg-blue-700 transition text-sm sm:text-base min-h-[40px] sm:min-h-[auto]"
+                    className="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold hover:bg-blue-700 transition text-sm sm:text-base min-h-[40px] sm:min-h-[auto]"
                 >
                     Spin Now
                 </button>

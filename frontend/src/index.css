@@ -91,6 +91,33 @@ img {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* 11. GLASS CARD (Used by GamificationStatCard, StreakCard, MeetingPreview) */
+/* White text is readable on this dark-blue gradient background */
+.glass-card {
+  background: linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(29, 78, 216, 0.25);
+  color: #ffffff;
+}
+
+/* 12. CUSTOM SCROLLBAR */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.8); }
+
+/* 13. MARQUEE ANIMATION */
+@keyframes marquee {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
+}
+
 .text-gradient {
   background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%);
   -webkit-background-clip: text;
@@ -101,3 +128,44 @@ img {
 html {
   scroll-behavior: smooth;
 }
+
+/* 14. SHIMMER ANIMATION (used by EliteSkeleton) */
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* 15. ANIMATE-IN POLYFILL (Tailwind v4 may not include all these) */
+.animate-in {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+}
+@keyframes fade-in-anim {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.fade-in {
+  animation-name: fade-in-anim;
+}
+@keyframes slide-in-from-bottom {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.slide-in-from-bottom-4 { animation-name: slide-in-from-bottom; }
+.slide-in-from-bottom-8 { animation-name: slide-in-from-bottom; }
+
+/* 16. SHAKE ANIMATION (used on login error) */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Duration helpers for animate-in */
+.duration-200 { animation-duration: 0.2s !important; }
+.duration-300 { animation-duration: 0.3s !important; }
+.duration-500 { animation-duration: 0.5s !important; }
+.duration-700 { animation-duration: 0.7s !important; }
