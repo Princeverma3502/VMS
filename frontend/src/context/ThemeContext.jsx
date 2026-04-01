@@ -55,16 +55,11 @@ export const ThemeProvider = ({ children }) => {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/preferences', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await api.get('/preferences');
 
-      if (response.ok) {
-        const data = await response.json();
-        setPreferences(data.data);
-        applyTheme(data.data.theme || 'light');
+      if (response.data && response.data.data) {
+        setPreferences(response.data.data);
+        applyTheme(response.data.data.theme || 'light');
       } else {
         applyTheme('light');
       }
