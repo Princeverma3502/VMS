@@ -15,6 +15,17 @@ async function login(page, user) {
 
   // Auto-Mock Login API to ensure 100% test reliability without backend dependencies
   await page.route('**/api/auth/login', async route => {
+    if (route.request().method() === 'OPTIONS') {
+      return route.fulfill({
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': '*'
+        }
+      });
+    }
+
     let mockRole = 'Volunteer';
     if (user.email.includes('sec')) mockRole = 'Secretary';
     else if (user.email.includes('dh')) mockRole = 'Domain Head';
@@ -23,6 +34,7 @@ async function login(page, user) {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
+      headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({
         _id: 'mock-user-456',
         name: user.name,
@@ -36,6 +48,17 @@ async function login(page, user) {
   });
 
   await page.route('**/api/auth/me', async route => {
+    if (route.request().method() === 'OPTIONS') {
+      return route.fulfill({
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': '*'
+        }
+      });
+    }
+
     let mockRole = 'Volunteer';
     if (user.email.includes('sec')) mockRole = 'Secretary';
     else if (user.email.includes('dh')) mockRole = 'Domain Head';
@@ -44,6 +67,7 @@ async function login(page, user) {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
+      headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({
         _id: 'mock-user-456',
         name: user.name,
@@ -106,9 +130,21 @@ test('Login page: renders form elements', async ({ page }) => {
 test('Login page: shows error on wrong credentials', async ({ page }) => {
   // MUST mock a 401 rejection for this explicit test
   await page.route('**/api/auth/login', async route => {
+    if (route.request().method() === 'OPTIONS') {
+      return route.fulfill({
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': '*'
+        }
+      });
+    }
+
     await route.fulfill({
       status: 401,
       contentType: 'application/json',
+      headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({ message: 'Invalid Email or Password' })
     });
   });

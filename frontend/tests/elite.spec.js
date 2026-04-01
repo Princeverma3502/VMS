@@ -11,17 +11,29 @@ async function login(page, email, pass, rememberMe = true) {
 
   // Auto-Mock Login API to ensure 100% test reliability without backend dependencies
   await page.route('**/api/auth/login', async route => {
+    if (route.request().method() === 'OPTIONS') {
+      return route.fulfill({
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': '*'
+        }
+      });
+    }
+
     const postData = JSON.parse(route.request().postData() || '{}');
     let role = 'Volunteer';
-    if (postData.email.includes('sec')) role = 'Secretary';
+    if (postData.email?.includes('sec')) role = 'Secretary';
     
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
+      headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({
         _id: 'mock-user-123',
         name: 'Test ' + role,
-        email: postData.email,
+        email: postData.email || 'test@example.com',
         role: role,
         token: 'mock-jwt-token-777',
         isSuperAdmin: false,
@@ -31,9 +43,21 @@ async function login(page, email, pass, rememberMe = true) {
   });
 
   await page.route('**/api/auth/me', async route => {
+    if (route.request().method() === 'OPTIONS') {
+      return route.fulfill({
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': '*'
+        }
+      });
+    }
+
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
+      headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({
         _id: 'mock-user-123',
         name: 'Test User',
