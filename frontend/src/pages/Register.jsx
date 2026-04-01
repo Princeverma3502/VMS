@@ -233,6 +233,7 @@ const Register = () => {
             </div>
           </div>
 
+          {formData.role === 'Secretary' && (
               <div className="animate-fade-in bg-red-50 p-4 rounded-xl border border-red-100">
                 <div className="flex items-center gap-2 mb-2 text-red-800 font-bold text-sm">
                     <LockKeyhole size={16} /> Admin Verification
@@ -256,6 +257,7 @@ const Register = () => {
                     </button>
                 </div>
              </div>
+          )}
 
           <Button type="submit" variant="primary" className="w-full py-3 mt-4" isLoading={isLoading}>
             Submit Registration
