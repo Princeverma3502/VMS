@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
-import { UserPlus, ArrowLeft, LockKeyhole } from 'lucide-react';
+import { UserPlus, ArrowLeft, LockKeyhole, Eye, EyeOff } from 'lucide-react';
 
 const Register = () => {
   const { register } = useContext(AuthContext);
@@ -25,6 +25,8 @@ const Register = () => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showAdminSecret, setShowAdminSecret] = useState(false);
 
   // --- LOGIC: AUTO-ASSIGN ROLE BASED ON YEAR ---
   useEffect(() => {
@@ -186,7 +188,24 @@ const Register = () => {
           </div>
 
           <Input label="WhatsApp Number" name="whatsappNumber" value={formData.whatsappNumber} onChange={handleChange} required />
-          <Input label="Password" type="password" name="password" value={formData.password} onChange={handleChange} required />
+          
+          <div className="relative">
+            <Input 
+              label="Password" 
+              type={showPassword ? "text" : "password"} 
+              name="password" 
+              value={formData.password} 
+              onChange={handleChange} 
+              required 
+            />
+            <button
+               type="button"
+               onClick={() => setShowPassword(!showPassword)}
+               className="absolute right-3 top-[38px] text-gray-400 hover:text-blue-600 transition-colors focus:outline-none"
+            >
+               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
 
           <div className="pt-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -214,14 +233,29 @@ const Register = () => {
             </div>
           </div>
 
-          {formData.role === 'Secretary' && (
-             <div className="animate-fade-in bg-red-50 p-4 rounded-xl border border-red-100">
+              <div className="animate-fade-in bg-red-50 p-4 rounded-xl border border-red-100">
                 <div className="flex items-center gap-2 mb-2 text-red-800 font-bold text-sm">
                     <LockKeyhole size={16} /> Admin Verification
                 </div>
-                <Input type="password" name="adminSecret" placeholder="Enter Admin Secret Key" value={formData.adminSecret} onChange={handleChange} className="bg-white" required />
+                <div className="relative">
+                    <Input 
+                        type={showAdminSecret ? "text" : "password"} 
+                        name="adminSecret" 
+                        placeholder="Enter Admin Secret Key" 
+                        value={formData.adminSecret} 
+                        onChange={handleChange} 
+                        className="bg-white" 
+                        required 
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowAdminSecret(!showAdminSecret)}
+                        className="absolute right-3 top-[10px] text-gray-400 hover:text-blue-600 transition-colors focus:outline-none"
+                    >
+                        {showAdminSecret ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                </div>
              </div>
-          )}
 
           <Button type="submit" variant="primary" className="w-full py-3 mt-4" isLoading={isLoading}>
             Submit Registration

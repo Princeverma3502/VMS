@@ -22,8 +22,8 @@ const Layout = ({ children, showBackButton = true }) => {
       {/* --- MAIN CONTENT --- */}
       <div className="flex-1 flex flex-col md:pl-64 h-full relative w-full transition-all duration-300">
         
-        {/* Mobile Header (Hidden on Desktop) */}
-        <div className="md:hidden sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        {/* Global Header (Sticky) */}
+        <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
           <Navbar showBackButton={showBackButton} />
         </div>
 

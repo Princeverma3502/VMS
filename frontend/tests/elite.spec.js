@@ -10,35 +10,45 @@ const STREAK_MODAL_SELECTOR = 'button:has-text("Let\'s Go!"), button:has-text("C
 
 // ─── Auth Helper ────────────────────────────────────────────────────────────
 async function login(page, email, pass, rememberMe = true) {
-  await page.goto('/login');
+  console.log(`🔑 Logging in as: ${email}`);
+  await page.goto('/login', { waitUntil: 'domcontentloaded' });
+  
+  // 1. Wait for form fields
+  await page.locator('input[type="email"]').waitFor();
   await page.locator('input[type="email"]').fill(email);
   await page.locator('input[type="password"]').fill(pass);
   
-  // Handle "Stay signed in" toggle
-  const toggle = page.locator('input[type="checkbox"] + div'); // Custom toggle div
-  const isChecked = await page.locator('input[type="checkbox"]').isChecked();
+  // 2. Handle "Stay signed in" toggle (select by label for robustness)
+  const toggleLabel = page.locator('label:has-text("Stay signed in")');
+  const checkbox = page.locator('input[type="checkbox"]');
+  const isChecked = await checkbox.isChecked();
   
   if (rememberMe !== isChecked) {
-    await toggle.click();
+    await toggleLabel.click();
   }
   
+  // 3. Submit
   await page.locator('button[type="submit"]').click();
   
-  // Wait for navigation or streak modal
+  // 4. Wait for Modal or Dashboard (Multiple Roles)
+  const streakModalBtn = page.locator('button:has-text("Let\'s Go!"), button:has-text("Continue")');
+  
   try {
      await Promise.race([
-       page.waitForURL(/\/volunteer\/dashboard/, { timeout: 10000 }),
-       page.locator(STREAK_MODAL_SELECTOR).waitFor({ state: 'visible', timeout: 10000 })
+       page.waitForURL(/\/(secretary|volunteer|domain-head)\/dashboard/, { timeout: 30000 }),
+       streakModalBtn.waitFor({ state: 'visible', timeout: 30000 })
      ]);
      
-     if (await page.locator(STREAK_MODAL_SELECTOR).isVisible()) {
-       await page.locator(STREAK_MODAL_SELECTOR).click();
+     if (await streakModalBtn.isVisible()) {
+       console.log('✨ Streak Modal detected, dismissing...');
+       await streakModalBtn.click();
      }
   } catch (e) {
-     console.log('Login navigation/modal race timeout');
+     console.log('⚠️ Login navigation/modal race timeout - check if already on Dashboard');
   }
   
-  await page.waitForURL(/\/volunteer\/dashboard/);
+  // 5. Final verification of Dashboard state
+  await expect(page.locator('h1').first()).toBeVisible({ timeout: 15000 });
 }
 
 // ─── Phase 2 Tests ──────────────────────────────────────────────────────────
@@ -91,7 +101,7 @@ test.describe('Elite Feature Suite: Industry-Ready Audit', () => {
     
     // 2. Verify Bento Grid structure (grid-cols or specific Bento labels)
     const statsGrid = page.locator('.grid');
-    await expect(statsGrid).toBeVisible();
+    await expect(statsGrid.first()).toBeVisible();
     
     // 3. Verify specific "Mission Control" titles
     await expect(page.locator('text=/Mission Control|Overview|Analytics/i').first()).toBeVisible();

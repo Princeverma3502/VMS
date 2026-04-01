@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { Mail, Lock, LogIn, Loader2 } from 'lucide-react';
+import { Mail, Lock, LogIn, Loader2, Eye, EyeOff } from 'lucide-react';
 import StreakModal from '../components/modals/StreakModal';
 
 
@@ -11,6 +11,7 @@ const Login = () => {
   const [newStreakCount, setNewStreakCount] = useState(0);
   
   const [rememberMe, setRememberMe] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   
   const { login, loading, user } = useContext(AuthContext);
   const [error, setError] = useState(null);
@@ -77,8 +78,8 @@ const Login = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 mb-2">
-                Identifier (Email)
-              </label>
+                Email
+             </label>
               <div className="relative group">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
                 <input
@@ -94,18 +95,25 @@ const Login = () => {
 
             <div>
               <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 mb-2">
-                Access Key
+                Password
               </label>
               <div className="relative group">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   required
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-blue-600/20 focus:ring-4 focus:ring-blue-600/5 font-bold text-slate-800 transition-all outline-none"
+                  className="w-full pl-12 pr-12 py-4 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-blue-600/20 focus:ring-4 focus:ring-blue-600/5 font-bold text-slate-800 transition-all outline-none"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-blue-600 transition-colors focus:outline-none"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 
@@ -125,7 +133,7 @@ const Login = () => {
                   <span className="ml-3 text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-slate-600 transition-colors">Stay signed in</span>
                </label>
                <Link to="/forgot-password" size="sm" className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:text-slate-900 transition-colors">
-                 Lost Key?
+                 Forgot Password
                </Link>
             </div>
 
@@ -142,7 +150,7 @@ const Login = () => {
               className="w-full flex justify-center items-center gap-3 py-5 px-4 rounded-[1.5rem] shadow-xl shadow-blue-600/20 text-[10px] font-black uppercase tracking-[0.3em] text-white bg-blue-600 hover:bg-slate-900 focus:outline-none transition-all active:scale-95 disabled:opacity-50"
             >
               {loading ? <Loader2 className="animate-spin" size={20} /> : <LogIn size={18} />}
-              <span>{loading ? 'Authenticating...' : 'Engage System'}</span>
+              <span>{loading ? 'Authenticating...' : 'Log In'}</span>
             </button>
           </form>
 
