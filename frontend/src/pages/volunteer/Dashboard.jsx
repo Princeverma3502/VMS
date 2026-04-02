@@ -9,9 +9,15 @@ import { triggerHaptic } from '../../utils/haptics';
 import { triggerConfetti } from '../../utils/confetti';
 import { shareContent } from '../../utils/nativeShare';
 import { calculateLevel, getProgress } from '../../utils/levels';
-import { 
-  CheckCircle, Clock, PlayCircle, Lock, 
-  Share2, Zap, Trophy, Flame 
+import {
+  CheckCircle,
+  Clock,
+  PlayCircle,
+  Lock,
+  Share2,
+  Zap,
+  Trophy,
+  Flame,
 } from 'lucide-react';
 
 const VolunteerDashboard = () => {
@@ -69,7 +75,6 @@ const VolunteerDashboard = () => {
   const level = calculateLevel(xp);
   const progress = getProgress(xp);
 
-  // --- VISIBILITY FIX: Task Card ---
   const TaskCard = ({ task }) => (
     <div className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200 mb-3 active:scale-95 transition-all hover:shadow-md">
       <div className="flex justify-between items-start mb-2 gap-2">

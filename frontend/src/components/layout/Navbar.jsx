@@ -67,7 +67,7 @@ const Navbar = ({ userName = "User", showBackButton = false }) => {
       <div className="flex items-center gap-2 sm:gap-4">
         {/* Unit Branding (Always Visible) */}
         <div className="flex items-center gap-2 bg-blue-50 px-2 py-1 rounded-lg border border-blue-100">
-          <img src="/logo.png" alt="NSS" className="w-7 h-7 min-w-[1.75rem] min-h-[1.75rem] bg-white border border-slate-200 rounded-full object-contain p-1 shadow" />
+          <img src="/public/logo.png" alt="NSS" className="w-7 h-7 min-w-[1.75rem] min-h-[1.75rem] bg-white border border-slate-200 rounded-full object-contain p-1 shadow" />
           <span className="text-[10px] font-black text-blue-700 uppercase tracking-tighter italic">National Service Scheme</span>
         </div>
         {/* Notification Icon */}
