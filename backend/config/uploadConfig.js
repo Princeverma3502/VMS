@@ -1,17 +1,14 @@
 import multer from 'multer';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-// Fix for __dirname in ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Use process.cwd() so this module works under Jest and normal runtime
+const uploadsDir = path.join(process.cwd(), 'uploads');
 
 // Set storage engine
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Files will be saved in 'backend/uploads/'
-    // You must manually create this folder in your root directory!
-    cb(null, 'uploads/');
+    // Files will be saved in '<cwd>/uploads/' (ensure folder exists)
+    cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
     // Naming convention: fieldname-timestamp.extension

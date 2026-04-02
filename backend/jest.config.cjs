@@ -5,4 +5,6 @@ module.exports = {
   transform: {
     '^.+\\.js$': 'babel-jest'
   },
+  // Allow transforming uuid package (ESM syntax) so Jest can run it in tests
+  transformIgnorePatterns: ['/node_modules/(?!(uuid)/)'],
 };

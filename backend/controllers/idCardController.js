@@ -23,7 +23,8 @@ export const getIDCardSettings = asyncHandler(async (req, res) => {
   if (settings && settings.idCardOptions) {
     res.json({
       ...settings.idCardOptions,
-      collegeSubheading: settings.collegeSubheading || 'Harcourt Butler Technical University'
+      collegeSubheading: settings.collegeSubheading || 'Harcourt Butler Technical University',
+      studentSecretaries: settings.idCardOptions.studentSecretaries || []
     });
   } else {
     res.json({
@@ -31,7 +32,8 @@ export const getIDCardSettings = asyncHandler(async (req, res) => {
         orgName: 'NATIONAL SERVICE SCHEME',
         subHeader: 'Your College Name',
         collegeSubheading: 'Harcourt Butler Technical University',
-        roleColors: { 'Volunteer': '#1d4ed8' }
+        roleColors: { 'Volunteer': '#1d4ed8' },
+        studentSecretaries: []
     });
   }
 });
@@ -62,7 +64,7 @@ export const getIDCardSettings = asyncHandler(async (req, res) => {
 export const updateIDCardSettings = asyncHandler(async (req, res) => {
   const { 
     templateId, orgName, subHeader, collegeLogo, councilLogo, 
-    signatureUrl, signatureName, signatureRole, roleColors, visibleFields, collegeSubheading 
+    signatureUrl, signatureName, signatureRole, roleColors, visibleFields, collegeSubheading, studentSecretaries 
   } = req.body;
 
   let settings = await CollegeSettings.findOne({ collegeId: req.user.collegeId });
@@ -73,7 +75,8 @@ export const updateIDCardSettings = asyncHandler(async (req, res) => {
 
   settings.idCardOptions = {
     templateId, orgName, subHeader, collegeLogo, councilLogo,
-    signatureUrl, signatureName, signatureRole, roleColors, visibleFields
+    signatureUrl, signatureName, signatureRole, roleColors, visibleFields,
+    studentSecretaries: Array.isArray(studentSecretaries) ? studentSecretaries.slice(0,3) : []
   };
   settings.collegeSubheading = collegeSubheading || 'Harcourt Butler Technical University';
 

@@ -62,6 +62,16 @@ const collegeSettingsSchema = new mongoose.Schema(
       signatureUrl: { type: String, default: '' },
       signatureName: { type: String, default: 'Auth Signatory' },
       signatureRole: { type: String, default: 'Program Officer' },
+      studentSecretaries: {
+        type: [
+          {
+            name: { type: String, default: '' },
+            signatureUrl: { type: String, default: '' },
+            designation: { type: String, default: 'Student Secretary' }
+          }
+        ],
+        default: []
+      },
       roleColors: {
         type: Map,
         of: String,
