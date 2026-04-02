@@ -1,5 +1,5 @@
 // Confetti animation utility for celebrations
-export const triggerConfetti = (duration = 2000) => {
+export const triggerConfetti = () => {
   const canvas = document.createElement('canvas');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;

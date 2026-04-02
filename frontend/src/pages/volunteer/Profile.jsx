@@ -37,7 +37,7 @@ const Profile = () => {
     try {
       const { data } = await api.get(`/users/profile/${user._id}`);
       setProfileData(data.profile || data);
-    } catch (error) {
+    } catch {
       toast.error("Cloud synchronization failed");
     } finally {
       setLoading(false);
@@ -67,8 +67,8 @@ const Profile = () => {
             stream.getTracks().forEach(track => track.stop());
             setPerms(p => ({...p, camera: true}));
             toast.success("Optics Authorized");
-        } catch (e) {
-            toast.error("Hardware bypass failed");
+        } catch {
+          toast.error("Hardware bypass failed");
         }
     }
   };
@@ -86,7 +86,7 @@ const Profile = () => {
           setProfileData(prev => ({ ...prev, profileImage: data.profileImage }));
           toast.success("Identity Visual Updated");
         }
-    } catch (err) { toast.error("Upload failed"); }
+      } catch { toast.error("Upload failed"); }
     finally { setUploading(false); }
   };
 
@@ -241,5 +241,7 @@ const Profile = () => {
     </Layout>
   );
 };
-
+                  } catch {
+                      toast.error("Hardware bypass failed");
+                  }
 export default Profile;
