@@ -128,45 +128,46 @@ const IDCardRenderer = ({ user, config, verified = false, isBack = false }) => {
       </div>
 
       {/* 5. FOOTER (Signatures & Validity) */}
-      <div className="px-8 pb-4 flex justify-between items-end mt-6">
-        {/* Bottom-Left: Secretary Signature */}
-        <div className="flex flex-col items-start">
-          {config.secretarySig && (
-            <div className="h-8 mb-1 flex items-end">
-              <img src={config.secretarySig} alt="Secretary Signature" className="h-full object-contain" />
-            </div>
-          )}
-          <div className="w-20 h-[1px] bg-slate-200 mb-1"></div>
-          <p className="text-[8px] font-bold text-slate-500 uppercase tracking-wide">
-            {config.secretaryName || "Secretary"}
-          </p>
-          <p className="text-[10px] font-medium text-slate-400">Student Secretary</p>
+      <div className="px-8 pb-4 mt-6 relative">
+        <div className="flex justify-between items-end">
+          {(() => {
+            const defaults = [
+              { name: config.secretaryName || 'Student Secretary', signature: config.secretarySig || null, designation: 'Student Secretary' },
+              { name: config.secretary2Name || '', signature: config.secretary2Sig || null, designation: 'Student Secretary' },
+              { name: config.secretary3Name || '', signature: config.secretary3Sig || null, designation: 'Student Secretary' }
+            ];
+
+            const secs = (config.studentSecretaries && config.studentSecretaries.length)
+              ? config.studentSecretaries
+              : defaults;
+
+            return secs.slice(0, 3).map((s, idx) => (
+              <div key={idx} className="flex flex-col items-center w-1/3">
+                {s.signature && (
+                  <div className="h-8 mb-1 flex items-end">
+                    <img src={s.signature} alt={`Signature ${idx + 1}`} className="h-full object-contain" />
+                  </div>
+                )}
+                <div className="w-32 h-[1px] bg-slate-200 mb-1"></div>
+                <p className="text-[8px] font-bold text-slate-500 uppercase tracking-wide text-center">
+                  {s.name || `Student Secretary ${idx + 1}`}
+                </p>
+                <p className="text-[10px] font-medium text-slate-400 text-center">{s.designation || 'Student Secretary'}</p>
+              </div>
+            ));
+          })()}
         </div>
 
-        {/* Bottom-Right: Program Officer Signature */}
-        <div className="flex flex-col items-end">
-          {config.officerSig && (
-            <div className="h-8 mb-1 flex items-end">
-              <img src={config.officerSig} alt="Officer Signature" className="h-full object-contain" />
-            </div>
-          )}
-          <div className="w-27 h-[1px] bg-slate-200 mb-1"></div>
-          <p className="text-[8px] font-bold text-slate-500 uppercase tracking-wide">
-            {config.officerName || "Program Officer"}
+        {/* Validity Indicator */}
+        <div className="px-8 pb-2 text-center mt-4">
+          <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">
+            Valid Till: {config.validThru || 'N/A'}
           </p>
-          <p className="text-[10px] font-medium text-slate-400">Program Officer</p>
         </div>
-      </div>
 
-      {/* Validity Indicator */}
-      <div className="px-8 pb-2 text-center">
-        <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">
-          Valid Till: {config.validThru || 'N/A'}
-        </p>
+        {/* Bottom Stripe */}
+        <div className={`${HEADER_COLOR} h-2 w-full absolute bottom-0`}></div>
       </div>
-
-      {/* Bottom Stripe */}
-      <div className={`${HEADER_COLOR} h-2 w-full absolute bottom-0`}></div>
     </div>
   );
 };
