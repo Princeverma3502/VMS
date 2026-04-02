@@ -124,15 +124,16 @@ const Register = () => {
         <h1 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">Create Account</h1>
         <p className="text-gray-500 mb-8 font-medium">Join the National Service Scheme (NSS)</p>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5" id="registerForm" name="registerForm" autoComplete="off">
+
           {error && (
             <div className="p-4 bg-red-50 text-red-700 text-sm font-medium rounded-xl border border-red-100 flex items-center justify-center">
                 {error}
             </div>
           )}
 
-          <Input label="Full Name" name="name" value={formData.name} onChange={handleChange} required />
-          <Input label="Email Address" type="email" name="email" value={formData.email} onChange={handleChange} required />
+          <Input label="Full Name" name="name" value={formData.name} onChange={handleChange} autoComplete="name" required />
+          <Input label="Email Address" type="email" name="email" value={formData.email} onChange={handleChange} autoComplete="email" required />
           <Input label="Roll Number" name="rollNumber" value={formData.rollNumber} onChange={handleChange} placeholder="e.g. 250108048" />
 
           <div className="flex flex-col">
@@ -194,6 +195,7 @@ const Register = () => {
               label="Password" 
               type={showPassword ? "text" : "password"} 
               name="password" 
+              id="new-password"
               value={formData.password} 
               onChange={handleChange} 
               autoComplete="new-password"

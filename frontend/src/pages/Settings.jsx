@@ -356,45 +356,57 @@ const Settings = () => {
         </div>
 
         {/* Security Settings */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <form
+          id="changePasswordForm"
+          name="changePasswordForm"
+          autoComplete="off"
+          onSubmit={(e) => { e.preventDefault(); handleChangePassword(); }}
+          className="bg-white rounded-xl shadow-sm p-6 mb-6"
+        >
           <h2 className="text-xl font-bold text-gray-800 mb-4">Security</h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">Old Password</label>
               <input 
                 type="password"
+                name="oldPassword"
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
+                autoComplete="current-password"
                 className="w-full p-3 border border-gray-300 rounded-lg"
               />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">New Password</label>
               <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg"
+                  type="password"
+                  name="newPassword"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  autoComplete="new-password"
+                  className="w-full p-3 border border-gray-300 rounded-lg"
               />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">Confirm New Password</label>
               <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg"
+                  type="password"
+                  name="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  autoComplete="new-password"
+                  className="w-full p-3 border border-gray-300 rounded-lg"
               />
             </div>
           </div>
           <button
-            onClick={handleChangePassword}
+            type="submit"
             disabled={saving}
             className="w-full mt-4 bg-blue-600 text-white py-3 rounded-lg font-bold shadow-lg shadow-blue-100 active:scale-95 transition-all disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Change Password'}
           </button>
-        </div>
+        </form>
 
         {/* Account Information */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">

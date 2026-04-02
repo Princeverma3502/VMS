@@ -13,7 +13,7 @@ const LoginForm = ({ onSubmit, isLoading, error }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4" id="loginForm" name="loginForm" autoComplete="off">
       {/* Global Error Message Display */}
       {error && (
         <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-200">
@@ -24,18 +24,22 @@ const LoginForm = ({ onSubmit, isLoading, error }) => {
       <Input 
         label="Email Address"
         type="email"
+        name="email"
         placeholder="Enter your email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        autoComplete="username"
         required
       />
 
       <Input 
         label="Password"
         type="password"
+        name="password"
         placeholder="••••••••"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        autoComplete="current-password"
         required
       />
 
