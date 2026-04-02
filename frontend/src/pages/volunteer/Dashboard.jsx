@@ -18,14 +18,8 @@ const VolunteerDashboard = () => {
   const { user } = useContext(AuthContext);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (user) {
-      fetchTasks();
-    }
-  }, [user]);
-
-  const fetchTasks = async () => {
+  // Fetch tasks (function declaration moved above effect to avoid "used before declared" warnings)
+  async function fetchTasks() {
     try {
       const { data } = await api.get('/tasks');
       setTasks(Array.isArray(data) ? data : []);
@@ -35,7 +29,13 @@ const VolunteerDashboard = () => {
       setTasks([]);
       setLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    if (user) {
+      fetchTasks();
+    }
+  }, [user]);
 
   const handleClaim = async (id) => {
     try {
