@@ -67,7 +67,7 @@ const Sidebar = ({ userRole = 'Volunteer', hideHeader = false }) => {
       {!hideHeader && (
         <div className="p-8 border-b border-white/5 flex items-center gap-4 bg-gradient-to-b from-white/5 to-transparent">
           <div className="bg-white p-2 rounded-2xl shadow-[0_10px_30px_rgba(255,255,255,0.1)] ring-1 ring-white/20 transform hover:scale-110 transition-transform duration-500">
-            <img src="/logo.png" alt="NSS Logo" className="w-10 h-10 object-contain" />
+            <img src="/logo.png" alt="NSS Logo" className="w-10 h-10 min-w-[2.5rem] min-h-[2.5rem] bg-white border border-slate-200 rounded-full object-contain p-1 shadow" />
           </div>
           <div>
             <h1 className="text-2xl font-black tracking-tight text-white leading-none">Console</h1>

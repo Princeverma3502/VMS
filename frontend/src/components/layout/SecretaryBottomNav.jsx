@@ -69,7 +69,7 @@ const SecretaryBottomNav = () => {
             <div className="flex justify-between items-center p-4 border-b border-slate-800 bg-slate-900/50 backdrop-blur-md">
               <div className="flex items-center gap-3">
                 <div className="bg-white p-1 rounded-lg">
-                  <img src="/logo.png" alt="NSS Logo" className="w-8 h-8 object-contain" />
+                  <img src="/logo.png" alt="NSS Logo" className="w-8 h-8 min-w-[2rem] min-h-[2rem] bg-white border border-slate-200 rounded-full object-contain p-1 shadow" />
                 </div>
                 <span className="text-white font-black uppercase tracking-widest text-sm">NSS Portal</span>
               </div>
