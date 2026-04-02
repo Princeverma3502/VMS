@@ -17,6 +17,11 @@ const DEFAULT_CONFIG = {
   councilLogo: "",
   secretarySig: "",
   secretaryName: "A. S. Patel",
+  secretary2Sig: "",
+  secretary2Name: "",
+  secretary3Sig: "",
+  secretary3Name: "",
+  studentSecretaries: [],
   officerSig: "",
   officerName: "Dr. R. K. Singh",
   validThru: "DEC 2026",
@@ -65,6 +70,21 @@ const SecretaryCustomizer = ({ userSample }) => {
     }
   };
 
+  const handleStudentSignatureUpload = (e, idx) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 500000) { alert("File too large! Max 500KB."); return; }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setConfig(prev => {
+        const secs = Array.isArray(prev.studentSecretaries) ? [...prev.studentSecretaries] : [];
+        secs[idx] = { ...(secs[idx] || {}), signature: reader.result };
+        return { ...prev, studentSecretaries: secs };
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSave = async () => {
     try {
       setSaving(true);
@@ -84,7 +104,7 @@ const SecretaryCustomizer = ({ userSample }) => {
     ...userSample,
     name: userSample?.name || "Rahul Sharma",
     role: previewRole,
-    rollNumber: userSample?.rollNumber || "VOL-2024-001",
+    rollNumber: userSample?.rollNumber || "230108048",
     bloodGroup: userSample?.bloodGroup || "B+",
     branch: userSample?.branch || userSample?.department || "CSE",
     year: userSample?.year || userSample?.academicYear || "2ND",
@@ -184,6 +204,43 @@ const SecretaryCustomizer = ({ userSample }) => {
           <div className="mt-4 space-y-2">
             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Validity Statement</label>
             <input type="text" value={config.validThru} onChange={(e) => setConfig({...config, validThru: e.target.value})} placeholder="Valid Thru (e.g. DEC 2026)" className="w-full p-3 border border-slate-300 rounded-xl text-sm font-bold uppercase" />
+          </div>
+
+          {/* Student Secretaries */}
+          <div className="mt-6 space-y-3">
+            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Student Secretaries (up to 3)</label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[0,1,2].map(i => (
+                <div key={i} className="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                  <label className="text-[9px] font-semibold text-slate-600">Name</label>
+                  <input type="text" value={(config.studentSecretaries && config.studentSecretaries[i] && config.studentSecretaries[i].name) || (i===0?config.secretaryName:(i===1?config.secretary2Name:config.secretary3Name))}
+                    onChange={(e) => {
+                      const name = e.target.value;
+                      setConfig(prev => {
+                        const secs = Array.isArray(prev.studentSecretaries) ? [...prev.studentSecretaries] : [];
+                        secs[i] = { ...(secs[i] || {}), name };
+                        // also keep individual legacy fields for backwards compat
+                        const patch = { studentSecretaries: secs };
+                        if (i===0) patch.secretaryName = name;
+                        if (i===1) patch.secretary2Name = name;
+                        if (i===2) patch.secretary3Name = name;
+                        return { ...prev, ...patch };
+                      });
+                    }}
+                    placeholder={`Secretary ${i+1} Name`} className="w-full p-2 border rounded-md text-sm" />
+
+                  <label className="text-[9px] font-semibold text-slate-600">Signature (PNG/JPG)</label>
+                  <div className="relative border-2 border-dashed border-slate-200 rounded-md p-2 flex items-center justify-center h-20 bg-white">
+                    <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer z-10" onChange={(e) => handleStudentSignatureUpload(e, i)} />
+                    {config.studentSecretaries && config.studentSecretaries[i] && config.studentSecretaries[i].signature ? (
+                      <img src={config.studentSecretaries[i].signature} alt={`sig-${i}`} className="h-12 object-contain" />
+                    ) : (
+                      <span className="text-[10px] text-slate-400">Upload Signature</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
