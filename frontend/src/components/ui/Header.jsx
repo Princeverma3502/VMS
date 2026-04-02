@@ -12,7 +12,12 @@ const Header = ({ onOpenCommand }) => {
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
       <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-6">
-        {logoUrl && <img src={logoUrl} alt={collegeName} className="h-12 w-auto drop-shadow-sm" />}
+        {logoUrl && (
+          <div className="flex items-center gap-2">
+            <img src={logoUrl} alt="National Service Scheme" className="h-12 w-12 min-w-[3rem] min-h-[3rem] bg-white border border-slate-200 rounded-full object-contain p-1 shadow" />
+            <span className="text-base font-black text-blue-700 uppercase tracking-tighter italic ml-2">National Service Scheme</span>
+          </div>
+        )}
         <div className="flex-1">
           <div className="cmd-palette flex items-center gap-4 px-5 py-3 rounded-2xl bg-slate-100 border border-slate-200 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500">
             <Search className="text-slate-400" size={18} />
