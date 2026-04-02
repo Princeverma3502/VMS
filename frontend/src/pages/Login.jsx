@@ -84,7 +84,9 @@ const Login = () => {
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
                 <input
                   type="email"
+                  name="email"
                   required
+                  autoComplete="username"
                   className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-blue-600/20 focus:ring-4 focus:ring-blue-600/5 font-bold text-slate-800 transition-all outline-none"
                   placeholder="name@college.edu"
                   value={formData.email}
@@ -101,7 +103,9 @@ const Login = () => {
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
                 <input
                   type={showPassword ? "text" : "password"}
+                  name="password"
                   required
+                  autoComplete="current-password"
                   className="w-full pl-12 pr-12 py-4 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-blue-600/20 focus:ring-4 focus:ring-blue-600/5 font-bold text-slate-800 transition-all outline-none"
                   placeholder="••••••••"
                   value={formData.password}

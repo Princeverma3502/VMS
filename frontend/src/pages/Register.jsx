@@ -46,8 +46,8 @@ const Register = () => {
         const res = await import('../services/api').then(m => m.default.get('/colleges'));
         const list = res.data || [];
         
-        // Filter the list to ONLY include Harcourt Butler Technical University
-        const filteredList = list.filter(c => /harcourt butler/i.test(c.name));
+        // Prefer matching known NSS or local college entries; fall back to all colleges
+        const filteredList = list.filter(c => /(national service scheme|nss|harcourt butler)/i.test(c.name));
         
         // Remove duplicates by name if any exist in the database
         const uniqueColleges = filteredList.filter((college, index, self) => 

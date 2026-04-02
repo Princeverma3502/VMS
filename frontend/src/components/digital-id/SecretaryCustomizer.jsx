@@ -11,7 +11,7 @@ const DEFAULT_CONFIG = {
   templateId: 'executive-pro',
   orgName: "NATIONAL SERVICE SCHEME",
   universityName: "NATIONAL SERVICE SCHEME",
-  collegeSubheading: "Harcourt Butler Technical University",
+  collegeSubheading: "National Service Scheme",
   subHeader: "Indian Institute of Technology, Bombay",
   collegeLogo: "",
   councilLogo: "",
@@ -179,7 +179,7 @@ const SecretaryCustomizer = ({ userSample }) => {
                   type="text"
                   value={config.collegeSubheading}
                   onChange={(e) => setConfig({...config, collegeSubheading: e.target.value})}
-                  placeholder="e.g. Harcourt Butler Technical University"
+                  placeholder="e.g. National Service Scheme"
                   className="w-full p-3 border border-slate-300 rounded-xl text-sm font-bold bg-slate-50 focus:bg-white transition-all"
                 />
              </div>

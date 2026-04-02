@@ -68,7 +68,7 @@ const IDCardRenderer = ({ user, config, verified = false, isBack = false }) => {
             {config.universityName || "NATIONAL SERVICE SCHEME"}
           </p>
           <p className="text-[9px] font-bold text-slate-700 text-center leading-tight mt-1">
-            {config.collegeSubheading || "Harcourt Butler Technical University"}
+            {config.collegeSubheading || "National Service Scheme"}
           </p>
         </div>
       </div>
