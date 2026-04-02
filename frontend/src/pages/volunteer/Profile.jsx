@@ -241,7 +241,4 @@ const Profile = () => {
     </Layout>
   );
 };
-                  } catch {
-                      toast.error("Hardware bypass failed");
-                  }
-export default Profile;
+  export default Profile;

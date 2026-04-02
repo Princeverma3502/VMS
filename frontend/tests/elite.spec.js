@@ -70,8 +70,14 @@ async function login(page, email, pass, rememberMe = true) {
   await setupMocks(page, email);
   await page.goto('/login', { waitUntil: 'domcontentloaded' });
 
+  // Clear persisted auth state after navigation (same-origin) to avoid SecurityError
+  await page.evaluate(() => { window.localStorage.clear(); window.sessionStorage.clear(); });
+  // Reload so the app picks up cleared storage state
+  await page.reload({ waitUntil: 'domcontentloaded' });
+
   // Fill form — use .first() to avoid strict mode violations
-  await page.locator('input[type="email"]').first().waitFor({ timeout: 10000 });
+  // Wait a bit longer for CI environments where rendering can be slower
+  await page.locator('input[type="email"]').first().waitFor({ state: 'visible', timeout: 20000 });
   await page.locator('input[type="email"]').first().fill(email);
 
   // Password field may be type="password" or type="text" (show/hide toggle)
