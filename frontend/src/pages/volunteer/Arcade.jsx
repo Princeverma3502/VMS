@@ -48,29 +48,29 @@ const Arcade = () => {
             <Gift className="mx-auto text-purple-500 mb-3 sm:mb-4" size={32} />
             <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">Daily Spin</h3>
             {spinResult ? (
-                <div className="animate-fade-in">
-                    <p className="text-xl sm:text-2xl font-bold text-gamification-gold">+{spinResult.xpAwarded} XP</p>
-                    <p className="text-xs sm:text-sm text-gray-500 mt-1">{spinResult.message}</p>
-                </div>
+              <div className="animate-fade-in">
+                <p className="text-xl sm:text-2xl font-bold text-gamification-gold">+{spinResult.xpAwarded} XP</p>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">{spinResult.message}</p>
+              </div>
             ) : (
-                <button 
-                    onClick={handleSpin}
-                    className="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold hover:bg-blue-700 transition text-sm sm:text-base min-h-[40px] sm:min-h-[auto]"
-                >
-                    Spin Now
-                </button>
+              <button
+                onClick={handleSpin}
+                disabled={isLoading}
+                className="bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold hover:bg-blue-700 transition text-sm sm:text-base min-h-[40px] sm:min-h-[auto]"
+              >
+                {isLoading ? 'Spinning...' : 'Spin Now'}
+              </button>
             )}
-        </div>
 
-        {/* Badges */}
-        <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-xl shadow-sm border border-gray-100">
-            <h3 className="font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2 text-sm sm:text-base">
-                <BrainCircuit size={18} />Your Badges
-            </h3>
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
-                <Badge name="Rookie" description="Joined NSS" isUnlocked={true} />
-                <Badge name="Explorer" description="First Event" isUnlocked={xp > 100} />
-                <Badge name="Leader" description="Domain Head" isUnlocked={false} />
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <BrainCircuit size={18} />
+              <h3 className="text-sm font-bold">Your Badges</h3>
+            </div>
+
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mt-4">
+              <Badge name="Rookie" description="Joined NSS" isUnlocked={true} />
+              <Badge name="Explorer" description="First Event" isUnlocked={xp > 100} />
+              <Badge name="Leader" description="Domain Head" isUnlocked={false} />
             </div>
         </div>
       </div>

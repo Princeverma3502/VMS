@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../../components/layout/Layout';
 import api from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
@@ -6,7 +6,7 @@ import useGeoLocation from '../../hooks/useGeoLocation';
 import { MapPin, QrCode, CheckCircle, AlertTriangle } from 'lucide-react';
 
 const AttendanceScanner = () => {
-  const { user } = useContext(AuthContext);
+  // user not required in this component
   // Destructure values from our custom hook
   const { location, error: geoError, isLoading: isLocating, getLocation } = useGeoLocation();
   
