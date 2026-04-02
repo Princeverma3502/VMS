@@ -15,7 +15,6 @@ const Header = ({ onOpenCommand }) => {
         {logoUrl && (
           <div className="flex items-center gap-2">
             <img src={logoUrl} alt="National Service Scheme" className="h-12 w-12 min-w-[3rem] min-h-[3rem] bg-white border border-slate-200 rounded-full object-contain p-1 shadow" />
-            <span className="text-base font-black text-blue-700 uppercase tracking-tighter italic ml-2">National Service Scheme</span>
           </div>
         )}
         <div className="flex-1">
