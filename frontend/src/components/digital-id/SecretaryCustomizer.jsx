@@ -194,16 +194,7 @@ const SecretaryCustomizer = ({ userSample }) => {
           <h2 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2 pb-4 border-b border-slate-100">
             <PenTool className="text-orange-600" /> 2. Authorization & Footer
           </h2>
-          <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Secretary Name</label>
-                <input type="text" value={config.secretaryName} onChange={(e) => setConfig({...config, secretaryName: e.target.value})} placeholder="Secretary Name" className="w-full p-3 border border-slate-300 rounded-xl text-sm font-bold" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Officer Name</label>
-                <input type="text" value={config.officerName} onChange={(e) => setConfig({...config, officerName: e.target.value})} placeholder="Officer Name" className="w-full p-3 border border-slate-300 rounded-xl text-sm font-bold" />
-              </div>
-          </div>
+          
           <div className="mt-4 space-y-2">
             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Validity Statement</label>
             <input type="text" value={config.validThru} onChange={(e) => setConfig({...config, validThru: e.target.value})} placeholder="Valid Thru (e.g. DEC 2026)" className="w-full p-3 border border-slate-300 rounded-xl text-sm font-bold uppercase" />

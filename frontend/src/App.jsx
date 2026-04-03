@@ -63,7 +63,6 @@ const App = ({ onReady }) => {
     <ErrorBoundary>
       <Router>
         <AuthProvider>
-          <ThemeProvider>
             <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
@@ -262,7 +261,6 @@ const App = ({ onReady }) => {
             <Route path="/" element={<Navigate to="/login" />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
-        </ThemeProvider>
       </AuthProvider>
       </Router>
     </ErrorBoundary>
