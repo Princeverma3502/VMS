@@ -157,10 +157,10 @@ const IDCardRenderer = ({ user, config, verified = false, isBack = false }) => {
                   </div>
                 )}
                 <div className="w-32 h-[1px] bg-slate-200 mb-1"></div>
-                <p className="text-[8px] font-bold text-slate-500 uppercase tracking-wide text-center">
+                <p className="text-[6px] font-bold text-slate-500 uppercase tracking-wide text-center">
                   {s.name || `Student Secretary ${idx + 1}`}
                 </p>
-                <p className="text-[10px] font-medium text-slate-400 text-center">{s.designation || 'Student Secretary'}</p>
+                <p className="text-[6px] font-medium text-slate-400 text-center">{s.designation || 'Student Secretary'}</p>
               </div>
             ));
           })()}
