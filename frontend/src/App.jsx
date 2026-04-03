@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 // Auth & Context
 import { AuthProvider } from './context/AuthContext';
-// import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -13,7 +12,6 @@ import Register from './pages/Register';
 import Unauthorized from './pages/Unauthorized';
 
 // Volunteer Pages
-// Use the new Bento-style dashboard
 import BentoDashboard from './pages/BentoDashboard';
 import Tasks from './pages/volunteer/TaskBoard';
 import Profile from './pages/volunteer/Profile';
@@ -38,7 +36,6 @@ import EventManagement from './pages/admin/EventManagement';
 import KnowledgeBase from './pages/KnowledgeBase';
 import SearchResults from './pages/SearchResults';
 import VolunteerResume from './pages/volunteer/VolunteerResume';
-import Settings from './pages/Settings';
 import Assistant from './pages/Assistant';
 import SecretaryOnboardingWizard from './pages/SecretaryOnboardingWizard';
 import SecretaryCustomizer from './components/digital-id/SecretaryCustomizer';
@@ -246,11 +243,6 @@ const App = ({ onReady }) => {
               </ProtectedRoute>
             } />
             <Route path="/volunteer-resume/:userId" element={<VolunteerResume />} />
-            <Route path="/settings" element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            } />
             <Route path="/impact" element={
               <ProtectedRoute>
                 <ImpactHub />
@@ -261,7 +253,7 @@ const App = ({ onReady }) => {
             <Route path="/" element={<Navigate to="/login" />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
-      </AuthProvider>
+        </AuthProvider>
       </Router>
     </ErrorBoundary>
   );
