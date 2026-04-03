@@ -147,8 +147,16 @@ const Register = () => {
 
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-700 mb-1.5">College / University</label>
-            <select name="collegeId" value={formData.collegeId} onChange={handleChange} className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-not-allowed bg-gray-50" required>
-              {colleges.length === 0 && <option value="">Loading College...</option>}
+            <select 
+                name="collegeId" 
+                value={formData.collegeId} 
+                onChange={handleChange} 
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all text-gray-700" 
+                required
+            >
+              {/* 1. The default unselectable prompt */}
+              <option value="" disabled>Select College / University</option>
+              
               {colleges.map(c => (
                 <option key={c._id} value={c._id}>{c.name}</option>
               ))}
