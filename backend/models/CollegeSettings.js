@@ -56,22 +56,38 @@ const collegeSettingsSchema = new mongoose.Schema(
     idCardOptions: {
       templateId: { type: String, default: 'executive-pro' },
       orgName: { type: String, default: 'NATIONAL SERVICE SCHEME' },
-      subHeader: { type: String, default: 'Your College Name' },
+      universityName: { type: String, default: 'NATIONAL SERVICE SCHEME' },
+      collegeSubheading: { type: String, default: 'National Service Scheme' },
+      subHeader: { type: String, default: 'Indian Institute of Technology, Bombay' },
       collegeLogo: { type: String, default: '' }, // Stores Base64 or URL
       councilLogo: { type: String, default: '' },
-      signatureUrl: { type: String, default: '' },
-      signatureName: { type: String, default: 'Auth Signatory' },
-      signatureRole: { type: String, default: 'Program Officer' },
+      
+      // Officers & Validity
+      officerName: { type: String, default: 'Dr. R. K. Singh' },
+      officerSig: { type: String, default: '' },
+      validThru: { type: String, default: 'DEC 2026' },
+
+      // Legacy Individual Secretary Fields (Kept for backwards compatibility with Customizer)
+      secretaryName: { type: String, default: 'A. S. Patel' },
+      secretarySig: { type: String, default: '' },
+      secretary2Name: { type: String, default: '' },
+      secretary2Sig: { type: String, default: '' },
+      secretary3Name: { type: String, default: '' },
+      secretary3Sig: { type: String, default: '' },
+
+      // Array format for student secretaries
       studentSecretaries: {
         type: [
           {
             name: { type: String, default: '' },
-            signatureUrl: { type: String, default: '' },
+            signature: { type: String, default: '' }, // Changed from signatureUrl to match frontend
             designation: { type: String, default: 'Student Secretary' }
           }
         ],
         default: []
       },
+      
+      // Role-Based Branding Colors
       roleColors: {
         type: Map,
         of: String,
@@ -82,6 +98,7 @@ const collegeSettingsSchema = new mongoose.Schema(
           'Volunteer': '#1d4ed8'
         }
       },
+      
       visibleFields: {
         photo: { type: Boolean, default: true },
         rollNumber: { type: Boolean, default: true },
@@ -96,13 +113,19 @@ const collegeSettingsSchema = new mongoose.Schema(
 );
 
 // Middleware: Ensure college exists before saving
-collegeSettingsSchema.pre('save', async function () {
-  const College = mongoose.model('College');
-  const college = await College.findById(this.collegeId);
-  
-  if (!college) {
-    // Throwing an error inside an async function automatically stops the save process
-    throw new Error('College does not exist');
+// Fixed 'next is not a function' by defining it and wrapping in try/catch
+collegeSettingsSchema.pre('save', async function (next) {
+  try {
+    const College = mongoose.model('College');
+    const college = await College.findById(this.collegeId);
+    
+    if (!college) {
+      return next(new Error('College does not exist'));
+    }
+    
+    next(); // Move on to save the document
+  } catch (error) {
+    next(error); // Pass any errors correctly to Mongoose
   }
 });
 
