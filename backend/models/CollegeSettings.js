@@ -96,16 +96,13 @@ const collegeSettingsSchema = new mongoose.Schema(
 );
 
 // Middleware: Ensure college exists before saving
-collegeSettingsSchema.pre('save', async function (next) {
-  try {
-    const College = mongoose.model('College');
-    const college = await College.findById(this.collegeId);
-    if (!college) {
-      throw new Error('College does not exist');
-    }
-    next();
-  } catch (error) {
-    next(error);
+collegeSettingsSchema.pre('save', async function () {
+  const College = mongoose.model('College');
+  const college = await College.findById(this.collegeId);
+  
+  if (!college) {
+    // Throwing an error inside an async function automatically stops the save process
+    throw new Error('College does not exist');
   }
 });
 

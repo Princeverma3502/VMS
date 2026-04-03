@@ -26,12 +26,15 @@ const DEFAULT_CONFIG = {
   officerName: "Dr. R. K. Singh",
   validThru: "DEC 2026",
   roleColors: {
-    'Secretary': '#EBF855',
-    'Domain Head': '#EBF855',
-    'Associate Head': '#EBF855',
-    'Volunteer': '#EBF855'
+    'Secretary': '#FFD700',
+    'Domain Head': '#7c3aed',
+    'Associate Head': '#10b981',
+    'Volunteer': '#1d4ed8'
   }
 };
+
+// Standard roles required by the system
+const STANDARD_ROLES = ['Secretary', 'Domain Head', 'Associate Head', 'Volunteer'];
 
 const SecretaryCustomizer = ({ userSample }) => {
   const [config, setConfig] = useState(DEFAULT_CONFIG);
@@ -249,18 +252,29 @@ const SecretaryCustomizer = ({ userSample }) => {
           <h2 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2 pb-4 border-b border-slate-100">
             <LayoutTemplate className="text-purple-600" /> 3. Role-Based Branding
           </h2>
+          <p className="text-xs text-slate-500 mb-4 font-medium">Assign a unique color to each role. This color will be applied to the top header, role badge, and bottom stripe of the ID card.</p>
           <div className="grid grid-cols-2 gap-4">
-            {Object.keys(config.roleColors).map((role) => (
-              <div key={role} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <input
-                  type="color"
-                  value={config.roleColors[role]}
-                  onChange={(e) => setConfig({ ...config, roleColors: { ...config.roleColors, [role]: e.target.value } })}
-                  className="w-8 h-8 rounded-lg cursor-pointer"
-                />
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">
-                  {role.replace(/([A-Z])/g, ' $1').trim()}
-                </label>
+            {STANDARD_ROLES.map((role) => (
+              <div key={role} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
+                <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-slate-300 shadow-sm flex-shrink-0">
+                  <input
+                    type="color"
+                    value={config.roleColors?.[role] || '#EBF855'}
+                    onChange={(e) => setConfig({ 
+                      ...config, 
+                      roleColors: { ...(config.roleColors || {}), [role]: e.target.value } 
+                    })}
+                    className="absolute inset-[-10px] w-16 h-16 cursor-pointer"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider leading-tight">
+                    {role}
+                  </label>
+                  <span className="text-[9px] text-slate-400 font-mono uppercase">
+                    {config.roleColors?.[role] || '#EBF855'}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
@@ -273,13 +287,13 @@ const SecretaryCustomizer = ({ userSample }) => {
             <div className="flex flex-col items-center justify-center py-12 px-2 sm:px-8 bg-slate-200 rounded-[3rem] border-4 border-white shadow-xl min-h-[600px] relative overflow-visible">
               
               <div className="mb-4 flex gap-2 overflow-x-auto max-w-full no-scrollbar pb-2">
-                {['Secretary', 'Domain Head', 'Associate Head', 'Volunteer'].map(r => (
+                {STANDARD_ROLES.map(r => (
                   <button
                     key={r}
                     onClick={() => setPreviewRole(r)}
                     className={`px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
                       previewRole === r
-                        ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-slate-400'
+                        ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-slate-400 hover:bg-slate-50'
                     }`}
                   >
                     {r === 'Domain Head' ? 'DH' : r === 'Associate Head' ? 'AH' : r}

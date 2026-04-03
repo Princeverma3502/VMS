@@ -5,8 +5,10 @@ import { MapPin, Globe } from 'lucide-react';
 const IDCardRenderer = ({ user, config, verified = false, isBack = false }) => {
   if (!user) return null;
 
-  // Design Constants
-  const HEADER_COLOR = 'bg-[#EBF855]'; // NSS Yellow
+  // Dynamically grab the color based on the user's role
+  // Fallback to 'Volunteer' color or default Yellow if something goes wrong
+  const currentRole = user.role || 'Volunteer';
+  const roleColor = config?.roleColors?.[currentRole] || '#EBF855';
 
   // --- BACK SIDE ---
   if (isBack) {
@@ -40,8 +42,11 @@ const IDCardRenderer = ({ user, config, verified = false, isBack = false }) => {
   return (
       <div className="w-full h-full bg-white relative flex flex-col rounded-3xl overflow-hidden shadow-2xl font-sans pt-6 aspect-[0.63]">
 
-      {/* 1. HEADER (Yellow Zone - 35% Height) */}
-      <div className={`${HEADER_COLOR} h-[50%] relative w-full px-3 py-10 mt-[-2em] flex flex-col items-center justify-center`}>
+      {/* 1. HEADER (Dynamic Role Color - 35% Height) */}
+      <div 
+        className="h-[50%] relative w-full px-3 py-10 mt-[-2em] flex flex-col items-center justify-center"
+        style={{ backgroundColor: roleColor }}
+      >
         <div className="flex items-center justify-between w-full mb-2">
           {/* Top-Left: College Logo */}
           <div className="w-14 h-14 rounded-full shadow-sm flex items-center justify-center overflow-hidden border-2 border-transparent bg-white flex-shrink-0">
@@ -77,11 +82,11 @@ const IDCardRenderer = ({ user, config, verified = false, isBack = false }) => {
       <div className="relative w-full h-35% flex justify-center mt-[-4em] mb-4">
         <div className="w-45 h-45 rounded-full border-[4px] border-white bg-white shadow-lg overflow-hidden relative z-10 flex items-center justify-center">
           <img
-            src={user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=EBF855&color=000`}
+            src={user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=${roleColor.replace('#', '')}&color=000`}
             alt="Volunteer"
             className="w-full h-full object-cover"
             onError={(e) => {
-              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=EBF855&color=000`;
+              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=${roleColor.replace('#', '')}&color=000`;
             }}
           />
         </div>
@@ -93,7 +98,10 @@ const IDCardRenderer = ({ user, config, verified = false, isBack = false }) => {
           {user.name}
         </h1>
         <div className="flex flex-col items-center gap-1">
-          <span className={`${HEADER_COLOR} text-slate-900 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm`}>
+          <span 
+            className="text-slate-900 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm"
+            style={{ backgroundColor: roleColor }}
+          >
             {user.role || 'VOLUNTEER'}
           </span>
         </div>
@@ -166,7 +174,10 @@ const IDCardRenderer = ({ user, config, verified = false, isBack = false }) => {
         </div>
 
         {/* Bottom Stripe */}
-        <div className={`${HEADER_COLOR} h-2 w-full absolute bottom-0`}></div>
+        <div 
+          className="h-2 w-full absolute bottom-0 left-0"
+          style={{ backgroundColor: roleColor }}
+        ></div>
       </div>
     </div>
   );
