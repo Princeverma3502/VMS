@@ -46,7 +46,7 @@ const Register = () => {
         console.log("1. Sending request to fetch colleges...");
         const res = await import('../services/api').then(m => m.default.get('/colleges'));
         
-        console.log("2. Backend responded with:", res.data); // WHAT DOES THIS PRINT?
+        console.log("2. Backend responded with:", res.data);
         
         const list = res.data || [];
         
@@ -65,12 +65,12 @@ const Register = () => {
         );
 
         setColleges(uniqueColleges);
+        
+        // NOTE: Auto-selection of uniqueColleges[0] has been removed 
+        // so the "Select College/University" placeholder actually shows up!
 
-        if (uniqueColleges.length > 0) {
-            setFormData(prev => ({ ...prev, collegeId: uniqueColleges[0]._id }));
-        }
       } catch (err) {
-        console.error('💥 4. API CALL FAILED:', err.message); // WHAT DOES THIS PRINT?
+        console.error('💥 4. API CALL FAILED:', err.message);
       }
     };
     fetchColleges();
@@ -151,11 +151,11 @@ const Register = () => {
                 name="collegeId" 
                 value={formData.collegeId} 
                 onChange={handleChange} 
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all text-gray-700" 
+                className={`w-full px-4 py-3 border border-gray-300 rounded-lg outline-none cursor-pointer transition-all focus:ring-2 focus:ring-blue-100 focus:border-blue-500 ${formData.collegeId === "" ? "text-gray-400 bg-gray-50" : "text-gray-700 bg-white"}`}
                 required
             >
-              {/* 1. The default unselectable prompt */}
-              <option value="" disabled>Select College / University</option>
+              {/* Using hidden attribute makes this act like a true placeholder */}
+              <option value="" disabled hidden>Select College/University</option>
               
               {colleges.map(c => (
                 <option key={c._id} value={c._id}>{c.name}</option>
