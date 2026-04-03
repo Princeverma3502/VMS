@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Layout from '../components/layout/Layout';
 import { AuthContext } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import api from '../services/api';
 import { Sun, Bell, Lock, LogOut } from 'lucide-react';
 
@@ -11,7 +10,6 @@ import SessionManager from '../components/admin/SessionManager';
 
 const Settings = () => {
   const { user, logout, updateUser } = useContext(AuthContext);
-  const { theme, updateTheme } = useTheme();
   const [preferences, setPreferences] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -99,32 +97,6 @@ const Settings = () => {
     }
   };
 
-  const handleThemeChange = async (newTheme) => {
-    setSaving(true);
-    try {
-      await api.put('/preferences/theme', { theme: newTheme });
-      updateTheme(newTheme);
-      setPreferences(prev => ({ ...prev, theme: newTheme }));
-      showNotification('Theme updated successfully', 'success');
-    } catch (error) {
-      showNotification('Failed to update theme', 'error');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleLanguageChange = async (newLanguage) => {
-    setSaving(true);
-    try {
-      await api.put('/preferences/language', { language: newLanguage });
-      setPreferences(prev => ({ ...prev, language: newLanguage }));
-      showNotification('Language updated successfully', 'success');
-    } catch (error) {
-      showNotification('Failed to update language', 'error');
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const handleNotificationToggle = async (type, checked) => {
     setSaving(true);
@@ -244,49 +216,6 @@ const Settings = () => {
 
         <h1 className="text-3xl font-bold text-gray-800 mb-8">Settings</h1>
 
-        {/* Appearance Settings */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <Sun size={24} className="text-yellow-500" />
-            Appearance
-          </h2>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">Theme</label>
-              <div className="flex gap-3 flex-wrap">
-                {['light', 'dark', 'nss-blue'].map(t => (
-                  <button
-                    key={t}
-                    onClick={() => handleThemeChange(t)}
-                    disabled={saving}
-                    className={`px-4 py-2 rounded-lg font-medium transition ${
-                      preferences.theme === t
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                    } ${saving ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    {t === 'light' && '☀️'} {t === 'dark' && '🌙'} {t === 'nss-blue' && '🔵'}
-                    {' '} {t.charAt(0).toUpperCase() + t.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">Language</label>
-              <select
-                value={preferences.language}
-                onChange={(e) => handleLanguageChange(e.target.value)}
-                disabled={saving}
-                className="w-full p-3 text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-              >
-                <option value="en">English</option>
-                <option value="hi">हिन्दी (Hindi)</option>
-              </select>
-            </div>
-          </div>
-        </div>
 
         {/* ----------------------------------------------------------- */}
         {/* 🚀 ADMIN ZONES (Only visible to Secretary)                  */}
