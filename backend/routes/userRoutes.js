@@ -26,12 +26,15 @@ router.get('/leaderboard', protect, getLeaderboard);
 router.get('/blood-group-stats', protect, getBloodGroupStats);
 
 // --- PROFILE MANAGEMENT ---
-// This was missing/broken, causing the "Not Found" error
+// FIX: We now handle BOTH GET and PUT for both /profile and /profile/:id
+// This ensures no 404s trigger regardless of how the frontend sends the request.
 router.route('/profile')
+  .get(protect, getUserProfile)
   .put(protect, updateUserProfile); 
 
 router.route('/profile/:id')
-  .get(protect, getUserProfile); 
+  .get(protect, getUserProfile)
+  .put(protect, updateUserProfile); 
 
 // --- SPECIFIC UPDATES ---
 router.put('/profile-photo', protect, updateProfilePhoto);
@@ -43,7 +46,7 @@ router.get('/verify/:id', protect, verifyUserById);
 
 // --- ADMIN / SECRETARY ONLY ---
 router.route('/')
-  .get(protect, getAllUsers);  // Allow secretaries and admins to list users
+  .get(protect, getAllUsers);  
 
 router.route('/:id')
   .put(protect, admin, updateUser)
@@ -54,8 +57,6 @@ router.put('/:id/reject', protect, admin, rejectUser);
 router.put('/:id/role', protect, admin, updateUserRole);
 
 router.put('/assign-college', protect, assignCollege);
-
-// Secretary/Admin can update blood group for a user
 router.put('/:id/blood-group', protect, admin, updateUserBloodGroup);
 
 export default router;
