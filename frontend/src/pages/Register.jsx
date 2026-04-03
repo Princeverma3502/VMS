@@ -41,26 +41,40 @@ const Register = () => {
   }, [formData.year]);
 
   useEffect(() => {
-  const fetchColleges = async () => {
-    try {
-      const res = await import('../services/api').then(m => m.default.get('/colleges'));
-      const list = res.data || [];
+    const fetchColleges = async () => {
+      try {
+        console.log("1. Sending request to fetch colleges...");
+        const res = await import('../services/api').then(m => m.default.get('/colleges'));
+        
+        console.log("2. Backend responded with:", res.data); // WHAT DOES THIS PRINT?
+        
+        const list = res.data || [];
+        
+        if (list.length === 0) {
+            console.log("3. WARNING: The backend sent an empty array. Your database might be empty!");
+        }
 
-      // Filter the list to only include "Harcourt Butler Technical University"
-      const filteredList = list.filter(c => c.name === 'Harcourt Butler Technical University');
+        let filteredList = list.filter(c => /(national service scheme|nss|harcourt butler)/i.test(c.name));
+        
+        if (filteredList.length === 0) {
+          filteredList = list; 
+        }
+        
+        const uniqueColleges = filteredList.filter((college, index, self) => 
+            index === self.findIndex((c) => c.name === college.name)
+        );
 
-      setColleges(filteredList);
+        setColleges(uniqueColleges);
 
-      // Auto-select the college ID if it exists
-      if (filteredList.length > 0) {
-        setFormData(prev => ({ ...prev, collegeId: filteredList[0]._id }));
+        if (uniqueColleges.length > 0) {
+            setFormData(prev => ({ ...prev, collegeId: uniqueColleges[0]._id }));
+        }
+      } catch (err) {
+        console.error('💥 4. API CALL FAILED:', err.message); // WHAT DOES THIS PRINT?
       }
-    } catch (err) {
-      console.error('Failed to load colleges', err);
-    }
-  };
-  fetchColleges();
-}, []);
+    };
+    fetchColleges();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
