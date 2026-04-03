@@ -130,7 +130,7 @@ const SecretaryDashboard = () => {
   );
 
   return (
-    <Layout userRole={user?.role} showBackButton={true}>
+    <Layout userRole={user?.role} showBackButton={false}>
       
       {/* 1. HERO HEADER */}
       <div className="mb-12 relative">
