@@ -32,7 +32,7 @@ import DomainHeadProfile from './pages/admin/DomainHeadProfile';
 import AssociateHeadProfile from './pages/admin/AssociateHeadProfile';
 import EventManagement from './pages/admin/EventManagement';
 
-// New Feature Pages
+// New Feature Pages & Settings
 import KnowledgeBase from './pages/KnowledgeBase';
 import SearchResults from './pages/SearchResults';
 import VolunteerResume from './pages/volunteer/VolunteerResume';
@@ -47,6 +47,7 @@ import Meetings from './components/meetings/Meetings';
 import EventDetails from './pages/EventDetails';
 import DemoCertificates from './pages/admin/DemoCertificates';
 import VolunteerCertificates from './pages/volunteer/VolunteerCertificates';
+import Settings from './pages/Settings';
 
 const App = ({ onReady }) => {
   useEffect(() => {
@@ -246,6 +247,12 @@ const App = ({ onReady }) => {
             <Route path="/impact" element={
               <ProtectedRoute>
                 <ImpactHub />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             } />
 
