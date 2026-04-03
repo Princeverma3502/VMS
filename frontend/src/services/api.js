@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-// Use Environment Variable or fallback to production backend
-// In Vite, variables must start with VITE_
+
 const BASE_URL = import.meta.env.VITE_API_URL || 'https://vms-6qfs.onrender.com';
 
 // Log for debugging

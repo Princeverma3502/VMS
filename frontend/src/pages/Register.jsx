@@ -41,31 +41,26 @@ const Register = () => {
   }, [formData.year]);
 
   useEffect(() => {
-    const fetchColleges = async () => {
-      try {
-        const res = await import('../services/api').then(m => m.default.get('/colleges'));
-        const list = res.data || [];
-        
-        // Prefer matching known NSS or local college entries; fall back to all colleges
-        const filteredList = list.filter(c => /(national service scheme|nss|harcourt butler)/i.test(c.name));
-        
-        // Remove duplicates by name if any exist in the database
-        const uniqueColleges = filteredList.filter((college, index, self) => 
-            index === self.findIndex((c) => c.name === college.name)
-        );
+  const fetchColleges = async () => {
+    try {
+      const res = await import('../services/api').then(m => m.default.get('/colleges'));
+      const list = res.data || [];
 
-        setColleges(uniqueColleges);
+      // Filter the list to only include "Harcourt Butler Technical University"
+      const filteredList = list.filter(c => c.name === 'Harcourt Butler Technical University');
 
-        // Auto-select the college ID if it exists
-        if (uniqueColleges.length > 0) {
-            setFormData(prev => ({ ...prev, collegeId: uniqueColleges[0]._id }));
-        }
-      } catch (err) {
-        console.error('Failed to load colleges', err);
+      setColleges(filteredList);
+
+      // Auto-select the college ID if it exists
+      if (filteredList.length > 0) {
+        setFormData(prev => ({ ...prev, collegeId: filteredList[0]._id }));
       }
-    };
-    fetchColleges();
-  }, []);
+    } catch (err) {
+      console.error('Failed to load colleges', err);
+    }
+  };
+  fetchColleges();
+}, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
