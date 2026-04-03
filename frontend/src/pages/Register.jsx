@@ -43,17 +43,9 @@ const Register = () => {
   useEffect(() => {
     const fetchColleges = async () => {
       try {
-        console.log("1. Sending request to fetch colleges...");
         const res = await import('../services/api').then(m => m.default.get('/colleges'));
-        
-        console.log("2. Backend responded with:", res.data);
-        
         const list = res.data || [];
         
-        if (list.length === 0) {
-            console.log("3. WARNING: The backend sent an empty array. Your database might be empty!");
-        }
-
         let filteredList = list.filter(c => /(national service scheme|nss|harcourt butler)/i.test(c.name));
         
         if (filteredList.length === 0) {
@@ -65,12 +57,9 @@ const Register = () => {
         );
 
         setColleges(uniqueColleges);
-        
-        // NOTE: Auto-selection of uniqueColleges[0] has been removed 
-        // so the "Select College/University" placeholder actually shows up!
 
       } catch (err) {
-        console.error('💥 4. API CALL FAILED:', err.message);
+        console.error('💥 API CALL FAILED:', err.message);
       }
     };
     fetchColleges();
