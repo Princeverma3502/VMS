@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import api from '../../services/api';
 import Layout from '../../components/layout/Layout';
@@ -13,15 +13,9 @@ const DomainHeadDashboard = () => {
   const [domainStats, setDomainStats] = useState({ volunteers: 0, pendingTasks: 0, activeEvents: 0 });
   const [volunteers, setVolunteers] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchDomainData();
-  }, []);
-
-  const fetchDomainData = async () => {
+  const fetchDomainData = useCallback(async () => {
     try {
-      setLoading(true);
       // Fetch domain-specific volunteers (filtered by domainId in backend)
       const usersRes = await api.get('/users?role=Volunteer');
       setVolunteers(usersRes.data || []);
@@ -35,12 +29,14 @@ const DomainHeadDashboard = () => {
         pendingTasks: tasksRes.data.filter(t => t.status === 'Completed').length,
         activeEvents: 0 // Fetch from events if domain-scoped events exist
       });
-      setLoading(false);
     } catch (err) {
       console.error("Domain Data Fetch Error:", err);
-      setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchDomainData();
+  }, [fetchDomainData]);
 
   return (
     <Layout userRole={user?.role} showBackButton={true}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import { AuthContext } from '../../context/AuthContext';
@@ -26,14 +26,7 @@ const Profile = () => {
   const [perms, setPerms] = useState({ notification: false, camera: false });
   const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    if (user) {
-      fetchProfile();
-      checkPermissions();
-    }
-  }, [user]);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       const { data } = await api.get(`/users/profile/${user._id}`);
       setProfileData(data.profile || data);
@@ -42,12 +35,21 @@ const Profile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
-  const checkPermissions = async () => {
+  const checkPermissions = useCallback(async () => {
     const notif = "Notification" in window && Notification.permission === 'granted';
     setPerms(p => ({...p, notification: notif}));
-  };
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      (async () => {
+        await fetchProfile();
+        await checkPermissions();
+      })();
+    }
+  }, [user, fetchProfile, checkPermissions]);
 
   const requestPermission = async (type) => {
     triggerHaptic('success');

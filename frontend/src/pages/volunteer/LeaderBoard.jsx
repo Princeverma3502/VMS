@@ -23,7 +23,7 @@ const Leaderboard = () => {
             xp: user?.gamification?.xpPoints || 0
           });
         }
-      } catch (error) {
+      } catch {
         console.error("Failed to fetch leaderboard");
       } finally {
         setLoading(false);

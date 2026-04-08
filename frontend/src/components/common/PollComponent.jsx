@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { MessageCircle, BarChart3, X } from 'lucide-react';
 import api from '../../services/api';
 
@@ -8,18 +8,18 @@ const PollComponent = ({ poll, onVote, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
 
-  useEffect(() => {
-    fetchResults();
-  }, [poll._id]);
-
-  const fetchResults = async () => {
+  const fetchResults = useCallback(async () => {
     try {
       const response = await api.get(`/polls/${poll._id}/results`);
       setResults(response.data.data);
     } catch (error) {
       console.error('Failed to fetch poll results:', error);
     }
-  };
+  }, [poll._id]);
+
+  useEffect(() => {
+    fetchResults();
+  }, [fetchResults]);
 
   const handleVote = async () => {
     if (selectedOption === null) return;

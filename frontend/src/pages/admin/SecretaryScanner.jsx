@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import Layout from '../../components/layout/Layout';
 import api from '../../services/api';
@@ -11,6 +11,22 @@ const SecretaryScanner = () => {
   const [scannedUser, setScannedUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const handleScan = useCallback(async (userId) => {
+    if (loading || scannedUser) return;
+    
+    setLoading(true);
+    triggerHaptic('success');
+    
+    try {
+      const { data } = await api.get(`/users/verify/${userId}`);
+      setScannedUser(data);
+    } catch {
+      alert("User not found or Invalid QR");
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, scannedUser]);
 
   useEffect(() => {
     // Create the scanner instance
@@ -25,32 +41,15 @@ const SecretaryScanner = () => {
         handleScan(decodedText);
         // We don't necessarily clear here if you want to scan multiple people
       },
-      (error) => {
+      (_error) => {
         // Quietly handle scanning noise
       }
     );
 
     return () => {
-      scanner.clear().catch(error => console.error("Failed to clear scanner", error));
+      scanner.clear().catch(err => console.error("Failed to clear scanner", err));
     };
-  }, []);
-
-  const handleScan = async (userId) => {
-    if (loading || scannedUser) return;
-    
-    setLoading(true);
-    triggerHaptic('success');
-    
-    try {
-      const { data } = await api.get(`/users/verify/${userId}`);
-      setScannedUser(data);
-    } catch (err) {
-      console.error(err);
-      alert("User not found or Invalid QR");
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [handleScan]);
 
   const approveAttendance = async () => {
     setLoading(true);
@@ -63,7 +62,7 @@ const SecretaryScanner = () => {
         setScannedUser(null);
         setSuccess(false);
       }, 2000);
-    } catch (err) {
+    } catch {
       alert("Failed to mark attendance");
     } finally {
       setLoading(false);

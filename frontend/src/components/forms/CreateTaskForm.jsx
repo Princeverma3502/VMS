@@ -23,7 +23,7 @@ const CreateTaskForm = ({ onTaskCreated }) => {
       alert("Task Created Successfully!");
       setFormData({ title: '', description: '', deadline: '', xpReward: 20 });
       if(onTaskCreated) onTaskCreated(data); // Refresh parent list
-    } catch (error) {
+    } catch {
       alert("Failed to create task");
     } finally {
       setLoading(false);

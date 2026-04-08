@@ -116,7 +116,9 @@ async function login(page, email, pass, rememberMe = true) {
   try {
     await streakBtn.waitFor({ state: 'visible', timeout: 3000 });
     await streakBtn.click();
-  } catch (e) {}
+  } catch {
+    // Proceed if no modal or already redirected
+  }
 
   // Assert transition (Generous timeout for slow CI environments)
   await expect(page).not.toHaveURL(/\/login/, { timeout: 20000 });
@@ -131,7 +133,6 @@ test.describe('Elite Feature Suite: Industry-Ready Audit', () => {
     testInfo.setTimeout(120000);
     page.on('console', msg => {
       const text = msg.text();
-      // Forward Auth/Protected logs to Node console for debugging
       if (text.includes('AuthContext') || text.includes('ProtectedRoute')) {
         console.log(`[BROWSER]: ${text}`);
       }

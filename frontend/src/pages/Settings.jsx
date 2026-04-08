@@ -33,8 +33,8 @@ const Settings = () => {
     try {
       const { data } = await api.get('/preferences');
       setPreferences(data.data);
-    } catch (error) {
-      console.error('Failed to fetch preferences:', error);
+    } catch {
+      console.error('Failed to fetch preferences');
       // Set defaults if fetch fails
       setPreferences({
         theme: 'light',
@@ -90,7 +90,7 @@ const Settings = () => {
       updateUser(data); // Update user in AuthContext
       showNotification('Profile updated successfully', 'success');
       setIsEditProfileModalOpen(false);
-    } catch (error) {
+    } catch {
       showNotification('Failed to update profile', 'error');
     } finally {
       setSaving(false);
@@ -111,7 +111,7 @@ const Settings = () => {
         notifications: updated
       }));
       showNotification('Notification preferences updated', 'success');
-    } catch (error) {
+    } catch {
       showNotification('Failed to update notifications', 'error');
     } finally {
       setSaving(false);
@@ -131,7 +131,7 @@ const Settings = () => {
         privacy: updated
       }));
       showNotification('Privacy settings updated', 'success');
-    } catch (error) {
+    } catch {
       showNotification('Failed to update privacy settings', 'error');
     } finally {
       setSaving(false);

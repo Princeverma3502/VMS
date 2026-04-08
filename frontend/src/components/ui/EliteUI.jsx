@@ -7,7 +7,7 @@ import { Zap, Sparkles, Box, ShieldAlert } from 'lucide-react';
 export const EliteEmptyState = ({ 
   title = "No Data Found", 
   message = "This sector currently shows no activity.", 
-  icon: Icon = Box,
+  icon: IconComponent = Box,
   actionLabel,
   onAction
 }) => {
@@ -16,7 +16,7 @@ export const EliteEmptyState = ({
        <div className="relative mb-8">
           <div className="absolute inset-0 bg-indigo-500/10 blur-3xl rounded-full translate-y-4"></div>
           <div className="relative w-24 h-24 bg-white rounded-[2rem] border border-slate-100 shadow-xl flex items-center justify-center text-slate-200">
-             <Icon size={48} className="opacity-50" />
+             <IconComponent size={48} className="opacity-50" />
           </div>
           <div className="absolute -top-2 -right-2 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg animate-bounce">
              <Zap size={14} />

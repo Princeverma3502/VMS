@@ -2,7 +2,7 @@ import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { MapPin, Globe } from 'lucide-react';
 
-const IDCardRenderer = ({ user, config, verified = false, isBack = false }) => {
+const IDCardRenderer = ({ user, config, isBack = false }) => {
   if (!user) return null;
 
   // Dynamically grab the color based on the user's role

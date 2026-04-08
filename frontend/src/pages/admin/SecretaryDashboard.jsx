@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import toast from 'react-hot-toast';
 
 // --- CONTEXT & API ---
@@ -27,9 +26,17 @@ import {
   ChevronRight, ArrowRight
 } from 'lucide-react';
 
+const EmptyState = ({ message, icon: Icon = Zap }) => (
+  <div className="flex flex-col items-center justify-center py-12 px-4 text-center bg-slate-50/50 rounded-[2.5rem] border border-dashed border-slate-200">
+     <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-300 mb-4 shadow-sm">
+       <Icon size={32} />
+     </div>
+     <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{message}</p>
+  </div>
+);
+
 const SecretaryDashboard = () => {
-  const { user, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const isSecretary = user?.role === 'Secretary';
 
   // --- STATE ---
@@ -37,17 +44,15 @@ const SecretaryDashboard = () => {
   const [showAnnouncementForm, setShowAnnouncementForm] = useState(false);
   const [showMeetingForm, setShowMeetingForm] = useState(false);
   const [stats, setStats] = useState({ ngos: 0, events: 0, pendingTasks: 0, pendingApprovals: 0 });
-  const [ngos, setNgos] = useState([]);
   const [pendingUsers, setPendingUsers] = useState([]);
   const [allVolunteers, setAllVolunteers] = useState([]);
   const [allDomainHeads, setAllDomainHeads] = useState([]);
   const [events, setEvents] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // --- DATA FETCHING ---
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [eventRes, taskRes] = await Promise.all([
         api.get('/events'),
@@ -62,10 +67,8 @@ const SecretaryDashboard = () => {
           api.get('/ngos'),
           api.get('/auth/pending'),
           api.get('/users/leaderboard'),
-          api.get('/audit/logs'),
           api.get('/users')
         ]);
-        setNgos(ngoRes.data);
         setPendingUsers(pendingRes.data);
         setAllVolunteers(volRes.data);
         setAuditLogs(auditRes.data || []);
@@ -80,17 +83,15 @@ const SecretaryDashboard = () => {
           pendingApprovals: pendingRes.data.length
         });
       }
-    } catch (error) {
-      console.error("Dashboard Sync Error:", error);
+    } catch (_err) {
+      console.error("Dashboard Sync Error:", _err);
       toast.error("Cloud synchronization failed");
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [isSecretary]);
 
   useEffect(() => {
     fetchData();
-  }, [isSecretary]);
+  }, [fetchData]);
 
   // --- ACTION HANDLERS ---
   const handleApproveUser = async (id) => {
@@ -99,7 +100,7 @@ const SecretaryDashboard = () => {
       toast.success("Identity Verified & Approved");
       triggerHaptic('success');
       fetchData();
-    } catch (error) { toast.error("Approval sequence failed"); }
+    } catch { toast.error("Approval sequence failed"); }
   };
 
   const handleResetPassword = async (id) => {
@@ -108,7 +109,7 @@ const SecretaryDashboard = () => {
       await api.put(`/auth/reset-password/${id}`);
       toast.success("Security Credentials Reset to Default");
       triggerHaptic('warning');
-    } catch (error) { toast.error("Reset failed"); }
+    } catch { toast.error("Reset failed"); }
   };
 
   const handleVerifyTask = async (id) => {
@@ -117,17 +118,8 @@ const SecretaryDashboard = () => {
       toast.success("Task Synchronized & XP Awarded");
       triggerHaptic('success');
       fetchData();
-    } catch (error) { toast.error("Verification failed"); }
+    } catch { toast.error("Verification failed"); }
   };
-
-  const EmptyState = ({ message, icon: Icon = Zap }) => (
-    <div className="flex flex-col items-center justify-center py-12 px-4 text-center bg-slate-50/50 rounded-[2.5rem] border border-dashed border-slate-200">
-       <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-300 mb-4 shadow-sm">
-         <Icon size={32} />
-       </div>
-       <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{message}</p>
-    </div>
-  );
 
   return (
     <Layout userRole={user?.role} showBackButton={false}>
@@ -252,7 +244,7 @@ const SecretaryDashboard = () => {
                            await api.post('/domains', data);
                            toast.success("New Domain Established");
                            fetchData();
-                         } catch(e) { toast.error("Failed to establish domain"); }
+                         } catch { toast.error("Failed to establish domain"); }
                       }} />
                    </div>
                 </div>
@@ -350,11 +342,10 @@ const SecretaryDashboard = () => {
                            <button onClick={async () => {
                               if (!window.confirm("Permanently wipe this mission data?")) return;
                               try {
-                                await api.delete(`/tasks/${task._id}`);
-                                toast.success("Operation Terminated");
-                                setTaskLoading(true);
-                                fetchData();
-                              } catch(e) { toast.error("Termination failed"); }
+                                 await api.delete(`/tasks/${task._id}`);
+                                 toast.success("Operation Terminated");
+                                 await fetchData();
+                               } catch { toast.error("Termination failed"); }
                            }} className="text-slate-300 hover:text-red-600 p-2 transition-colors"><Trash2 size={16}/></button>
                         </div>
                       ))}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from '../../components/layout/Layout';
 import api from '../../services/api';
 import Loader from '../../components/common/Loader';
@@ -15,18 +15,7 @@ const UserManagement = () => {
   // Blood group options and handler
   const BLOOD_GROUPS = ['', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
-  const handleBloodGroupChange = async (userId, newGroup) => {
-    try {
-      await api.put(`/users/${userId}/blood-group`, { bloodGroup: newGroup });
-      setUsers(prev => prev.map(u => u._id === userId ? { ...u, bloodGroup: newGroup } : u));
-      toast.success('Blood group updated');
-    } catch (err) {
-      console.error('Failed to update blood group', err);
-      toast.error('Failed to update blood group');
-    }
-  };
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const queryParams = new URLSearchParams();
@@ -43,11 +32,11 @@ const UserManagement = () => {
       setLoading(false);
       console.error(err);
     }
-  };
+  }, [filters]);
 
   useEffect(() => {
     fetchUsers();
-  }, [filters]);
+  }, [fetchUsers]);
 
   const handleEdit = (user) => {
     setEditingUser(user._id);
@@ -113,16 +102,6 @@ const UserManagement = () => {
     }
   };
 
-  const handleRoleUpdate = async (userId, newRole) => {
-    try {
-      await api.put(`/users/${userId}/role`, { role: newRole });
-      toast.success('User role updated successfully');
-      fetchUsers();
-    } catch (error) {
-      toast.error('Failed to update user role');
-      console.error(error);
-    }
-  };
 
   if (loading) {
     return <Layout><Loader /></Layout>;

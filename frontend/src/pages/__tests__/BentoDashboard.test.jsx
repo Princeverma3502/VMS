@@ -5,7 +5,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
 import BentoDashboard from '../BentoDashboard';
 import { AuthContext } from '../../context/AuthContext';
-import api from '../../services/api';
 
 // 1. Mock the Axios API calls
 vi.mock('../../services/api', () => ({

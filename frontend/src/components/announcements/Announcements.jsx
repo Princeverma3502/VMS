@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
 import SkeletonLoader from '../common/SkeletonLoader';
 import { Bell, AlertCircle, Info, CheckCircle, Filter } from 'lucide-react';
@@ -9,11 +9,7 @@ const Announcements = () => {
   const [filter, setFilter] = useState('All');
   const [unreadCount, setUnreadCount] = useState(0);
 
-  useEffect(() => {
-    fetchAnnouncements();
-  }, []);
-
-  const fetchAnnouncements = async () => {
+  const fetchAnnouncements = useCallback(async () => {
     try {
       const { data } = await api.get('/announcements');
       setAnnouncements(data || []);
@@ -27,7 +23,11 @@ const Announcements = () => {
       setAnnouncements([]);
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchAnnouncements();
+  }, [fetchAnnouncements]);
 
   const markAsRead = async (id) => {
     try {

@@ -107,7 +107,9 @@ async function login(page, roleInput) {
   try {
     await streakBtn.waitFor({ state: 'visible', timeout: 3000 });
     await streakBtn.click();
-  } catch (e) {}
+  } catch {
+    /* ignore streak modal if not present */
+  }
 
   // Assert transition (Generous timeout for slow CI environments)
   await expect(page).not.toHaveURL(/\/login/, { timeout: 20000 });
@@ -119,7 +121,7 @@ async function login(page, roleInput) {
 // ─────────────────────────────────────────────────────────────────────────────
 test.describe('Security: Route Guards — Unauthenticated Redirect', () => {
 
-  test.beforeEach(async ({ page }, testInfo) => {
+  test.beforeEach(async ({ page: _ }, testInfo) => {
     testInfo.setTimeout(120000);
   });
 

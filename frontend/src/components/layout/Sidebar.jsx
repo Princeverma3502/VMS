@@ -9,7 +9,7 @@ import {
 
 const Sidebar = ({ userRole = 'Volunteer', hideHeader = false }) => {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user: _user } = useContext(AuthContext);
 
   const menus = {
     Secretary: [

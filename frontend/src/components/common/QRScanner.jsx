@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import QrScanner from 'qr-scanner'; 
 import { X, Camera, AlertCircle } from 'lucide-react';
 
@@ -7,6 +7,14 @@ const QRScannerComponent = ({ onScan, onClose }) => {
   const [error, setError] = useState('');
   // Keep track of the scanner instance
   const scannerRef = useRef(null);
+
+  const handleStop = useCallback(() => {
+    if (scannerRef.current) {
+      scannerRef.current.stop();
+      scannerRef.current.destroy();
+      scannerRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     // 1. Initialize Scanner
@@ -35,15 +43,7 @@ const QRScannerComponent = ({ onScan, onClose }) => {
     return () => {
       handleStop();
     };
-  }, []);
-
-  const handleStop = () => {
-    if (scannerRef.current) {
-      scannerRef.current.stop();
-      scannerRef.current.destroy();
-      scannerRef.current = null;
-    }
-  };
+  }, [handleStop, onScan]);
 
   return (
     <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center animate-in fade-in">

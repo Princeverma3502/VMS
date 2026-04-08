@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/layout/Layout';
 import api from '../../services/api';
-import { AuthContext } from '../../context/AuthContext';
 import useGeoLocation from '../../hooks/useGeoLocation';
 import { MapPin, QrCode, CheckCircle, AlertTriangle } from 'lucide-react';
 
@@ -13,20 +12,16 @@ const AttendanceScanner = () => {
   const [status, setStatus] = useState('idle'); // idle | scanning | success | error
   const [msg, setMsg] = useState('');
 
-  // Effect: Watch for location changes to update status
   useEffect(() => {
-    if (location) {
-      setStatus('locked');
-    }
-  }, [location]);
-
-  // Effect: Watch for errors from the hook
-  useEffect(() => {
-    if (geoError) {
-      setStatus('error');
-      setMsg(geoError);
-    }
-  }, [geoError]);
+    (async () => {
+      if (location && status === 'idle') {
+        setStatus('locked');
+      } else if (geoError && status !== 'error') {
+        setStatus('error');
+        setMsg(geoError);
+      }
+    })();
+  }, [location, geoError, status]);
 
   const handleScanMock = async () => {
     setStatus('scanning');

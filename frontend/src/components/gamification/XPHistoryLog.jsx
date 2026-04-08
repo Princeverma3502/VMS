@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { Zap, TrendingUp, Award } from 'lucide-react';
 import SkeletonLoader from '../common/SkeletonLoader';
@@ -13,7 +12,7 @@ const XPHistoryLog = ({ userId, limit = 10 }) => {
       try {
         const { data } = await api.get(`/users/${userId}/xp-history?limit=${limit}`);
         setHistory(data);
-      } catch (error) {
+      } catch {
         console.error("Failed to fetch XP history");
       } finally {
         setLoading(false);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import Header from '../components/ui/Header';
 import GamificationStatCard from '../components/ui/GamificationStatCard';
 import StreakCard from '../components/ui/StreakCard';
@@ -7,39 +7,34 @@ import ActivityFeed from '../components/gamification/ActivityFeed';
 import BloodGroupSummary from '../components/ui/BloodGroupSummary';
 import NoticeBoard from '../components/notices/NoticeBoard';
 import BottomNav from '../components/layout/BottomNav';
-import useBranding from '../hooks/useBranding';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 import { CheckCircle, Clock, PlayCircle, Lock, Trophy, ClipboardList } from 'lucide-react';
 
 const BentoDashboard = () => {
   const { user } = useContext(AuthContext);
-  const { primaryColor } = useBranding();
-  
-  const xp = user?.gamification?.xpPoints || 0;
-  const level = user?.gamification?.level || 1;
-  const progressRatio = (xp % 100) / 100; // Example calc
   const [tasks, setTasks] = useState([]);
-  const [taskLoading, setTaskLoading] = useState(true);
-  const upcoming = { title: 'Unit Meeting', date: 'Dec 30', time: '17:00' };
+  
+  // Gamification stats (placeholder or derived)
+  const xp = user?.gamification?.xp || 0;
+  const level = Math.floor(xp / 100) + 1;
+  const progressRatio = (xp % 100) / 100;
+  const upcoming = null; // Placeholder for meeting
+
+  // --- ACTIONS ---
+  const fetchTasks = useCallback(async () => {
+    try {
+      const { data } = await api.get('/tasks');
+      setTasks(Array.isArray(data) ? data : []);
+    } catch {
+      // Background task fetching is non-critical for layout
+    }
+  }, []);
 
   // --- EFFECTS ---
   useEffect(() => {
     fetchTasks();
-  }, []);
-
-  // --- ACTIONS ---
-  const fetchTasks = async () => {
-    try {
-      const { data } = await api.get('/tasks');
-      setTasks(Array.isArray(data) ? data : []);
-      setTaskLoading(false);
-    } catch (error) {
-      console.error("Failed to fetch tasks:", error);
-      setTasks([]);
-      setTaskLoading(false);
-    }
-  };
+  }, [fetchTasks]);
 
   const handleClaim = async (id) => {
     try {

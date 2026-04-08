@@ -102,7 +102,7 @@ async function login(page, user) {
   try {
     await streakBtn.waitFor({ state: 'visible', timeout: 3000 });
     await streakBtn.click();
-  } catch (e) {
+  } catch {
     // Proceed if no modal or already redirected
   }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
 import SkeletonLoader from '../common/SkeletonLoader';
 import { Calendar, MapPin, Link as LinkIcon, Users, Clock, CheckCircle } from 'lucide-react';
@@ -8,11 +8,7 @@ const Meetings = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('Upcoming');
 
-  useEffect(() => {
-    fetchMeetings();
-  }, []);
-
-  const fetchMeetings = async () => {
+  const fetchMeetings = useCallback(async () => {
     try {
       const { data } = await api.get('/meetings');
       setMeetings(data || []);
@@ -22,7 +18,11 @@ const Meetings = () => {
       setMeetings([]);
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchMeetings();
+  }, [fetchMeetings]);
 
   const markAttendance = async (id) => {
     try {

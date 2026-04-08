@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
 import Layout from '../components/layout/Layout';
@@ -6,14 +6,26 @@ import Loader from '../components/common/Loader';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 
+const Post = ({ post }) => (
+  <div className="flex items-start gap-3 mb-4">
+    <img src={post.userId?.profileImage || '/placeholder-logo.svg'} alt={post.userId?.name} className="w-10 h-10 rounded-full object-cover" />
+    <div className="flex-1 bg-gray-100 p-3 rounded-lg">
+      <div className="flex items-center justify-between">
+        <span className="font-bold text-sm">{post.userId?.name}</span>
+        <span className="text-xs text-gray-500">{new Date(post.createdAt).toLocaleTimeString()}</span>
+      </div>
+      <p className="text-sm mt-1">{post.content}</p>
+    </div>
+  </div>
+);
+
 // --- Discussion Component ---
 const EventDiscussion = ({ eventId }) => {
-  const { user } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [newPostContent, setNewPostContent] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       const { data } = await api.get(`/discussions/${eventId}`);
       setPosts(data);
@@ -23,13 +35,13 @@ const EventDiscussion = ({ eventId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [eventId]);
 
   useEffect(() => {
     if (eventId) {
       fetchPosts();
     }
-  }, [eventId]);
+  }, [eventId, fetchPosts]);
 
   const handlePostSubmit = async (e) => {
     e.preventDefault();
@@ -46,18 +58,6 @@ const EventDiscussion = ({ eventId }) => {
     }
   };
   
-  const Post = ({ post }) => (
-    <div className="flex items-start gap-3 mb-4">
-      <img src={post.userId.profileImage || '/placeholder-logo.svg'} alt={post.userId.name} className="w-10 h-10 rounded-full object-cover" />
-      <div className="flex-1 bg-gray-100 p-3 rounded-lg">
-        <div className="flex items-center justify-between">
-          <span className="font-bold text-sm">{post.userId.name}</span>
-          <span className="text-xs text-gray-500">{new Date(post.createdAt).toLocaleTimeString()}</span>
-        </div>
-        <p className="text-sm mt-1">{post.content}</p>
-      </div>
-    </div>
-  );
 
   if (loading) return <Loader />;
 

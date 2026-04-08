@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Layout from '../../components/layout/Layout';
 import api from '../../services/api';
 import { 
@@ -12,11 +12,7 @@ const VolunteerResume = () => {
   const [showSkillForm, setShowSkillForm] = useState(false);
   const [newSkill, setNewSkill] = useState({ name: '', proficiency: 'Intermediate' });
 
-  useEffect(() => {
-    fetchResume();
-  }, []);
-
-  const fetchResume = async () => {
+  const fetchResume = useCallback(async () => {
     try {
       // Calls your backend: getMyResume
       const { data } = await api.get('/volunteer-resume');
@@ -26,7 +22,11 @@ const VolunteerResume = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchResume();
+  }, [fetchResume]);
 
   const handlePrint = () => {
     window.print(); // Triggers browser PDF save
@@ -46,7 +46,7 @@ const VolunteerResume = () => {
       setNewSkill({ name: '', proficiency: 'Intermediate' });
       setShowSkillForm(false);
       fetchResume(); // Refresh data
-    } catch (error) {
+    } catch {
       alert("Failed to add skill");
     }
   };

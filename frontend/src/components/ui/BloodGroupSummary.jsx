@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
 
 const BloodGroupSummary = () => {
@@ -7,17 +7,7 @@ const BloodGroupSummary = () => {
   const [error, setError] = useState(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-  useEffect(() => {
-    fetchStats();
-    window.addEventListener('online', () => setIsOnline(true));
-    window.addEventListener('offline', () => setIsOnline(false));
-    return () => {
-      window.removeEventListener('online', () => setIsOnline(true));
-      window.removeEventListener('offline', () => setIsOnline(false));
-    };
-  }, []);
-
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     if (!navigator.onLine) {
       setError('No internet connection. Check DevTools throttling.');
       setLoading(false);
@@ -33,7 +23,19 @@ const BloodGroupSummary = () => {
       setError('Failed to load blood donation stats. Please try again.');
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchStats();
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [fetchStats]);
 
   if (loading) {
     return (

@@ -1,13 +1,12 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutGrid, Trophy, Menu, Bot, QrCode, X, UserCircle } from 'lucide-react';
+import { LayoutGrid, Trophy, Bot, QrCode, UserCircle } from 'lucide-react';
 import { triggerHaptic } from '../../utils/haptics';
 import { AuthContext } from '../../context/AuthContext';
 import Sidebar from './Sidebar';
 
 const BottomNav = () => {
   const { user } = useContext(AuthContext);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const getHomePath = () => {
     const r = user?.role?.toLowerCase();

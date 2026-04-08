@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import Layout from '../../components/layout/Layout';
 import { AuthContext } from '../../context/AuthContext';
@@ -13,24 +13,23 @@ const AssociateHeadProfile = () => {
   const [loading, setLoading] = useState(true);
   const [showID, setShowID] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef(null);
+
+  const fetchProfile = useCallback(async () => {
+    try {
+      const { data } = await api.get(`/users/profile/${user._id}`);
+      setProfileData(data.profile || data);
+    } catch {
+      console.error('Failed to fetch profile');
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (user) {
       fetchProfile();
     }
-  }, [user]);
-
-  const fetchProfile = async () => {
-    try {
-      const { data } = await api.get(`/users/profile/${user._id}`);
-      setProfileData(data.profile || data);
-    } catch (error) {
-      console.error('Failed to fetch profile');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [user, fetchProfile]);
 
   const handleLogout = () => {
     triggerHaptic('success');
@@ -55,7 +54,7 @@ const AssociateHeadProfile = () => {
         if (data?.profileImage) updateUser({ profileImage: data.profileImage });
         await fetchProfile();
         triggerHaptic('success');
-      } catch (err) {
+      } catch {
         alert('Upload failed.');
       } finally {
         setUploading(false);
@@ -162,7 +161,7 @@ const AssociateHeadProfile = () => {
                       await api.put(`/users/profile/${user._id}`, { bloodGroup: bg });
                       await fetchProfile();
                       triggerHaptic('success');
-                    } catch (err) {
+                    } catch {
                       alert('Failed to update blood group');
                     }
                   }}

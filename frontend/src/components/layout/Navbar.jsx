@@ -1,26 +1,17 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, UserCircle, Settings, ArrowLeft, Search } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
-import { useDebounce } from '../../utils/debounce';
 
-const Navbar = ({ userName = "User", showBackButton = false }) => {
-  const { user, logout } = useContext(AuthContext);
+const Navbar = ({ _userName = "User", showBackButton = false }) => {
+  const { user } = useContext(AuthContext);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const [realTimeUserName, setRealTimeUserName] = useState(user?.name || "User");
   const [query, setQuery] = useState('');
-  const debouncedQuery = useDebounce(query, 300);
+  
+  // derivation from props/context instead of effect
+
   // navigation hook (declared once)
   const navigate = useNavigate();
-
-  // Fetch real-time user name
-  useEffect(() => {
-    setRealTimeUserName(user?.name || userName || "User");
-  }, [user?.name, userName]);
-
-  // Constants
-  const displayName = realTimeUserName;
 
   const handleProfileClick = () => {
     const roleRoutes = {
@@ -30,7 +21,6 @@ const Navbar = ({ userName = "User", showBackButton = false }) => {
     };
     const profileRoute = roleRoutes[user?.role] || '/volunteer/profile';
     navigate(profileRoute);
-    setShowUserMenu(false);
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, BookOpen, HelpCircle, FileText, Video, Download } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import Navbar from '../components/layout/Navbar';
@@ -6,7 +6,6 @@ import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 
 const KnowledgeBase = () => {
-  const { user } = useContext(AuthContext);
   const [articles, setArticles] = useState([]);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,11 +21,7 @@ const KnowledgeBase = () => {
     { name: 'Resources', label: 'Resources', icon: Download },
   ];
 
-  useEffect(() => {
-    fetchArticles();
-  }, [selectedCategory, searchQuery]);
-
-  const fetchArticles = async () => {
+  const fetchArticles = useCallback(async () => {
     try {
       setLoading(true);
       let url = '/knowledge-base';
@@ -42,7 +37,11 @@ const KnowledgeBase = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCategory, searchQuery]);
+
+  useEffect(() => {
+    fetchArticles();
+  }, [fetchArticles]);
 
   const handleArticleSelect = async (article) => {
     try {

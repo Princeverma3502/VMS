@@ -16,16 +16,17 @@ const QRScanner = () => {
   const [isCameraActive, setIsCameraActive] = useState(false);
 
   useEffect(() => {
+    const video = videoRef.current;
     const startCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'environment' }
         });
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
+        if (video) {
+          video.srcObject = stream;
           setIsCameraActive(true);
         }
-      } catch (error) {
+      } catch {
         setErrorMessage('Camera access denied. Please enable camera permissions.');
       }
     };
@@ -34,8 +35,8 @@ const QRScanner = () => {
 
     // CLEANUP: Stop camera on unmount
     return () => {
-      if (videoRef.current?.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+      if (video?.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
       }
     };
   }, []);
@@ -62,7 +63,7 @@ const QRScanner = () => {
             let payload = null;
             try {
               payload = JSON.parse(code.data);
-            } catch (e) {
+            } catch {
               payload = code.data;
             }
 
@@ -83,10 +84,11 @@ const QRScanner = () => {
               setScannedData({ ...res.data, id });
               setShowID(true);
               setIsCameraActive(false);
-              if (videoRef.current?.srcObject) {
-                videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+              const v = videoRef.current;
+              if (v?.srcObject) {
+                v.srcObject.getTracks().forEach(track => track.stop());
               }
-            } catch (err) {
+            } catch {
               setErrorMessage('Invalid ID or Network Error');
               setTimeout(() => setErrorMessage(''), 3000);
             }

@@ -1,11 +1,36 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../services/api'; 
-
-export const AuthContext = createContext();
+import { AuthContext } from './AuthContextObject';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Helper: normalize role strings to a consistent Title Case for UI checks
+  const normalizeRole = (role) => {
+    if (!role) return role;
+    const r = role.toString().trim().toLowerCase();
+    const map = {
+      'volunteer': 'Volunteer',
+      'secretary': 'Secretary',
+      'admin': 'Admin',
+      'administrator': 'Admin',
+      'domain head': 'Domain Head',
+      'domainhead': 'Domain Head',
+      'associate head': 'Associate Head',
+      'associatehead': 'Associate Head',
+    };
+    return map[r] || role.replace(/\b\w/g, c => c.toUpperCase());
+  };
+
+  const normalizeUserRole = useCallback((userObj) => {
+    if (!userObj) return userObj;
+    const u = { ...userObj };
+    if (u.role) u.role = normalizeRole(u.role);
+    // also add a lowercase helper
+    u.roleNormalized = (u.role || '').toString().toLowerCase();
+    return u;
+  }, []);
 
   useEffect(() => {
     const checkLoggedIn = async () => {
@@ -43,7 +68,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     };
     checkLoggedIn();
-  }, []);
+  }, [normalizeUserRole]);
 
   // UPDATED: Added rememberMe support
   const login = async (email, password, rememberMe = true) => {
@@ -106,32 +131,6 @@ export const AuthProvider = ({ children }) => {
   // Update current user object in context (partial updates allowed)
   const updateUser = (patch) => {
     setUser((prev) => normalizeUserRole({ ...(prev || {}), ...(patch || {}) }));
-  };
-
-  // Helper: normalize role strings to a consistent Title Case for UI checks
-  const normalizeRole = (role) => {
-    if (!role) return role;
-    const r = role.toString().trim().toLowerCase();
-    const map = {
-      'volunteer': 'Volunteer',
-      'secretary': 'Secretary',
-      'admin': 'Admin',
-      'administrator': 'Admin',
-      'domain head': 'Domain Head',
-      'domainhead': 'Domain Head',
-      'associate head': 'Associate Head',
-      'associatehead': 'Associate Head',
-    };
-    return map[r] || role.replace(/\b\w/g, c => c.toUpperCase());
-  };
-
-  const normalizeUserRole = (userObj) => {
-    if (!userObj) return userObj;
-    const u = { ...userObj };
-    if (u.role) u.role = normalizeRole(u.role);
-    // also add a lowercase helper
-    u.roleNormalized = (u.role || '').toString().toLowerCase();
-    return u;
   };
 
   // Expose a hasRole helper for components

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Heart, MessageCircle, Zap, Award, TrendingUp, Trophy, Calendar } from 'lucide-react';
 import api from '../../services/api';
 
@@ -10,17 +10,7 @@ const ActivityFeed = ({ limit = 20 }) => {
   const [skip, setSkip] = useState(0);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-  useEffect(() => {
-    fetchActivities();
-    window.addEventListener('online', () => setIsOnline(true));
-    window.addEventListener('offline', () => setIsOnline(false));
-    return () => {
-      window.removeEventListener('online', () => setIsOnline(true));
-      window.removeEventListener('offline', () => setIsOnline(false));
-    };
-  }, []);
-
-  const fetchActivities = async () => {
+  const fetchActivities = useCallback(async (currentSkip = skip) => {
     if (!navigator.onLine) {
       setError('No internet connection. Check DevTools throttling.');
       setLoading(false);
@@ -28,10 +18,13 @@ const ActivityFeed = ({ limit = 20 }) => {
     }
     try {
       setLoading(true);
-      const response = await api.get(`/activity?limit=${limit}&skip=${skip}`);
-      // Check if response.data.data exists, otherwise handle gracefully
+      const response = await api.get(`/activity?limit=${limit}&skip=${currentSkip}`);
       const newActivities = response.data.data || [];
-      setActivities(prev => [...prev, ...newActivities]);
+      if (currentSkip === 0) {
+        setActivities(newActivities);
+      } else {
+        setActivities(prev => [...prev, ...newActivities]);
+      }
       setHasMore(response.data.hasMore);
       setError(null);
     } catch (error) {
@@ -40,7 +33,21 @@ const ActivityFeed = ({ limit = 20 }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, skip]);
+
+  useEffect(() => {
+    (async () => {
+      await fetchActivities(0);
+    })();
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [fetchActivities]);
 
   const getActivityIcon = (type) => {
     const icons = {
@@ -56,18 +63,7 @@ const ActivityFeed = ({ limit = 20 }) => {
   const handleLoadMore = () => {
     const newSkip = skip + limit;
     setSkip(newSkip);
-    // Logic to fetch next page usually goes here or depends on useEffect with skip dependency
-    // For manual load more, we call fetch directly:
-    const fetchMore = async () => {
-        try {
-            const response = await api.get(`/activity?limit=${limit}&skip=${newSkip}`);
-            setActivities(prev => [...prev, ...response.data.data]);
-            setHasMore(response.data.hasMore);
-        } catch (error) {
-            console.error("Error loading more", error);
-        }
-    };
-    fetchMore();
+    fetchActivities(newSkip);
   };
 
   const handleLike = async (activityId) => {

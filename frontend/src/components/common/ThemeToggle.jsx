@@ -27,7 +27,7 @@ const ThemeToggle = () => {
           <div className="p-4">
             <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Choose Theme</p>
             <div className="space-y-2">
-              {themes.map(({ name, label, icon: Icon }) => (
+              {themes.map(({ name, label, icon: IconComponent }) => (
                 <button
                   key={name}
                   onClick={() => {
@@ -40,7 +40,7 @@ const ThemeToggle = () => {
                       : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
                   }`}
                 >
-                  <Icon size={18} />
+                  <IconComponent size={18} />
                   <span className="text-sm font-medium">{label}</span>
                   {theme === name && <span className="ml-auto text-blue-600 dark:text-blue-300">✓</span>}
                 </button>

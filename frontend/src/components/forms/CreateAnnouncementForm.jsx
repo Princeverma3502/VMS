@@ -78,7 +78,7 @@ const CreateAnnouncementForm = ({ onClose, onSuccess }) => {
       try {
         const { data } = await api.get('/domains');
         if (mounted) setDomains(Array.isArray(data) ? data : []);
-      } catch (err) {
+      } catch {
         // silently ignore – domain list is optional
       }
     };

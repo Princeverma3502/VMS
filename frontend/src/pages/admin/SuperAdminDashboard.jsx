@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import api from '../../services/api';
-import { Server, Users, Building2, Activity, AlertTriangle, Settings, UserCheck, Building } from 'lucide-react';
+import { Server, Users, Building2, Activity, AlertTriangle, UserCheck, Building } from 'lucide-react';
 
 const SuperAdminDashboard = () => {
   const [stats, setStats] = useState(null);

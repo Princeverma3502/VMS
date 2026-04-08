@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
 import { Bell, AlertTriangle, Calendar, Zap, ChevronRight } from 'lucide-react';
 
@@ -8,17 +8,18 @@ const NoticeBoard = () => {
   const [error, setError] = useState(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-  useEffect(() => {
-    fetchNotices();
-    window.addEventListener('online', () => setIsOnline(true));
-    window.addEventListener('offline', () => setIsOnline(false));
-    return () => {
-      window.removeEventListener('online', () => setIsOnline(true));
-      window.removeEventListener('offline', () => setIsOnline(false));
-    };
-  }, []);
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'Urgent':
+        return 'bg-red-100 border-red-300 text-red-900';
+      case 'Success':
+        return 'bg-emerald-100 border-emerald-300 text-emerald-900';
+      default:
+        return 'bg-amber-100 border-amber-300 text-amber-900';
+    }
+  };
 
-  const fetchNotices = async () => {
+  const fetchNotices = useCallback(async () => {
     if (!navigator.onLine) {
       setError('No internet connection. Check DevTools throttling.');
       setLoading(false);
@@ -81,18 +82,7 @@ const NoticeBoard = () => {
       setNotices([]);
       setLoading(false);
     }
-  };
-
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'Urgent':
-        return 'bg-red-100 border-red-300 text-red-900';
-      case 'Success':
-        return 'bg-emerald-100 border-emerald-300 text-emerald-900';
-      default:
-        return 'bg-amber-100 border-amber-300 text-amber-900';
-    }
-  };
+  }, []);
 
   const getIcon = (type, iconType) => {
     switch (iconType) {
@@ -106,6 +96,18 @@ const NoticeBoard = () => {
         return <Zap size={18} className="flex-shrink-0" />;
     }
   };
+
+  useEffect(() => {
+    fetchNotices();
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [fetchNotices]);
 
   if (loading) {
     return (

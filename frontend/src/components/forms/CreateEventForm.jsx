@@ -34,7 +34,7 @@ const CreateEventForm = () => {
           longitude: pos.coords.longitude
         }));
       },
-      (err) => {
+      () => {
         alert("Unable to retrieve location. Please allow GPS access.");
       }
     );

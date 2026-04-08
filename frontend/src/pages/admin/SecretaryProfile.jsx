@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import Layout from '../../components/layout/Layout';
 import { AuthContext } from '../../context/AuthContext';
@@ -14,13 +14,7 @@ const SecretaryProfile = () => {
   const [showID, setShowID] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      fetchProfile();
-    }
-  }, [user]);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       const { data } = await api.get(`/users/profile/${user._id}`);
       setProfileData(data.profile || data);
@@ -29,7 +23,13 @@ const SecretaryProfile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchProfile();
+    }
+  }, [user, fetchProfile]);
 
   const handleLogout = () => {
     triggerHaptic('success');

@@ -30,7 +30,7 @@ const useBranding = () => {
           document.documentElement.style.setProperty('--secondary-color', secondary);
           document.documentElement.style.setProperty('--accent-color', accent);
           if (data.logoUrl) document.documentElement.style.setProperty('--college-logo-url', `url(${data.logoUrl})`);
-        } catch (e) {
+        } catch {
           // ignore (SSR or restricted env)
         }
 

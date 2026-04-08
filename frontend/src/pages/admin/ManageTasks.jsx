@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Plus, ClipboardCheck, Clock, Trash2, AlertCircle } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
 import api from '../../services/api';
@@ -18,21 +18,21 @@ const ManageTasks = () => {
     category: 'Cleanliness'
   });
 
-  useEffect(() => {
-    if (activeTab === 'view') {
-      fetchTasks();
-    }
-  }, [activeTab, filterStatus]);
-
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       const params = filterStatus !== 'all' ? { status: filterStatus } : {};
       const { data } = await api.get('/tasks', { params });
       setTasks(data);
-    } catch (err) {
+    } catch {
       console.error("Failed to fetch tasks");
     }
-  };
+  }, [filterStatus]);
+
+  useEffect(() => {
+    if (activeTab === 'view') {
+      fetchTasks();
+    }
+  }, [activeTab, fetchTasks]);
 
   const handleVerify = async (taskId) => {
     if (!window.confirm("Are you sure you want to verify this task and award XP?")) return;
@@ -40,9 +40,8 @@ const ManageTasks = () => {
       await api.put(`/tasks/${taskId}/verify`);
       alert("Task verified successfully!");
       fetchTasks();
-    } catch (err) {
+    } catch {
       alert("Error verifying task");
-      console.error(err);
     }
   };
 
@@ -52,9 +51,8 @@ const ManageTasks = () => {
       await api.delete(`/tasks/${taskId}`);
       alert("Task deleted successfully!");
       fetchTasks();
-    } catch (err) {
+    } catch {
       alert("Error deleting task");
-      console.error(err);
     }
   };
 
@@ -66,7 +64,7 @@ const ManageTasks = () => {
       setFormData({ title: '', description: '', deadline: '', xpReward: 20, category: 'Cleanliness' });
       setActiveTab('view');
       fetchTasks();
-    } catch (err) {
+    } catch {
       alert("Error creating task");
     } finally {
       setLoading(false);

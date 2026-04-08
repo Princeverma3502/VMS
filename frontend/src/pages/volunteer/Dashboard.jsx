@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import api from '../../services/api';
 import Layout from '../../components/layout/Layout';
@@ -24,8 +24,8 @@ const VolunteerDashboard = () => {
   const { user } = useContext(AuthContext);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  // Fetch tasks (function declaration moved above effect to avoid "used before declared" warnings)
-  async function fetchTasks() {
+  // Fetch tasks
+  const fetchTasks = useCallback(async () => {
     try {
       const { data } = await api.get('/tasks');
       setTasks(Array.isArray(data) ? data : []);
@@ -35,13 +35,15 @@ const VolunteerDashboard = () => {
       setTasks([]);
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     if (user) {
-      fetchTasks();
+      (async () => {
+        await fetchTasks();
+      })();
     }
-  }, [user]);
+  }, [user, fetchTasks]);
 
   const handleClaim = async (id) => {
     try {

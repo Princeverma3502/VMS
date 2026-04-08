@@ -12,7 +12,7 @@ const EditBloodGroup = ({ currentGroup, onUpdate, onClose }) => {
     setLoading(true);
     try {
       // Direct API call to update profile
-      const { data } = await api.put('/users/profile', { bloodGroup: selected });
+      await api.put('/users/profile', { bloodGroup: selected });
       
       // Update parent state and close modal
       if (onUpdate) onUpdate(selected);
