@@ -1,3 +1,4 @@
+# CI Workflow - Stabilization Audit (Trigger)
 name: CI
 
 on:
