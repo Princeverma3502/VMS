@@ -32,6 +32,8 @@ jobs:
           MONGOMS_DOWNLOAD_MIRROR: https://fastdl.mongodb.org
           MONGOMS_VERSION: 7.0.14
           MONGOMS_DISTRO: ubuntu-22.04
+          # Force the correct storage engine for MongoDB 7+
+          MONGOMS_STORAGE_ENGINE: wiredTiger
       - name: Run npm audit
         working-directory: backend
         run: npm audit --audit-level=high || true
@@ -49,7 +51,8 @@ jobs:
           cache-dependency-path: './frontend/package-lock.json'
       - name: Install frontend deps
         working-directory: frontend
-        run: npm ci
+        # Changed from 'npm ci' to 'npm install' to fix the lightningcss optional dependency bug
+        run: npm install
       - name: Run frontend unit tests (Vitest)
         working-directory: frontend
         run: npx vitest run --reporter=verbose
