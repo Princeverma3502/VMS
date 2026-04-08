@@ -9,7 +9,7 @@ on:
 jobs:
   backend-tests:
     name: Backend tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
@@ -30,13 +30,14 @@ jobs:
           # Use GitHub's CDN mirror so mongodb-memory-server binary downloads fast in CI
           MONGOMS_DOWNLOAD_MIRROR: https://fastdl.mongodb.org
           MONGOMS_VERSION: 7.0.14
+          MONGOMS_DISTRO: ubuntu-22.04
       - name: Run npm audit
         working-directory: backend
         run: npm audit --audit-level=high || true
 
   frontend-tests:
     name: Frontend tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js

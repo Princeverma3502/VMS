@@ -14,7 +14,9 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await server.close();
+    if (server) {
+        await server.close();
+    }
 });
 
 describe('Security Patches: IDOR & Multi-Tenant Boundaries', () => {
