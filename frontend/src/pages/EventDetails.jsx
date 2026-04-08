@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
 import Layout from '../components/layout/Layout';
 import Loader from '../components/common/Loader';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContextObject';
 import { toast } from 'react-hot-toast';
 
 const Post = ({ post }) => (

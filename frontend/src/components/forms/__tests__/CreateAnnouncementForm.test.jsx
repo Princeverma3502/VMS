@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import CreateAnnouncementForm from '../../forms/CreateAnnouncementForm'
 import React from 'react'
-import { AuthContext } from '../../../context/AuthContext'
+import { AuthContext } from '../../../context/AuthContextObject'
 
 describe('CreateAnnouncementForm', () => {
   it('renders title and content fields', () => {

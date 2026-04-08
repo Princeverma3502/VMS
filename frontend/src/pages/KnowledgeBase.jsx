@@ -3,7 +3,7 @@ import { Search, BookOpen, HelpCircle, FileText, Video, Download } from 'lucide-
 import Layout from '../components/layout/Layout';
 import Navbar from '../components/layout/Navbar';
 import api from '../services/api';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContextObject';
 
 const KnowledgeBase = () => {
   const [articles, setArticles] = useState([]);

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import Layout from '../components/layout/Layout';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContextObject';
 import api from '../services/api';
 import { Heart, Activity, MapPin, AlertCircle, Send } from 'lucide-react';
 import useGeoLocation from '../hooks/useGeoLocation';

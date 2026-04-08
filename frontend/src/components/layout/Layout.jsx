@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 import Navbar from './Navbar';
 import BottomNav from './BottomNav';
 import SecretaryBottomNav from './SecretaryBottomNav';

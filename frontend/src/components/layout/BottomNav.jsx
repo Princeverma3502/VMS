@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutGrid, Trophy, Bot, QrCode, UserCircle } from 'lucide-react';
 import { triggerHaptic } from '../../utils/haptics';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 import Sidebar from './Sidebar';
 
 const BottomNav = () => {

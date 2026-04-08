@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
 import BentoDashboard from '../BentoDashboard';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 
 // 1. Mock the Axios API calls
 vi.mock('../../services/api', () => ({

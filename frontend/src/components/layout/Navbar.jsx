@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, UserCircle, Settings, ArrowLeft, Search } from 'lucide-react';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 
 const Navbar = ({ _userName = "User", showBackButton = false }) => {
   const { user } = useContext(AuthContext);

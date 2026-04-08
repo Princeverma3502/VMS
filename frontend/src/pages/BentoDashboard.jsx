@@ -8,7 +8,7 @@ import BloodGroupSummary from '../components/ui/BloodGroupSummary';
 import NoticeBoard from '../components/notices/NoticeBoard';
 import BottomNav from '../components/layout/BottomNav';
 import api from '../services/api';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContextObject';
 import { CheckCircle, Clock, PlayCircle, Lock, Trophy, ClipboardList } from 'lucide-react';
 
 const BentoDashboard = () => {

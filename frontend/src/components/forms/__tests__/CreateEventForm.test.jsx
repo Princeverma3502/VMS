@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import CreateEventForm from '../../forms/CreateEventForm'
 import React from 'react'
-import { AuthContext } from '../../../context/AuthContext'
+import { AuthContext } from '../../../context/AuthContextObject'
 
 describe('CreateEventForm', () => {
   it('renders form fields', () => {

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 import api from '../../services/api';
 import { X, Send, AlertCircle, Info, CheckCircle, Clock } from 'lucide-react';
 
