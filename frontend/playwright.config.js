@@ -4,17 +4,18 @@ export default defineConfig({
   testDir: './tests',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: 1,
-  workers: 1,
-  timeout: 60000,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  timeout: 120000,
+  expect: { timeout: 60000 },
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://127.0.0.1:5200',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'off',
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    actionTimeout: 30000,
+    navigationTimeout: 60000,
   },
   projects: [
     {
@@ -22,11 +23,11 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  // Auto-start the Vite dev server before running tests (uses .env.test → live Render backend)
+  // Use Vite preview for CI (production build check), Dev server for local
   webServer: {
-    command: 'npx vite --mode test',
-    url: 'http://localhost:5173',
-    reuseExistingServer: true,
+    command: process.env.CI ? 'npm run preview' : 'npx vite --port 5200 --strictPort --host 127.0.0.1',
+    url: 'http://127.0.0.1:5200',
+    reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },
 });

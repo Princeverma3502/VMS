@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
   backend-tests:
@@ -51,6 +51,9 @@ jobs:
       - name: Run frontend unit tests (Vitest)
         working-directory: frontend
         run: npx vitest run --reporter=verbose
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
       - name: Install Playwright browsers
         working-directory: frontend
         run: npx playwright install --with-deps chromium
@@ -59,6 +62,8 @@ jobs:
         run: npx playwright test --reporter=list
         env:
           CI: true
+          # Force Playwright to use the built preview server (defined in playwright.config.js)
+          PLAYWRIGHT_TEST_BASE_URL: http://localhost:4173
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

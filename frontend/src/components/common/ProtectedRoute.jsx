@@ -9,8 +9,9 @@ const ProtectedRoute = ({ children, role, adminOnly, allowedRoles }) => {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center font-bold text-blue-600">
-        Authenticating...
+      <div className="h-screen flex flex-col items-center justify-center bg-slate-50">
+        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="font-semibold text-slate-600 animate-pulse">Authenticating...</p>
       </div>
     );
   }

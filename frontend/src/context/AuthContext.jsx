@@ -11,21 +11,30 @@ export const AuthProvider = ({ children }) => {
     const checkLoggedIn = async () => {
       console.log('🟢 AuthContext: Checking if user is logged in');
       
-      // Check both persistent (localStorage) and session-only (sessionStorage)
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       
       if (token) {
         console.log('🟢 AuthContext: Token found, validating...');
+        // Add an 8s failsafe to prevent the app from being stuck in "Authenticating..."
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Auth Timeout')), 8000)
+        );
+
         try {
-          const { data } = await api.get('/auth/me', {
+          const fetchUserPromise = api.get('/auth/me', {
              headers: { Authorization: `Bearer ${token}` }
           });
+          
+          const { data } = await Promise.race([fetchUserPromise, timeoutPromise]);
           console.log('🟢 AuthContext: User authenticated:', data?.email);
           setUser(normalizeUserRole(data));
         } catch (error) {
           console.error('🔴 AuthContext: Failed to validate token:', error.message);
-          localStorage.removeItem('token');
-          sessionStorage.removeItem('token');
+          // Don't clear storage on a simple timeout, but do on actual 401/error
+          if (error.message !== 'Auth Timeout') {
+            localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
+          }
           setUser(null);
         }
       } else {
