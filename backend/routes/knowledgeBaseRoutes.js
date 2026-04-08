@@ -13,16 +13,20 @@ import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Public routes
+// All routes require authentication — controllers access req.user.collegeId for tenant isolation
+router.use(protect);
+
 router.get('/', getArticles);
 router.get('/category/:category', getArticlesByCategory);
 router.get('/search/:query', searchArticles);
 router.get('/:slug', getArticleBySlug);
 
-// Protected routes
-router.post('/', protect, authorize('Secretary', 'Domain Head'), createArticle);
+// Protected write routes
+router.post('/', authorize('Secretary', 'Domain Head'), createArticle);
 router.put('/:slug/helpful', markAsHelpful);
-router.put('/:id', protect, updateArticle);
-router.delete('/:id', protect, deleteArticle);
+
+// Update/Delete — controller checks author or admin internally
+router.put('/:id', updateArticle);
+router.delete('/:id', deleteArticle);
 
 export default router;

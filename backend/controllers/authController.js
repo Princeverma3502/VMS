@@ -47,13 +47,19 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new Error(errors.array()[0].msg);
   }
 
-  const { name, email, password, whatsappNumber, branch, year, role, adminSecret, rollNumber, collegeName, collegeId } = req.body;
+  const { name, email, password, whatsappNumber, branch, year, role: requestedRole, adminSecret, rollNumber, collegeName, collegeId } = req.body;
   const normalizedEmail = email.toLowerCase();
 
-  // 1. Admin Secret Check
-  if (role === 'Secretary' && adminSecret !== process.env.ADMIN_SECRET) {
-    res.status(401);
-    throw new Error('Invalid Admin Secret Key. Access Denied.');
+  // 1. Role Assignment and Admin Secret Check
+  // Only allow Secretary registration with valid admin secret
+  // All other users register as Volunteer and get promoted by Secretary later
+  let role = 'Volunteer';
+  if (requestedRole === 'Secretary') {
+    if (adminSecret !== process.env.ADMIN_SECRET) {
+      res.status(401);
+      throw new Error('Invalid Admin Secret Key. Access Denied.');
+    }
+    role = 'Secretary';
   }
 
   // 2. Year vs Role validation
@@ -114,7 +120,9 @@ export const registerUser = asyncHandler(async (req, res) => {
   if (collegeId) {
     userPayload.collegeId = collegeId;
   } else if (collegeName) {
-    const existing = await College.findOne({ name: new RegExp('^' + collegeName + '$', 'i') });
+    // Escape regex special characters to prevent ReDoS
+    const escapedName = collegeName.toString().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const existing = await College.findOne({ name: new RegExp('^' + escapedName + '$', 'i') });
     if (existing) {
       userPayload.collegeId = existing._id;
     } else {

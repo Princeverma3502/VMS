@@ -109,7 +109,7 @@ const App = ({ onReady }) => {
               </ProtectedRoute>
             } />
             <Route path="/volunteer/certificates" element={
-              <ProtectedRoute role="volunteer">
+              <ProtectedRoute allowedRoles={['Volunteer', 'Associate Head', 'Domain Head']}>
                 <VolunteerCertificates />
               </ProtectedRoute>
             } />
@@ -207,6 +207,26 @@ const App = ({ onReady }) => {
                 <AssociateHeadProfile />
               </ProtectedRoute>
             } />
+            <Route path="/associate-head/tasks" element={
+              <ProtectedRoute role="associate-head">
+                <Tasks />
+              </ProtectedRoute>
+            } />
+            <Route path="/associate-head/leaderboard" element={
+              <ProtectedRoute role="associate-head">
+                <Leaderboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/associate-head/scan" element={
+              <ProtectedRoute role="associate-head">
+                <AttendanceScanner />
+              </ProtectedRoute>
+            } />
+            <Route path="/associate-head/arcade" element={
+              <ProtectedRoute role="associate-head">
+                <Arcade />
+              </ProtectedRoute>
+            } />
 
             {/* Shared Routes */}
             <Route path="/events/:id" element={
@@ -216,8 +236,16 @@ const App = ({ onReady }) => {
             } />
 
             {/* New Feature Routes */}
-            <Route path="/knowledge-base" element={<KnowledgeBase />} />
-            <Route path="/search" element={<SearchResults />} />
+            <Route path="/knowledge-base" element={
+              <ProtectedRoute>
+                <KnowledgeBase />
+              </ProtectedRoute>
+            } />
+            <Route path="/search" element={
+              <ProtectedRoute>
+                <SearchResults />
+              </ProtectedRoute>
+            } />
             <Route path="/announcements" element={
               <ProtectedRoute>
                 <Announcements />
@@ -239,11 +267,15 @@ const App = ({ onReady }) => {
               </ProtectedRoute>
             } />
             <Route path="/volunteer-resume" element={
-              <ProtectedRoute role="volunteer">
+              <ProtectedRoute allowedRoles={['Volunteer', 'Associate Head', 'Domain Head']}>
                 <VolunteerResume />
               </ProtectedRoute>
             } />
-            <Route path="/volunteer-resume/:userId" element={<VolunteerResume />} />
+            <Route path="/volunteer-resume/:userId" element={
+              <ProtectedRoute>
+                <VolunteerResume />
+              </ProtectedRoute>
+            } />
             <Route path="/impact" element={
               <ProtectedRoute>
                 <ImpactHub />

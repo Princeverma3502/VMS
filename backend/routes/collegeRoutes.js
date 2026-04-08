@@ -1,11 +1,13 @@
 import express from 'express';
 import { createCollege, getCollegeBySlug, getAllColleges } from '../controllers/collegeController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/', protect, createCollege); // protect so only authenticated secretaries can create for their unit
-router.get('/', getAllColleges); // public listing of colleges
+// Only Secretary can create colleges
+router.post('/', protect, authorize('Secretary'), createCollege);
+// Public listing of colleges (needed for registration dropdown)
+router.get('/', getAllColleges);
 router.get('/:slug', getCollegeBySlug);
 
 export default router;

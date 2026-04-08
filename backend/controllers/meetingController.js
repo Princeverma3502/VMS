@@ -114,7 +114,7 @@ export const getMeetings = asyncHandler(async (req, res) => {
 // @desc    Mark attendance for a meeting
 // @route   PUT /meetings/:id/attend
 export const markMeetingAttendance = asyncHandler(async (req, res) => {
-  const meeting = await Meeting.findById(req.params.id);
+  const meeting = await Meeting.findOne({ _id: req.params.id, collegeId: req.user.collegeId });
   
   if (!meeting) {
     res.status(404);
@@ -153,7 +153,7 @@ export const markMeetingAttendance = asyncHandler(async (req, res) => {
 // @desc    Delete a meeting (Creator only)
 // @route   DELETE /meetings/:id
 export const deleteMeeting = asyncHandler(async (req, res) => {
-  const meeting = await Meeting.findById(req.params.id);
+  const meeting = await Meeting.findOne({ _id: req.params.id, collegeId: req.user.collegeId });
   
   if (!meeting) {
     res.status(404);
@@ -172,7 +172,7 @@ export const deleteMeeting = asyncHandler(async (req, res) => {
 // @desc    Get meeting details
 // @route   GET /meetings/:id
 export const getMeetingDetails = asyncHandler(async (req, res) => {
-  const meeting = await Meeting.findById(req.params.id)
+  const meeting = await Meeting.findOne({ _id: req.params.id, collegeId: req.user.collegeId })
     .populate('createdBy', 'name role email')
     .populate('domain', 'name')
     .populate('invitedUsers', 'name email role')

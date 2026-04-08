@@ -153,6 +153,13 @@ const limiter = rateLimit({
 });
 app.use('/', limiter);
 
+// Auth specific rate limit
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // max 20 attempts
+  message: 'Too many login attempts, please try again after 15 minutes'
+});
+
 // 4. Body Parser (with increased limit for images)
 app.use(express.json({ limit: '5mb' })); 
 app.use(express.urlencoded({ extended: true }));
@@ -161,7 +168,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- ROUTES ---
-app.use('/auth', authRoutes);
+app.use('/auth', authLimiter, authRoutes);
 app.use('/ngos', ngoRoutes);
 app.use('/domains', domainRoutes);
 app.use('/events', eventRoutes);

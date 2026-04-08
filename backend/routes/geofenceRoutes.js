@@ -7,7 +7,7 @@ const router = express.Router();
 // @desc    Create geofence location
 // @route   POST /geofence
 // @access  Private (Secretary/Domain Head)
-router.post('/', protect, authorize('Secretary', 'Domain Head'), async (req, res) => {
+router.post('/', protect, authorize('Secretary', 'Domain Head'), async (req, res, next) => {
   try {
     const { eventId, taskId, locationName, latitude, longitude, radiusMeters, address, mapUrl } = req.body;
 
@@ -29,14 +29,14 @@ router.post('/', protect, authorize('Secretary', 'Domain Head'), async (req, res
       data: geofence,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 });
 
 // @desc    Get geofence by event
 // @route   GET /geofence/event/:eventId
-// @access  Public
-router.get('/event/:eventId', async (req, res) => {
+// @access  Private (must be authenticated — event location data is sensitive)
+router.get('/event/:eventId', protect, async (req, res, next) => {
   try {
     const geofence = await GeofenceLocation.findOne({ eventId: req.params.eventId, isActive: true });
 
@@ -49,14 +49,14 @@ router.get('/event/:eventId', async (req, res) => {
       data: geofence,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 });
 
 // @desc    Check if user is within geofence
 // @route   POST /geofence/check-in
 // @access  Private
-router.post('/check-in', protect, async (req, res) => {
+router.post('/check-in', protect, async (req, res, next) => {
   try {
     const { eventId, userLat, userLon } = req.body;
 
@@ -67,7 +67,7 @@ router.post('/check-in', protect, async (req, res) => {
     }
 
     // Calculate distance using Haversine formula
-    const R = 6371000; // Earth radius in meters
+    const R = 6371000;
     const dLat = ((userLat - geofence.latitude) * Math.PI) / 180;
     const dLon = ((userLon - geofence.longitude) * Math.PI) / 180;
     const a =
@@ -89,14 +89,14 @@ router.post('/check-in', protect, async (req, res) => {
       message: isWithinGeofence ? 'You are within the event location' : 'You are outside the event location',
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 });
 
 // @desc    Update geofence
 // @route   PUT /geofence/:id
 // @access  Private (Secretary/Domain Head)
-router.put('/:id', protect, authorize('Secretary', 'Domain Head'), async (req, res) => {
+router.put('/:id', protect, authorize('Secretary', 'Domain Head'), async (req, res, next) => {
   try {
     const { radiusMeters, isActive } = req.body;
 
@@ -112,14 +112,14 @@ router.put('/:id', protect, authorize('Secretary', 'Domain Head'), async (req, r
       data: geofence,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 });
 
 // @desc    Delete geofence
 // @route   DELETE /geofence/:id
 // @access  Private (Secretary/Domain Head)
-router.delete('/:id', protect, authorize('Secretary', 'Domain Head'), async (req, res) => {
+router.delete('/:id', protect, authorize('Secretary', 'Domain Head'), async (req, res, next) => {
   try {
     await GeofenceLocation.findByIdAndDelete(req.params.id);
 
@@ -128,7 +128,7 @@ router.delete('/:id', protect, authorize('Secretary', 'Domain Head'), async (req
       message: 'Geofence deleted',
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 });
 

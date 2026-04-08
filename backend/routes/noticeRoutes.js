@@ -12,15 +12,16 @@ import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Public routes
+// All routes require authentication
+// (controllers access req.user.collegeId — unauthenticated access would crash)
+router.use(protect);
+
 router.get('/', getNotices);
 router.get('/:id', getNoticeById);
-
-// Protected routes
-router.post('/', protect, authorize('Secretary', 'Domain Head'), createNotice);
-router.put('/:id/read', protect, markNoticeAsRead);
-router.get('/:id/read-status', protect, getReadStatus);
-router.put('/:id/pin', protect, pinNotice);
-router.delete('/:id', protect, deleteNotice);
+router.post('/', authorize('Secretary', 'Domain Head'), createNotice);
+router.put('/:id/read', markNoticeAsRead);
+router.get('/:id/read-status', getReadStatus);
+router.put('/:id/pin', pinNotice);
+router.delete('/:id', deleteNotice);
 
 export default router;

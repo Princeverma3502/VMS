@@ -6,7 +6,7 @@ import { getIDCardSettings, updateIDCardSettings } from '../controllers/idCardCo
 const router = express.Router();
 router.get('/id-card', protect, getIDCardSettings);
 router.put('/id-card', protect, authorize('Secretary', 'admin'), updateIDCardSettings);
-router.get('/:collegeId', collegeSettingsController.getSettingsByCollegeId);
-router.put('/:collegeId', protect, collegeSettingsController.updateSettings);
+router.get('/:collegeId', protect, collegeSettingsController.getSettingsByCollegeId);
+router.put('/:collegeId', protect, authorize('Secretary', 'admin'), collegeSettingsController.updateSettings);
 
 export default router;

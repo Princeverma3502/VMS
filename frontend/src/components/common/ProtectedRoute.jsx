@@ -53,6 +53,14 @@ const ProtectedRoute = ({ children, role, adminOnly, allowedRoles }) => {
       return <Navigate to="/secretary/dashboard" />;
     }
 
+    // Role-based redirects for elevated roles accessing volunteer routes
+    if (required === 'volunteer' && hasRole('domain head')) {
+      return <Navigate to="/domain-head/dashboard" />;
+    }
+    if (required === 'volunteer' && hasRole('associate head')) {
+      return <Navigate to="/associate-head/dashboard" />;
+    }
+
     // Generic check: if required role is not matched, deny
     if (!hasRole(required) && !user.isSuperAdmin) {
       return <Navigate to="/unauthorized" />;

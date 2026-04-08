@@ -35,9 +35,10 @@ export const getActivityFeed = asyncHandler(async (req, res) => {
   const { limit = 20, skip = 0, type, userId } = req.query;
 
   const filters = { visibility: 'public' };
-
-  if (type) filters.type = type;
-  if (userId) filters.userId = userId;
+  
+  if (req.user && req.user.collegeId) {
+    filters.collegeId = req.user.collegeId;
+  }
 
   const activities = await ActivityLog.find(filters)
     .populate('userId', 'name profileImage gamification')
@@ -157,6 +158,7 @@ export const getTrendingActivities = asyncHandler(async (req, res) => {
     {
       $match: {
         visibility: 'public',
+        collegeId: req.user.collegeId,
         createdAt: { $gte: dateFilter },
       },
     },

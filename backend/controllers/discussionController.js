@@ -52,10 +52,10 @@ export const createPost = asyncHandler(async (req, res) => {
   }
   
   // Optional: Check if event exists
-  const eventExists = await Event.findById(eventId);
+  const eventExists = await Event.findOne({ _id: eventId, collegeId: req.user.collegeId });
   if (!eventExists) {
     res.status(404);
-    throw new Error('Event not found');
+    throw new Error('Event not found or not in your college');
   }
 
   const post = await DiscussionPost.create({

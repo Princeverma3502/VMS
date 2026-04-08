@@ -11,14 +11,14 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Public routes
+// All routes require authentication — tenant isolation applied in controllers
+router.use(protect);
+
 router.get('/', getActivityFeed);
 router.get('/trending', getTrendingActivities);
 router.get('/user/:userId', getUserActivity);
-
-// Protected routes
-router.post('/', protect, createActivity);
-router.put('/:activityId/like', protect, likeActivity);
-router.put('/:activityId/comment', protect, commentOnActivity);
+router.post('/', createActivity);
+router.put('/:activityId/like', likeActivity);
+router.put('/:activityId/comment', commentOnActivity);
 
 export default router;

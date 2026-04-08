@@ -40,6 +40,12 @@ export const getUserProfile = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 
+  // Multi-tenant check: ensure profile belongs to same college unless superAdmin
+  if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
+    res.status(403);
+    throw new Error('Forbidden: User does not belong to your college');
+  }
+
   // Fetch verified tasks for history
   const completedTasks = await Task.find({ 
     assignedUsers: user._id, 
@@ -184,7 +190,9 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   if (role && role !== 'all') filter.role = role;
   if (bloodGroup && bloodGroup !== 'all') filter.bloodGroup = bloodGroup;
   if (search) {
-    const regex = new RegExp(search, 'i');
+    // Escape regex special characters to prevent ReDoS
+    const escapedSearch = search.toString().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escapedSearch, 'i');
     filter.$or = [{ name: regex }, { email: regex }, { rollNumber: regex }];
   }
 
@@ -447,7 +455,9 @@ export const getAllUsersFiltered = asyncHandler(async (req, res) => {
   if (role && role !== 'all') filter.role = role;
   if (bloodGroup && bloodGroup !== 'all') filter.bloodGroup = bloodGroup;
   if (search) {
-    const regex = new RegExp(search, 'i');
+    // Escape regex special characters to prevent ReDoS
+    const escapedSearch = search.toString().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escapedSearch, 'i');
     filter.$or = [{ name: regex }, { email: regex }, { rollNumber: regex }];
   }
 

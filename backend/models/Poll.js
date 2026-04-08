@@ -58,8 +58,8 @@ const pollSchema = new mongoose.Schema(
     },
     visibility: {
       type: String,
-      enum: ['all', 'domain', 'ngo'],
-      default: 'all',
+      enum: ['public', 'all', 'domain', 'ngo', 'secretary'],
+      default: 'public',
     },
     collegeId: {
       type: mongoose.Schema.Types.ObjectId,

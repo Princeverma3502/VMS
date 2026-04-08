@@ -182,7 +182,8 @@ export const getPollResults = asyncHandler(async (req, res) => {
 // @route   DELETE /polls/:id
 // @access  Private (Creator/Admin only)
 export const deletePoll = asyncHandler(async (req, res) => {
-  const poll = await Poll.findById(req.params.id);
+  // Add collegeId to findOne for tenant isolation
+  const poll = await Poll.findOne({ _id: req.params.id, collegeId: req.user.collegeId });
 
   if (!poll) {
     return res.status(404).json({ message: 'Poll not found' });

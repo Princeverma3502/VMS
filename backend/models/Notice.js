@@ -26,8 +26,8 @@ const noticeSchema = new mongoose.Schema(
     collegeId: { type: mongoose.Schema.Types.ObjectId, ref: 'College' },
     visibility: {
       type: String,
-      enum: ['all', 'domain', 'ngo'],
-      default: 'all',
+      enum: ['public', 'all', 'domain', 'ngo', 'leadership'],
+      default: 'public',
     },
     attachments: [
       {
