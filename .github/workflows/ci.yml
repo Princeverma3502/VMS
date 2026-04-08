@@ -67,8 +67,8 @@ jobs:
         run: npx playwright test --reporter=list
         env:
           CI: true
-          # Force Playwright to use the built preview server (defined in playwright.config.js)
-          PLAYWRIGHT_TEST_BASE_URL: http://localhost:4173
+          # Force Playwright to use the built preview server via IPv4
+          PLAYWRIGHT_TEST_BASE_URL: http://127.0.0.1:5200
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
