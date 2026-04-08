@@ -5,7 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "cross-env NODE_ENV=test jest --runInBand",
+    "test": "cross-env MONGOMS_STORAGE_ENGINE=wiredTiger NODE_ENV=test jest --runInBand --forceExit",
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
