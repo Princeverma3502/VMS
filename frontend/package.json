@@ -7,7 +7,7 @@
     "dev": "vite",
     "test": "vitest run",
     "test:elite": "npx playwright test elite.spec.js",
-    "test:e2e": "npx playwright test elite.spec.js",
+    "test:e2e": "npx playwright test",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
