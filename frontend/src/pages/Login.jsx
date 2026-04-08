@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContextObject';
 import { Mail, Lock, LogIn, Loader2, Eye, EyeOff } from 'lucide-react';
 import StreakModal from '../components/modals/StreakModal';
 

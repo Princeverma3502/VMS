@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 import api from '../../services/api';
 import Layout from '../../components/layout/Layout';
 import Announcements from '../../components/announcements/Announcements';

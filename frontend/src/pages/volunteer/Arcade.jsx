@@ -3,7 +3,7 @@ import Layout from '../../components/layout/Layout';
 import XPProgressBar from '../../components/gamification/XPProgressBar';
 import Badge from '../../components/gamification/Badge';
 import api from '../../services/api';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 import { Gift, BrainCircuit } from 'lucide-react';
 
 const Arcade = () => {

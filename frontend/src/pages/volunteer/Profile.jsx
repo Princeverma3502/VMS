@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 import DigitalIDCard from '../../components/digital-id/DigitalIDCard';
 import EditBloodGroup from '../../components/common/EditBloodGroup'; 
 import api from '../../services/api';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import Layout from '../../components/layout/Layout';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 import DigitalIDCard from '../../components/digital-id/DigitalIDCard';
 import api from '../../services/api';
 import { LogOut, Camera, X, Shield } from 'lucide-react';

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContextObject';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import { UserPlus, ArrowLeft, LockKeyhole, Eye, EyeOff } from 'lucide-react';

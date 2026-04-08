@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import Layout from '../../components/layout/Layout';
 import api from '../../services/api';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 import { triggerHaptic } from '../../utils/haptics';
 import { ShieldCheck, User, X, Loader2, CheckCircle } from 'lucide-react';
 

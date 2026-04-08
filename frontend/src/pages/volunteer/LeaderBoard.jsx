@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 import Layout from '../../components/layout/Layout';
 import api from '../../services/api';
 import { Trophy, Medal, Award, Zap, Star, TrendingUp, Target } from 'lucide-react';

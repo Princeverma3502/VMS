@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import toast from 'react-hot-toast';
 
 // --- CONTEXT & API ---
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 import api from '../../services/api';
 
 // --- LAYOUT & COMPONENTS ---

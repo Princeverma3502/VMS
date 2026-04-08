@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Layout from '../components/layout/Layout';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContextObject';
 import api from '../services/api';
 import { Sun, Bell, Lock, LogOut } from 'lucide-react';
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Layout from '../../components/layout/Layout';
 import api from '../../services/api';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 import { CheckCircle, Clock, PlayCircle, Lock, Target, Zap, ShieldCheck, ArrowRight, MessageSquare } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { EliteEmptyState, EliteSkeleton } from '../../components/ui/EliteUI';

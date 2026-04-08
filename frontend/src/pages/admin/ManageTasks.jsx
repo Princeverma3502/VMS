@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Plus, ClipboardCheck, Clock, Trash2, AlertCircle } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
 import api from '../../services/api';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContextObject';
 
 const ManageTasks = () => {
   const { user } = useContext(AuthContext);
