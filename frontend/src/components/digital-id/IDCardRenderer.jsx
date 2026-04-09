@@ -137,7 +137,7 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
 
       {/* 5. FOOTER (Signatures & Validity) */}
       <div className="px-8 pb-4 mt-6 relative">
-        <div className="flex justify-around items-end text-slate-600">
+        <div className="flex justify-between items-center text-slate-600">
           {(() => {
             const defaults = [
               { name: config.secretaryName || 'Student Secretary', signature: config.secretarySig || null, designation: 'Student Secretary' },
