@@ -58,7 +58,7 @@ const Navbar = ({ _userName = "User", showBackButton = false }) => {
         {/* Unit Branding (Responsive) */}
         <div className="flex items-center gap-1.5 sm:gap-2 bg-blue-50 px-1.5 py-1 sm:px-2 sm:py-1 rounded-md sm:rounded-lg border border-blue-100">
           <img src="/logo.png" alt="Logo" className="w-5 h-5 sm:w-7 sm:h-7 bg-white border border-slate-200 rounded-full object-contain p-0.5 sm:p-1 shadow flex-shrink-0" />
-          <span className="text-[7px] sm:text-[10px] font-black text-blue-700 uppercase tracking-tighter italic leading-tight max-w-[70px] sm:max-w-none">National Social Summit</span>
+          <span className="text-[7px] sm:text-[10px] font-black text-blue-700 uppercase tracking-tighter italic leading-tight max-w-[70px] sm:max-w-none">National Service Scheme</span>
         </div>
         {/* Notification Icon */}
         <div className="relative">
