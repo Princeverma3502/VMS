@@ -137,7 +137,7 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
 
       {/* 5. FOOTER (Signatures & Validity) */}
       <div className="px-8 pb-4 mt-6 relative">
-        <div className="flex justify-between items-end">
+        <div className="flex justify-around items-end text-slate-600">
           {(() => {
             const defaults = [
               { name: config.secretaryName || 'Student Secretary', signature: config.secretarySig || null, designation: 'Student Secretary' },
@@ -160,7 +160,7 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
                 <p className="text-[7px] font-bold text-slate-500 uppercase tracking-wide text-center">
                   {s.name || `Student Secretary ${idx + 1}`}
                 </p>
-                <p className="text-[7px] font-medium text-slate-400 text-center">{s.designation || 'Student Secretary'}</p>
+                <p className="text-[7px] font-medium text-slate-700 text-center">{s.designation || 'Student Secretary'}</p>
               </div>
             ));
           })()}
@@ -168,7 +168,7 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
 
         {/* Validity Indicator */}
         <div className="px-8 pb-2 text-center mt-4">
-          <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">
+          <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
             Valid Till: {config.validThru || 'N/A'}
           </p>
         </div>
