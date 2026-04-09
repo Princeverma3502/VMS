@@ -46,7 +46,7 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
            </p>
             <p className="text-xs text-slate-600 font-semibold flex flex-col items-center gap-1">
               <Globe size={16} className="text-blue-600" />
-              https://nss-hbtu.vercel.app
+              https://vms-nss.vercel.app
             </p>
         </div>
       </div>
