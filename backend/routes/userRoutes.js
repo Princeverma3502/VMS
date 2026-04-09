@@ -7,7 +7,7 @@ import {
   getLeaderboard,
   assignCollege,
   subscribePush,
-  updateProfilePhoto, // This now uses the Buffer/Cloudinary logic we fixed
+  updateProfilePhoto,
   getXPHistory,
   verifyUserById,
   deleteUser,
@@ -17,43 +17,40 @@ import {
   getBloodGroupStats
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
-import upload from '../config/uploadConfig.js';
+import upload from '../config/uploadConfig.js'; // ✅ Fixed path
 
 const router = express.Router();
 
-// --- PUBLIC / SEMI-PROTECTED ROUTES ---
-// These require a valid login (protect) but not admin rights
+// --- PUBLIC / SEMI-PROTECTED ---
 router.get('/leaderboard', protect, getLeaderboard);
 router.get('/blood-group-stats', protect, getBloodGroupStats);
 
-// --- PROFILE MANAGEMENT (SELF) ---
-router.route('/profile')
+// --- PROFILE MANAGEMENT ---
+// ✅ FIX: added :id? so frontend calls to /users/profile/ID work
+router.route('/profile/:id?')
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile); 
 
-
+// ✅ FIX: Profile Photo (placed before generic :id)
 router.put('/profile-photo', protect, upload.single('image'), updateProfilePhoto);
 
-// --- SPECIFIC USER/HISTORY ROUTES ---
+// --- HISTORY & VERIFICATION ---
 router.get('/:id/xp-history', protect, getXPHistory);
 router.get('/verify/:id', protect, verifyUserById);
 router.post('/subscribe-push', protect, subscribePush);
 
-// --- ADMIN / SECRETARY ONLY ROUTES ---
-// These routes require the user to have an admin/secretary role
+// --- ADMIN / SECRETARY ONLY ---
 router.route('/')
   .get(protect, admin, getAllUsers); 
 
+// Generic admin update/delete
 router.route('/:id')
-  .get(protect, getUserProfile) // Admin viewing a specific profile
   .put(protect, admin, updateUser)
   .delete(protect, admin, deleteUser);
 
 router.put('/:id/reject', protect, admin, rejectUser);
 router.put('/:id/role', protect, admin, updateUserRole);
 router.put('/:id/blood-group', protect, admin, updateUserBloodGroup);
-
-// College assignment (usually for Secretaries)
 router.put('/assign-college', protect, admin, assignCollege);
 
 export default router;

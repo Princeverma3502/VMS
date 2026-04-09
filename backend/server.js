@@ -1,215 +1,3 @@
-// import express from 'express';
-// import dotenv from 'dotenv';
-// import cors from 'cors';
-// import helmet from 'helmet';
-// import path from 'path';
-// import { fileURLToPath } from 'url';
-// import rateLimit from 'express-rate-limit';
-// import mongoSanitize from 'express-mongo-sanitize';
-// import xss from 'xss-clean';
-// import hpp from 'hpp';
-// import connectDB from './config/db.js';
-
-// dotenv.config();
-
-// // --- VALIDATE ENVIRONMENT VARIABLES ---
-// const requiredEnvVars = [
-//   'MONGO_URI',
-//   'JWT_SECRET',
-//   'ADMIN_SECRET',
-//   'CLOUDINARY_CLOUD_NAME',
-//   'CLOUDINARY_API_KEY',
-//   'CLOUDINARY_API_SECRET'
-// ];
-
-// const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
-// if (missingVars.length > 0) {
-//   console.error(`❌ Missing required environment variables: ${missingVars.join(', ')}`);
-//   console.error('Please check your .env file or environment configuration.');
-//   process.exit(1);
-// }
-
-// console.log('✓ All required environment variables are set');
-
-// connectDB();
-
-// // Route Imports
-// import authRoutes from './routes/authRoutes.js';
-// import ngoRoutes from './routes/ngoRoutes.js';
-// import domainRoutes from './routes/domainRoutes.js';
-// import eventRoutes from './routes/eventRoutes.js';
-// import gameRoutes from './routes/gameRoutes.js';
-// import taskRoutes from './routes/taskRoutes.js';
-// import userRoutes from './routes/userRoutes.js';
-// import aiRoutes from './routes/aiRoutes.js';
-// import auditRoutes from './routes/auditRoutes.js';
-// import announcementRoutes from './routes/announcementRoutes.js';
-// import meetingRoutes from './routes/meetingRoutes.js';
-// import pollRoutes from './routes/pollRoutes.js';
-// import activityRoutes from './routes/activityRoutes.js';
-// import noticeRoutes from './routes/noticeRoutes.js';
-// import knowledgeBaseRoutes from './routes/knowledgeBaseRoutes.js';
-// import volunteerResumeRoutes from './routes/volunteerResumeRoutes.js';
-// import userPreferencesRoutes from './routes/userPreferencesRoutes.js';
-// import apiKeyRoutes from './routes/apiKeyRoutes.js';
-// import webhookRoutes from './routes/webhookRoutes.js';
-// import geofenceRoutes from './routes/geofenceRoutes.js';
-// import sessionRoutes from './routes/sessionRoutes.js';
-// import collegeRoutes from './routes/collegeRoutes.js';
-// import superAdminRoutes from './routes/superAdminRoutes.js';
-// import resumeRoutes from './routes/resumeRoutes.js';
-// import impactRoutes from './routes/impactRoutes.js';
-// import collegeSettingsRoutes from './routes/collegeSettingsRoutes.js';
-// import discussionRoutes from './routes/discussionRoutes.js';
-// import skillEndorsementRoutes from './routes/skillEndorsementRoutes.js';
-// import demoCertificateRoutes from './routes/demoCertificateRoutes.js';
-// import analyticsRoutes from './routes/analyticsRoutes.js';
-
-// // Middleware Imports
-// import { notFound, errorHandler } from './middleware/errorMiddleware.js';
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-// const app = express();
-
-// // --- SECURITY MIDDLEWARE ---
-
-// // 1. Set Security Headers
-// app.use(helmet({
-//   contentSecurityPolicy: {
-//     directives: {
-//       defaultSrc: ["'self'"],
-//       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://vms-pearl.vercel.app", "https://vms-6qfs.onrender.com"],
-//       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
-//       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
-//       imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://*.cloudinary.com"],
-//       connectSrc: ["'self'", "https://vms-6qfs.onrender.com", "http://localhost:5000", "ws://localhost:5173"],
-//     },
-//   },
-//   crossOriginEmbedderPolicy: false,
-//   crossOriginResourcePolicy: { policy: "cross-origin" },
-// }));
-
-// // 2. Data Sanitization against NoSQL injection
-// app.use(mongoSanitize());
-
-// // 3. Data Sanitization against XSS
-// app.use(xss());
-
-// // 4. Prevent HTTP Parameter Pollution
-// app.use(hpp());
-
-// // Extra: Enforce HSTS (Strict-Transport-Security) in production
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(helmet.hsts({
-//     maxAge: 31536000,
-//     includeSubDomains: true,
-//     preload: true
-//   }));
-// }
-
-// // Extra: Disable X-Powered-By to hide server technology
-// app.disable('x-powered-by');
-
-// // 2. CORS Configuration
-// const corsOptions = {
-//   origin: (origin, callback) => {
-//     // Allow requests with no origin (like mobile apps or curl requests)
-//     if (!origin) {
-//       return callback(null, true);
-//     }
-    
-//     // Whitelist specific origins
-//     const allowedOrigins = [
-//       'https://vms-pearl.vercel.app',  // Production Frontend
-//       'http://localhost:5173',          // Dev Frontend (Vite)
-//       'http://localhost:5174',          // Dev Frontend (Vite alternate)
-//       'http://localhost:3000',          // Dev Frontend (alternative)
-//       process.env.FRONTEND_URL,         // From environment
-//     ].filter(Boolean); // Remove undefined/null values
-    
-//     // Also allow any vercel.app preview deployment (for CI/CD and branches)
-//     const isVercelPreview = origin && origin.includes('.vercel.app');
-    
-//     if (allowedOrigins.includes(origin) || isVercelPreview) {
-//       callback(null, true);
-//     } else {
-//       console.warn(`⚠️ CORS blocked request from: ${origin}`);
-//       callback(new Error('CORS policy violation'));
-//     }
-//   },
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-//   credentials: true,
-//   optionsSuccessStatus: 200
-// };
-// app.use(cors(corsOptions));
-
-// // 3. Prevent Brute Force (Limit: 1000 requests per 10 mins for heavy dashboard usage)
-// const limiter = rateLimit({
-//   windowMs: 10 * 60 * 1000, 
-//   max: 1000,
-//   message: 'Too many requests from this IP, please try again after 10 minutes'
-// });
-// app.use('/', limiter);
-
-// // Auth specific rate limit
-// const authLimiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   max: 20, // max 20 attempts
-//   message: 'Too many login attempts, please try again after 15 minutes'
-// });
-
-// // 4. Body Parser (with increased limit for images)
-// app.use(express.json({ limit: '5mb' })); 
-// app.use(express.urlencoded({ extended: true }));
-
-// // --- STATIC FILES ---
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// // --- ROUTES ---
-// app.use('/auth', authLimiter, authRoutes);
-// app.use('/ngos', ngoRoutes);
-// app.use('/domains', domainRoutes);
-// app.use('/events', eventRoutes);
-// app.use('/game', gameRoutes);
-// app.use('/tasks', taskRoutes);
-// app.use('/users', userRoutes);
-// app.use('/ai', aiRoutes);
-// app.use('/audit', auditRoutes);
-// app.use('/announcements', announcementRoutes);
-// app.use('/meetings', meetingRoutes);
-// app.use('/polls', pollRoutes);
-// app.use('/activity', activityRoutes);
-// app.use('/notices', noticeRoutes);
-// app.use('/knowledge-base', knowledgeBaseRoutes);
-// app.use('/volunteer-resume', volunteerResumeRoutes);
-// app.use('/preferences', userPreferencesRoutes);
-// app.use('/geofence', geofenceRoutes);
-// app.use('/sessions', sessionRoutes);
-// app.use('/colleges', collegeRoutes);
-// app.use('/keys', apiKeyRoutes);
-// app.use('/webhooks', webhookRoutes);
-// app.use('/super-admin', superAdminRoutes);
-// app.use('/resumes', resumeRoutes);
-// app.use('/impact', impactRoutes);
-// app.use('/college-settings', collegeSettingsRoutes);
-// app.use('/discussions', discussionRoutes);
-// app.use('/skill-endorsements', skillEndorsementRoutes);
-// app.use('/demo-certificates', demoCertificateRoutes);
-// app.use('/analytics', analyticsRoutes);
-
-// app.get('/', (req, res) => {
-//   res.send('VMS API is Secure & Running...');
-// });
-
-// // --- ERROR HANDLING ---
-// app.use(notFound);
-// app.use(errorHandler);
-
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -221,29 +9,6 @@ import mongoSanitize from 'express-mongo-sanitize';
 import xss from 'xss-clean';
 import hpp from 'hpp';
 import connectDB from './config/db.js';
-
-dotenv.config();
-
-// --- VALIDATE ENVIRONMENT VARIABLES ---
-const requiredEnvVars = [
-  'MONGO_URI',
-  'JWT_SECRET',
-  'ADMIN_SECRET',
-  'CLOUDINARY_CLOUD_NAME',
-  'CLOUDINARY_API_KEY',
-  'CLOUDINARY_API_SECRET'
-];
-
-const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
-if (missingVars.length > 0) {
-  console.error(`❌ Missing required environment variables: ${missingVars.join(', ')}`);
-  console.error('Please check your .env file or environment configuration.');
-  process.exit(1);
-}
-
-console.log('✓ All required environment variables are set');
-
-connectDB();
 
 // Route Imports
 import authRoutes from './routes/authRoutes.js';
@@ -280,23 +45,35 @@ import analyticsRoutes from './routes/analyticsRoutes.js';
 // Middleware Imports
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
+dotenv.config();
+
+// --- VALIDATE ENVIRONMENT VARIABLES ---
+const requiredEnvVars = [
+  'MONGO_URI', 'JWT_SECRET', 'ADMIN_SECRET',
+  'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'
+];
+
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+if (missingVars.length > 0) {
+  console.error(`❌ Missing: ${missingVars.join(', ')}`);
+  process.exit(1);
+}
+
+connectDB();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const app = express();
 
-// 🚨 CRITICAL FIX FOR RENDER: Trust the reverse proxy 🚨
-// This ensures rate limiting applies to the user's actual IP, not Render's internal IP.
+// ✅ CRITICAL FOR RENDER: Trust Proxy
 app.set('trust proxy', 1);
 
 // --- SECURITY MIDDLEWARE ---
-
-// 1. Set Security Headers
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://vms-pearl.vercel.app", "https://vms-6qfs.onrender.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://vms-nss.vercel.app", "https://vms-6qfs.onrender.com"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
       imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://*.cloudinary.com"],
@@ -307,90 +84,62 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
 }));
 
-// 2. Data Sanitization against NoSQL injection
 app.use(mongoSanitize());
-
-// 3. Data Sanitization against XSS
 app.use(xss());
-
-// 4. Prevent HTTP Parameter Pollution
 app.use(hpp());
 
-// Extra: Enforce HSTS (Strict-Transport-Security) in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(helmet.hsts({
-    maxAge: 31536000,
-    includeSubDomains: true,
-    preload: true
-  }));
+  app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true }));
 }
-
-// Extra: Disable X-Powered-By to hide server technology
 app.disable('x-powered-by');
 
-// 2. CORS Configuration
+// --- CORS ---
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) {
-      return callback(null, true);
-    }
-    
-    // Whitelist specific origins
+    if (!origin) return callback(null, true);
     const allowedOrigins = [
-      'https://vms-nss.vercel.app',  // Production Frontend
-      'http://localhost:5173',          // Dev Frontend (Vite)
-      'http://localhost:5174',          // Dev Frontend (Vite alternate)
-      'http://localhost:3000',          // Dev Frontend (alternative)
-      process.env.FRONTEND_URL,         // From environment
-    ].filter(Boolean); // Remove undefined/null values
-    
-    // Also allow any vercel.app preview deployment (for CI/CD and branches)
-    const isVercelPreview = origin && origin.includes('.vercel.app');
+      'https://vms-nss.vercel.app', // ✅ Your current production frontend
+      'http://localhost:5173',
+      'http://localhost:5174',
+      process.env.FRONTEND_URL,
+    ].filter(Boolean);
+    const isVercelPreview = origin.includes('.vercel.app');
     
     if (allowedOrigins.includes(origin) || isVercelPreview) {
       callback(null, true);
     } else {
-      console.warn(`⚠️ CORS blocked request from: ${origin}`);
       callback(new Error('CORS policy violation'));
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   credentials: true,
-  optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
 
-// 3. Prevent Brute Force (Updated for 200 users on shared IP)
+// --- RATE LIMITING ---
 const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 3000, // Increased to 3000 to handle 200 students making concurrent requests
-  message: 'System is currently experiencing high traffic from your network, please try again in 10 minutes'
+  windowMs: 10 * 60 * 1000,
+  max: 3000, // Optimized for high concurrent student usage
 });
 app.use('/', limiter);
 
-// Auth specific rate limit (Updated for 200 users on shared IP)
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 500, // Safely handles 200 users logging in or refreshing simultaneously
-  message: 'System is currently busy due to high login traffic. Please try again in a few minutes.'
+  windowMs: 15 * 60 * 1000,
+  max: 500,
 });
 
-// 4. Body Parser (with increased limit for images)
-app.use(express.json({ limit: '5mb' })); 
+app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
-
-// --- STATIC FILES ---
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// --- ROUTES ---
+// --- ALL ROUTES PRESERVED ---
 app.use('/auth', authLimiter, authRoutes);
 app.use('/ngos', ngoRoutes);
 app.use('/domains', domainRoutes);
 app.use('/events', eventRoutes);
 app.use('/game', gameRoutes);
 app.use('/tasks', taskRoutes);
-app.use('/users', userRoutes);
+app.use('/users', userRoutes); 
 app.use('/ai', aiRoutes);
 app.use('/audit', auditRoutes);
 app.use('/announcements', announcementRoutes);
@@ -415,13 +164,10 @@ app.use('/skill-endorsements', skillEndorsementRoutes);
 app.use('/demo-certificates', demoCertificateRoutes);
 app.use('/analytics', analyticsRoutes);
 
-app.get('/', (req, res) => {
-  res.send('VMS API is Secure & Running...');
-});
+app.get('/', (req, res) => res.send('VMS API is Secure & Running...'));
 
-// --- ERROR HANDLING ---
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`✓ Server running on port ${PORT}`));
