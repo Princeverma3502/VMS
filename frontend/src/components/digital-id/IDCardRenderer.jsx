@@ -38,7 +38,7 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
         <div className="w-full space-y-3 text-center">
            <p className="text-xs text-slate-600 font-semibold flex flex-col items-center gap-1">
              <MapPin size={16} className="text-blue-600" />
-             {config.subHeader || "NSS Unit"}
+             Harcourt Butler Technical University
            </p>
            <p className="text-xs text-slate-600 font-semibold flex flex-col items-center gap-1">
              <Globe size={16} className="text-blue-600" />
