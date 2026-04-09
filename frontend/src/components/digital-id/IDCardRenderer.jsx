@@ -99,7 +99,7 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
         </h1>
         <div className="flex flex-col items-center gap-1">
           <span 
-            className="text-slate-900 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm"
+            className="text-white px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm"
             style={{ backgroundColor: roleColor }}
           >
             {user.role || 'VOLUNTEER'}
