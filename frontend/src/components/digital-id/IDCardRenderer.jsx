@@ -69,7 +69,7 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
 
         {/* Center: Heading and Subheading */}
         <div className="flex-1  flex flex-col items-center justify-center px-4 w-full">
-          <p className="text-xs font-white mt-[-9em] text-slate-900 uppercase tracking-wider text-center leading-tight">
+          <p className="text-xs font-bold mt-[-9em] text-white uppercase tracking-wider text-center leading-tight">
             {config.universityName || "NATIONAL SERVICE SCHEME"}
           </p>
           <p className="text-[9px] font-bold text-white text-center leading-tight mt-1">
