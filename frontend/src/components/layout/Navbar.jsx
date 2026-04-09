@@ -31,10 +31,10 @@ const Navbar = ({ _userName = "User", showBackButton = false }) => {
         {showBackButton && (
           <button 
             onClick={() => navigate(-1)} 
-            className="flex items-center gap-2 text-slate-700 font-black hover:text-blue-600 transition-all bg-white hover:bg-blue-50 px-3 py-2 rounded-xl border border-slate-200 hover:border-blue-200 shadow-sm active:scale-95 group"
+            className="flex items-center gap-1.5 sm:gap-2 text-slate-700 font-black hover:text-blue-600 transition-all bg-white hover:bg-blue-50 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl border border-slate-200 hover:border-blue-200 shadow-sm active:scale-95 group"
           >
-            <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="text-xs uppercase tracking-widest">Back</span>
+            <ArrowLeft className="w-4 h-4 sm:w-[18px] sm:h-[18px] group-hover:-translate-x-1 transition-transform" />
+            <span className="text-[10px] sm:text-xs uppercase tracking-widest hidden xs:inline-block">Back</span>
           </button>
         )}
 
@@ -55,10 +55,10 @@ const Navbar = ({ _userName = "User", showBackButton = false }) => {
 
       {/* 2. RIGHT: Actions */}
       <div className="flex items-center gap-2 sm:gap-4">
-        {/* Unit Branding (Always Visible) */}
-        <div className="flex items-center gap-2 bg-blue-50 px-2 py-1 rounded-lg border border-blue-100">
-          <img src="/logo.png" alt="NSS" className="w-7 h-7 min-w-[1.75rem] min-h-[1.75rem] bg-white border border-slate-200 rounded-full object-contain p-1 shadow" />
-          <span className="text-[10px] font-black text-blue-700 uppercase tracking-tighter italic">National Service Scheme</span>
+        {/* Unit Branding (Responsive) */}
+        <div className="flex items-center gap-1.5 sm:gap-2 bg-blue-50 px-1.5 py-1 sm:px-2 sm:py-1 rounded-md sm:rounded-lg border border-blue-100">
+          <img src="/logo.png" alt="Logo" className="w-5 h-5 sm:w-7 sm:h-7 bg-white border border-slate-200 rounded-full object-contain p-0.5 sm:p-1 shadow flex-shrink-0" />
+          <span className="text-[7px] sm:text-[10px] font-black text-blue-700 uppercase tracking-tighter italic leading-tight max-w-[70px] sm:max-w-none">National Social Summit</span>
         </div>
         {/* Notification Icon */}
         <div className="relative">
@@ -96,8 +96,12 @@ const Navbar = ({ _userName = "User", showBackButton = false }) => {
             onClick={handleProfileClick}
             className="flex items-center gap-2 p-1.5 sm:p-2 hover:bg-slate-100 rounded-xl transition-all group"
           >
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform uppercase">
-              {user?.name?.charAt(0) || 'U'}
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform uppercase overflow-hidden">
+              {user?.profileImage ? (
+                <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
+              ) : (
+                user?.name?.charAt(0) || 'U'
+              )}
             </div>
             <div className="hidden md:block text-left">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{user?.role || 'User'}</p>
