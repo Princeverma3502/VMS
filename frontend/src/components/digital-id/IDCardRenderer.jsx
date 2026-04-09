@@ -7,6 +7,10 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
 
   const normalize = (r) => {
     if (!r) return 'Volunteer';
+    // Consistent normalization mapping
+    const titleCase = (s) => (s || '').toString().trim().toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+    const rNorm = (r || '').toString().trim().toLowerCase();
+    
     const map = {
       'volunteer': 'Volunteer',
       'secretary': 'Secretary',
@@ -15,7 +19,7 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
       'admin': 'Secretary',
       'administrator': 'Secretary'
     };
-    return map[r.toLowerCase().trim()] || r.replace(/\b\w/g, c => c.toUpperCase());
+    return map[rNorm] || titleCase(r);
   };
 
   const currentRole = normalize(user.role);
@@ -40,10 +44,10 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
              <MapPin size={16} className="text-blue-600" />
              Harcourt Butler Technical University
            </p>
-           <p className="text-xs text-slate-600 font-semibold flex flex-col items-center gap-1">
-             <Globe size={16} className="text-blue-600" />
-             https://nss-hbtu.vercel.app
-           </p>
+            <p className="text-xs text-slate-600 font-semibold flex flex-col items-center gap-1">
+              <Globe size={16} className="text-blue-600" />
+              https://nss-hbtu.vercel.app
+            </p>
         </div>
       </div>
     );

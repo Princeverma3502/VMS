@@ -26,11 +26,26 @@ export const getIDCardSettings = asyncHandler(async (req, res) => {
 
   const settings = await CollegeSettings.findOne({ collegeId: req.user.collegeId });
   if (settings && settings.idCardOptions) {
+    const optionsObj = settings.idCardOptions.toJSON ? settings.idCardOptions.toJSON() : settings.idCardOptions.toObject();
+    
+    // Explicitly convert roleColors to a plain object to prevent empty {} serialization
+    let plainRoleColors = {};
+    if (settings.idCardOptions.roleColors) {
+      if (typeof settings.idCardOptions.roleColors.get === 'function') {
+        settings.idCardOptions.roleColors.forEach((value, key) => {
+          plainRoleColors[key] = value;
+        });
+      } else {
+        plainRoleColors = settings.idCardOptions.roleColors;
+      }
+    }
+
     res.json({
-      ...settings.idCardOptions.toObject(),
+      ...optionsObj,
+      roleColors: plainRoleColors,
       // Ensure collegeSubheading and studentSecretaries are properly returned
-      collegeSubheading: settings.idCardOptions.collegeSubheading || 'Harcourt Butler Technical University',
-      studentSecretaries: settings.idCardOptions.studentSecretaries || []
+      collegeSubheading: optionsObj.collegeSubheading || 'Harcourt Butler Technical University',
+      studentSecretaries: optionsObj.studentSecretaries || []
     });
   } else {
     res.json({
