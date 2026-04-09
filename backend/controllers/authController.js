@@ -51,15 +51,14 @@ export const registerUser = asyncHandler(async (req, res) => {
   const normalizedEmail = email.toLowerCase();
 
   // 1. Role Assignment and Admin Secret Check
-  // Only allow Secretary registration with valid admin secret
-  // All other users register as Volunteer and get promoted by Secretary later
-  let role = 'Volunteer';
-  if (requestedRole === 'Secretary') {
+  // ✅ FIX: Use requestedRole, fallback to Volunteer if none provided
+  let role = requestedRole || 'Volunteer'; 
+
+  if (role === 'Secretary') {
     if (adminSecret !== process.env.ADMIN_SECRET) {
       res.status(401);
       throw new Error('Invalid Admin Secret Key. Access Denied.');
     }
-    role = 'Secretary';
   }
 
   // 2. Year vs Role validation
@@ -94,18 +93,17 @@ export const registerUser = asyncHandler(async (req, res) => {
   }
 
   // 4. Create User
-  // NOTE: We do NOT hash password here. The User model's pre('save') hook handles it.
   const isAutoApproved = role === 'Secretary';
 
   const userPayload = {
     name,
     email: normalizedEmail,
-    password, // Plain text passed to model -> Model hashes it
+    password, 
     rollNumber: rollNumber || undefined,
     whatsappNumber,
     branch,
     year,
-    role: role || 'Volunteer',
+    role, // ✅ FIX: This now passes the correct role (e.g. 'Associate Head')
     isApproved: isAutoApproved,
     gamification: {
       streak: 1,
@@ -164,7 +162,6 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ email: normalizedEmail });
 
-  // Use the matchPassword method from the User model
   if (user && (await user.matchPassword(password))) {
     
     if (!user.isApproved) {
@@ -172,7 +169,6 @@ export const loginUser = asyncHandler(async (req, res) => {
       throw new Error('Your account is pending approval from the Secretary.');
     }
 
-    // Wrap streak update so gamification errors don't crash login
     try {
       await updateStreak(user);
     } catch (err) {
@@ -211,7 +207,6 @@ export const getMe = asyncHandler(async (req, res) => {
 // @desc    Get Pending Users
 export const getPendingUsers = asyncHandler(async (req, res) => {
   const query = { isApproved: false };
-  // Multi-tenant check: only fetch pending users for the admin's college
   if (!req.user.isSuperAdmin && req.user.collegeId) {
     query.collegeId = req.user.collegeId;
   }
@@ -249,7 +244,6 @@ export const resetUserPassword = asyncHandler(async (req, res) => {
     throw new Error('Forbidden: User does not belong to your college');
   }
   
-  // Directly set password; Model pre-save hook will detect modification and hash it
   user.password = 'Welcome@123';
   await user.save();
   
@@ -270,13 +264,11 @@ export const changePassword = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user && (await user.matchPassword(oldPassword))) {
-    // Check if new password is same as old
     if (oldPassword === newPassword) {
       res.status(400);
       throw new Error('New password cannot be the same as the old password.');
     }
     
-    // The pre-save hook in the User model will handle hashing
     user.password = newPassword;
     await user.save();
     

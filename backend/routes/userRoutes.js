@@ -11,7 +11,6 @@ import {
   getXPHistory,
   verifyUserById,
   deleteUser,
-  approveUser,
   rejectUser,
   updateUserRole,
   updateUser,
@@ -26,8 +25,6 @@ router.get('/leaderboard', protect, getLeaderboard);
 router.get('/blood-group-stats', protect, getBloodGroupStats);
 
 // --- PROFILE MANAGEMENT ---
-// FIX: We now handle BOTH GET and PUT for both /profile and /profile/:id
-// This ensures no 404s trigger regardless of how the frontend sends the request.
 router.route('/profile')
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile); 
@@ -46,17 +43,16 @@ router.get('/verify/:id', protect, verifyUserById);
 
 // --- ADMIN / SECRETARY ONLY ---
 router.route('/')
-  .get(protect, getAllUsers);  
+  .get(protect, admin, getAllUsers); // Added admin protection here so normal users can't fetch all users
 
 router.route('/:id')
   .put(protect, admin, updateUser)
   .delete(protect, admin, deleteUser);
 
-router.put('/:id/approve', protect, admin, approveUser);
 router.put('/:id/reject', protect, admin, rejectUser);
 router.put('/:id/role', protect, admin, updateUserRole);
 
-router.put('/assign-college', protect, assignCollege);
+router.put('/assign-college', protect, admin, assignCollege);
 router.put('/:id/blood-group', protect, admin, updateUserBloodGroup);
 
 export default router;
