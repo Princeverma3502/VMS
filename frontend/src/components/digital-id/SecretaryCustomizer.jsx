@@ -38,7 +38,7 @@ const STANDARD_ROLES = ['Secretary', 'Domain Head', 'Associate Head', 'Volunteer
 
 const SecretaryCustomizer = ({ userSample }) => {
   const [config, setConfig] = useState(DEFAULT_CONFIG);
-  const [previewRole, setPreviewRole] = useState('Volunteer');
+  const [previewRole, setPreviewRole] = useState(userSample?.role || 'Volunteer');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
