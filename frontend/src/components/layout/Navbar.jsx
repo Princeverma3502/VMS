@@ -39,7 +39,7 @@ const Navbar = ({ _userName = "User", showBackButton = false }) => {
   };
 
   return (
-    <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 py-3 px-4 sm:px-4 sticky top-0 z-[60] flex justify-between items-center transition-all duration-300">
+    <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 py-3 px-4 sm:px-8 sticky top-0 z-[60] flex justify-between items-center transition-all duration-300">
       
       {/* 1. LEFT: Back Button or Search */}
       <div className="flex-1 flex items-center gap-4">
@@ -69,11 +69,11 @@ const Navbar = ({ _userName = "User", showBackButton = false }) => {
       </div>
 
       {/* 2. RIGHT: Actions */}
-      <div className="flex items-center gap-2 sm:gap-2">
+      <div className="flex items-center gap-2 sm:gap-4">
         {/* Unit Branding (Responsive) */}
         <div className="flex items-center gap-1.5 sm:gap-2 bg-blue-50 px-1.5 py-1 sm:px-2 sm:py-1 rounded-md sm:rounded-lg border border-blue-100">
           <img src="/logo.png" alt="Logo" className="w-5 h-5 sm:w-7 sm:h-7 bg-white border border-slate-200 rounded-full object-contain p-0.5 sm:p-1 shadow flex-shrink-0" />
-          <span className="text-[7px] sm:text-[10px] font-black text-blue-700 uppercase tracking-tighter italic leading-tight max-w-[70px] sm:max-w-none">National Service Scheme</span>
+          <span className="text-[7px] sm:text-[10px] font-black text-blue-700 uppercase tracking-tighter italic leading-tight max-w-[70px] sm:max-w-[80px]">National Service Scheme</span>
         </div>
         {/* Install PWA Button (Only visible if prompt is ready) */}
         {deferredPrompt && (
