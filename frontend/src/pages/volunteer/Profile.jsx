@@ -80,7 +80,7 @@ const Profile = () => {
     if (!file) return;
     setUploading(true);
     const formData = new FormData();
-    formData.append('profileImage', file);
+    formData.append('image', file);
     try {
         const { data } = await api.put('/users/profile/image', formData, { headers: { 'Content-Type': 'multipart/form-data' }});
         if (data.profileImage) {

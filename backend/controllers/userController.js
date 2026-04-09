@@ -74,38 +74,43 @@ export const subscribePush = asyncHandler(async (req, res) => {
 // @desc    Update Profile Photo (Cloudinary)
 // @route   PUT /users/profile/image
 export const updateProfilePhoto = asyncHandler(async (req, res) => {
-  // Validate request
   if (!req.user || !req.user._id) {
     res.status(401);
     throw new Error('User not authenticated');
   }
 
-  if (!req.body.image && !req.file) {
-    res.status(400);
-    throw new Error('No image data provided');
-  }
-
   const user = await User.findById(req.user._id);
-
   if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
 
   try {
-    // Determine image source (Body for base64, File for multer)
-    const imageToUpload = req.body.image || req.file?.path;
+    let imageToUpload;
+
+    // Handle Multer Memory Storage (req.file.buffer)
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString("base64");
+      imageToUpload = "data:" + req.file.mimetype + ";base64," + b64;
+    } 
+    // Handle Base64 strings sent directly in body
+    else if (req.body.image) {
+      imageToUpload = req.body.image;
+    } 
+    else {
+      res.status(400);
+      throw new Error('No image file or data provided');
+    }
 
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(imageToUpload, {
       folder: 'vms-profiles',
       resource_type: 'auto',
-      public_id: `user_${user._id}`, // Use user ID as unique identifier
-      overwrite: true, // Replace old image if exists
-      transformation: [{ width: 500, height: 500, crop: "fill", gravity: "face" }] // Optimize
+      public_id: `user_${user._id}`, 
+      overwrite: true,
+      transformation: [{ width: 500, height: 500, crop: "fill", gravity: "face" }]
     });
 
-    // Update user with Cloudinary URL
     user.profileImage = result.secure_url;
     const updatedUser = await user.save();
 

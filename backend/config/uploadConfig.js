@@ -1,23 +1,8 @@
 import multer from 'multer';
 import path from 'path';
 
-// Use process.cwd() so this module works under Jest and normal runtime
-const uploadsDir = path.join(process.cwd(), 'uploads');
-
-// Set storage engine
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    // Files will be saved in '<cwd>/uploads/' (ensure folder exists)
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    // Naming convention: fieldname-timestamp.extension
-    cb(
-      null,
-      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
-    );
-  },
-});
+// Use memoryStorage for production (Cloudinary/Render compatible)
+const storage = multer.memoryStorage();
 
 // File filter (Images and PDFs)
 const checkFileType = (file, cb) => {
@@ -34,7 +19,7 @@ const checkFileType = (file, cb) => {
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5000000 }, // Limit: 5MB
+  limits: { fileSize: 5000000 }, // 5MB limit
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   },
