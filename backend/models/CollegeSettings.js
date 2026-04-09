@@ -116,16 +116,22 @@ const collegeSettingsSchema = new mongoose.Schema(
 // Fixed 'next is not a function' by defining it and wrapping in try/catch
 collegeSettingsSchema.pre('save', async function (next) {
   try {
-    const College = mongoose.model('College');
+    if (!this.collegeId) {
+      return next(new Error('College ID is required to save settings'));
+    }
+
+    // Safely get models to avoid MissingSchemaError or circular dependencies
+    const College = mongoose.models.College || mongoose.model('College');
     const college = await College.findById(this.collegeId);
     
     if (!college) {
-      return next(new Error('College does not exist'));
+      return next(new Error('Associated college does not exist in the system'));
     }
     
-    next(); // Move on to save the document
+    next();
   } catch (error) {
-    next(error); // Pass any errors correctly to Mongoose
+    console.error("COLLEGE_SETTINGS_SAVE_ERROR:", error);
+    next(error);
   }
 });
 

@@ -19,20 +19,32 @@ import CollegeSettings from '../models/CollegeSettings.js';
 // });
 
 export const getIDCardSettings = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user.collegeId) {
+    res.status(400);
+    throw new Error('User college association not found');
+  }
+
   const settings = await CollegeSettings.findOne({ collegeId: req.user.collegeId });
   if (settings && settings.idCardOptions) {
     res.json({
-      ...settings.idCardOptions,
-      collegeSubheading: settings.collegeSubheading || 'Harcourt Butler Technical University',
+      ...settings.idCardOptions.toObject(),
+      // Ensure collegeSubheading and studentSecretaries are properly returned
+      collegeSubheading: settings.idCardOptions.collegeSubheading || 'Harcourt Butler Technical University',
       studentSecretaries: settings.idCardOptions.studentSecretaries || []
     });
   } else {
     res.json({
         templateId: 'executive-pro',
         orgName: 'NATIONAL SERVICE SCHEME',
+        universityName: 'NATIONAL SERVICE SCHEME',
         subHeader: 'Your College Name',
         collegeSubheading: 'Harcourt Butler Technical University',
-        roleColors: { 'Volunteer': '#1d4ed8' },
+        roleColors: { 
+          'Secretary': '#FFD700',
+          'Domain Head': '#7c3aed',
+          'Associate Head': '#10b981',
+          'Volunteer': '#1d4ed8' 
+        },
         studentSecretaries: []
     });
   }
@@ -40,31 +52,17 @@ export const getIDCardSettings = asyncHandler(async (req, res) => {
 
 // @desc    Update ID Card Settings
 // @route   PUT /settings/id-card
-// export const updateIDCardSettings = asyncHandler(async (req, res) => {
-//   const { 
-//     templateId, orgName, subHeader, collegeLogo, councilLogo, 
-//     signatureUrl, signatureName, signatureRole, roleColors, visibleFields 
-//   } = req.body;
-
-//   let settings = await CollegeSettings.findOne({ collegeId: req.user.collegeId });
-
-//   if (!settings) {
-//     settings = new CollegeSettings({ collegeId: req.user.collegeId });
-//   }
-
-//   settings.idCardOptions = {
-//     templateId, orgName, subHeader, collegeLogo, councilLogo,
-//     signatureUrl, signatureName, signatureRole, roleColors, visibleFields
-//   };
-
-//   await settings.save();
-//   res.json({ message: "ID Card Configuration Saved", settings: settings.idCardOptions });
-// });
-
 export const updateIDCardSettings = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user.collegeId) {
+    res.status(400);
+    throw new Error('User college association not found. Please contact admin.');
+  }
+
   const { 
-    templateId, orgName, subHeader, collegeLogo, councilLogo, 
-    signatureUrl, signatureName, signatureRole, roleColors, visibleFields, collegeSubheading, studentSecretaries 
+    templateId, orgName, universityName, subHeader, collegeLogo, councilLogo, 
+    officerName, officerSig, validThru,
+    secretaryName, secretarySig, secretary2Name, secretary2Sig, secretary3Name, secretary3Sig,
+    roleColors, visibleFields, collegeSubheading, studentSecretaries 
   } = req.body;
 
   let settings = await CollegeSettings.findOne({ collegeId: req.user.collegeId });
@@ -74,12 +72,35 @@ export const updateIDCardSettings = asyncHandler(async (req, res) => {
   }
 
   settings.idCardOptions = {
-    templateId, orgName, subHeader, collegeLogo, councilLogo,
-    signatureUrl, signatureName, signatureRole, roleColors, visibleFields,
+    templateId, 
+    orgName, 
+    universityName,
+    subHeader, 
+    collegeLogo, 
+    councilLogo,
+    officerName,
+    officerSig,
+    validThru,
+    secretaryName,
+    secretarySig,
+    secretary2Name,
+    secretary2Sig,
+    secretary3Name,
+    secretary3Sig,
+    collegeSubheading: collegeSubheading || 'Harcourt Butler Technical University',
+    roleColors: roleColors || {},
+    visibleFields: visibleFields || {
+      photo: true,
+      rollNumber: true,
+      bloodGroup: true,
+      year: true,
+      branch: true,
+      role: true
+    },
     studentSecretaries: Array.isArray(studentSecretaries) ? studentSecretaries.slice(0,3) : []
   };
-  settings.collegeSubheading = collegeSubheading || 'Harcourt Butler Technical University';
 
   await settings.save();
   res.json({ message: "ID Card Configuration Saved", settings: settings.idCardOptions });
 });
+
