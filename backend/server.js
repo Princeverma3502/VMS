@@ -338,7 +338,7 @@ const corsOptions = {
     
     // Whitelist specific origins
     const allowedOrigins = [
-      'https://vms-pearl.vercel.app',  // Production Frontend
+      'https://vms-nss.vercel.app',  // Production Frontend
       'http://localhost:5173',          // Dev Frontend (Vite)
       'http://localhost:5174',          // Dev Frontend (Vite alternate)
       'http://localhost:3000',          // Dev Frontend (alternative)
