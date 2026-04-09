@@ -136,8 +136,8 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
       </div>
 
       {/* 5. FOOTER (Signatures & Validity) */}
-      <div className="px-8 pb-4 mt-6 relative">
-        <div className="w-full flex justify-between items-center text-slate-600 px-4">
+      <div className="pb-4 mt-6 relative">
+        <div className="w-full flex justify-between items-center text-slate-600 px-4 gap-2">
           {(() => {
             const defaults = [
               { name: config.secretaryName || 'Student Secretary', signature: config.secretarySig || null, designation: 'Student Secretary' },
@@ -150,24 +150,28 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
               : defaults;
 
             return secs.slice(0, 3).map((s, idx) => (
-              <div key={idx} className="flex flex-col items-center w-1/3">
+              <div key={idx} className="flex flex-col items-center flex-1">
                 {s.signature && (
                   <div className="h-8 mb-1 flex items-end">
                     <img src={s.signature} alt={`Signature ${idx + 1}`} className="h-full object-contain" />
                   </div>
                 )}
-                <div className="w-32 h-[1px] bg-slate-200 mb-1"></div>
+
+                {/* <div className="w-[80%] h-[1px] bg-slate-200 mb-1"></div> */}
+                <div className="w-16 h-[1px] bg-slate-300 mb-1 mt-1"></div>
                 <p className="text-[7px] font-bold text-slate-500 uppercase tracking-wide text-center">
                   {s.name || `Student Secretary ${idx + 1}`}
                 </p>
-                <p className="text-[7px] font-medium text-slate-700 text-center">{s.designation || 'Student Secretary'}</p>
+                <p className="text-[7px] font-medium text-slate-700 text-center leading-tight">
+                  {s.designation || 'Student Secretary'}
+                </p>
               </div>
             ));
           })()}
         </div>
 
         {/* Validity Indicator */}
-        <div className="px-8 pb-2 text-center mt-4">
+        <div className="px-4 pb-2 text-center mt-4">
           <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">
             Valid Till: {config.validThru || 'N/A'}
           </p>
