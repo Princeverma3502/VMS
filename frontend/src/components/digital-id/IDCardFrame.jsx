@@ -23,8 +23,8 @@ const IDCardFrame = ({ children }) => {
         const dataUrl = await toPng(element, { 
           cacheBust: true, 
           pixelRatio: 3, 
-          backgroundColor: '#ffffff',
-          style: { transform: 'none' } // Reset 3D transforms for clean 2D print
+          backgroundColor: 'rgba(0,0,0,0)',
+          style: { transform: 'none', borderRadius: '1.5rem' } // Ensure transparency and clean borders
         });
         
         if (format === 'pdf') {
