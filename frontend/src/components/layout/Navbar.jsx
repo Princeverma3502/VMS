@@ -1,17 +1,32 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, UserCircle, Settings, ArrowLeft, Search } from 'lucide-react';
+import { Bell, UserCircle, Settings, ArrowLeft, Search, DownloadCloud } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContextObject';
 
 const Navbar = ({ _userName = "User", showBackButton = false }) => {
   const { user } = useContext(AuthContext);
   const [showNotifications, setShowNotifications] = useState(false);
   const [query, setQuery] = useState('');
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
   
-  // derivation from props/context instead of effect
-
   // navigation hook (declared once)
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') setDeferredPrompt(null);
+  };
 
   const handleProfileClick = () => {
     const roleRoutes = {
@@ -60,6 +75,17 @@ const Navbar = ({ _userName = "User", showBackButton = false }) => {
           <img src="/logo.png" alt="Logo" className="w-5 h-5 sm:w-7 sm:h-7 bg-white border border-slate-200 rounded-full object-contain p-0.5 sm:p-1 shadow flex-shrink-0" />
           <span className="text-[7px] sm:text-[10px] font-black text-blue-700 uppercase tracking-tighter italic leading-tight max-w-[70px] sm:max-w-none">National Service Scheme</span>
         </div>
+        {/* Install PWA Button (Only visible if prompt is ready) */}
+        {deferredPrompt && (
+          <button 
+            onClick={handleInstallClick}
+            className="flex items-center gap-1.5 bg-green-600 text-white px-2 sm:px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold shadow-md hover:bg-green-700 transition"
+          >
+            <DownloadCloud size={14} />
+            <span className="hidden sm:inline">Install App</span>
+          </button>
+        )}
+
         {/* Notification Icon */}
         <div className="relative">
           <button 
