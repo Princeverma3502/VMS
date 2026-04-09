@@ -5,9 +5,20 @@ import { MapPin, Globe } from 'lucide-react';
 const IDCardRenderer = ({ user, config, isBack = false }) => {
   if (!user) return null;
 
-  // Dynamically grab the color based on the user's role
-  // Fallback to 'Volunteer' color or default Yellow if something goes wrong
-  const currentRole = user.role || 'Volunteer';
+  const normalize = (r) => {
+    if (!r) return 'Volunteer';
+    const map = {
+      'volunteer': 'Volunteer',
+      'secretary': 'Secretary',
+      'domain head': 'Domain Head',
+      'associate head': 'Associate Head',
+      'admin': 'Secretary',
+      'administrator': 'Secretary'
+    };
+    return map[r.toLowerCase().trim()] || r.replace(/\b\w/g, c => c.toUpperCase());
+  };
+
+  const currentRole = normalize(user.role);
   const roleColor = config?.roleColors?.[currentRole] || '#EBF855';
 
   // --- BACK SIDE ---
@@ -22,7 +33,7 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
           />
         </div>
         <h3 className="text-slate-900 font-black text-lg mb-1">SCAN TO VERIFY</h3>
-        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-6">NSS VOLUNTEER</p>
+        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-6">{currentRole}</p>
 
         <div className="w-full space-y-3 text-center">
            <p className="text-xs text-slate-600 font-semibold flex flex-col items-center gap-1">
@@ -31,7 +42,7 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
            </p>
            <p className="text-xs text-slate-600 font-semibold flex flex-col items-center gap-1">
              <Globe size={16} className="text-blue-600" />
-             www.nss.gov.in
+             https://nss-hbtu.vercel.app
            </p>
         </div>
       </div>
@@ -102,7 +113,7 @@ const IDCardRenderer = ({ user, config, isBack = false }) => {
             className="text-white px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm"
             style={{ backgroundColor: roleColor }}
           >
-            {user.role || 'VOLUNTEER'}
+            {currentRole}
           </span>
         </div>
       </div>
