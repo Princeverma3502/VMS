@@ -17,7 +17,7 @@ import {
   getBloodGroupStats
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
-import upload from '../middleware/multer.js'; // ✅ Import the memory-storage multer config
+import upload from '../config/uploadConfig.js';
 
 const router = express.Router();
 
