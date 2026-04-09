@@ -2,6 +2,19 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
+import { registerSW } from 'virtual:pwa-register'
+
+// Initialize PWA Service Worker
+const updateSW = registerSW({
+  onNeedRefresh() {
+    if (confirm('New content downloaded! Click OK to restart and update.')) {
+      updateSW(true);
+    }
+  },
+  onOfflineReady() {
+    console.log('App is ready to work completely offline.');
+  },
+})
 
 // Hide Splash Screen Logic
 const hideSplash = () => {
