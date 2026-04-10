@@ -103,8 +103,13 @@ export const updateProfilePhoto = asyncHandler(async (req, res) => {
       transformation: [{ width: 500, height: 500, crop: "fill", gravity: "face", quality: "auto" }]
     });
 
-    user.profileImage = result.secure_url;
-    await user.save();
+    // CRITICAL: Ensure we get a URL before saving
+    if (result.secure_url) {
+      user.profileImage = result.secure_url;
+      await user.save();
+    } else {
+      throw new Error("Cloudinary did not return a secure URL");
+    }
 
     res.status(200).json({
       message: 'Profile photo updated successfully',
@@ -249,13 +254,19 @@ export const updateUserRole = asyncHandler(async (req, res) => {
   res.json({ message: 'User role updated', user });
 });
 
-// @desc    Update user profile (Self)
+// @desc    Update user profile (Self) - BUG FIX FOR BLANKING IMAGE
 export const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
+
   if (user) {
     user.name = req.body.name || user.name;
     user.bloodGroup = req.body.bloodGroup || user.bloodGroup;
-    if (req.body.profileImage) user.profileImage = req.body.profileImage;
+    
+    // FIX: Only update profileImage if a non-empty value is provided
+    // This prevents text updates from wiping out the Cloudinary URL
+    if (req.body.profileImage && req.body.profileImage.trim() !== "") {
+      user.profileImage = req.body.profileImage;
+    }
     
     const updatedUser = await user.save();
     res.json({
