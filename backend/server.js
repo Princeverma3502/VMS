@@ -55,7 +55,7 @@ const requiredEnvVars = [
 
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
 if (missingVars.length > 0) {
-  console.error(`❌ Missing: ${missingVars.join(', ')}`);
+  console.error(`❌ Missing Environment Variables: ${missingVars.join(', ')}`);
   process.exit(1);
 }
 
@@ -65,7 +65,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-// ✅ CRITICAL FOR RENDER: Trust Proxy
 app.set('trust proxy', 1);
 
 // --- SECURITY MIDDLEWARE ---
@@ -98,7 +97,7 @@ const corsOptions = {
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
     const allowedOrigins = [
-      'https://vms-nss.vercel.app', // ✅ Your current production frontend
+      'https://vms-nss.vercel.app', 
       'http://localhost:5173',
       'http://localhost:5174',
       process.env.FRONTEND_URL,
@@ -119,7 +118,7 @@ app.use(cors(corsOptions));
 // --- RATE LIMITING ---
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000,
-  max: 3000, // Optimized for high concurrent student usage
+  max: 3000, 
 });
 app.use('/', limiter);
 
@@ -128,11 +127,12 @@ const authLimiter = rateLimit({
   max: 500,
 });
 
-app.use(express.json({ limit: '5mb' }));
-app.use(express.urlencoded({ extended: true }));
+// ✅ UPDATED LIMITS FOR IMAGE UPLOADS
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// --- ALL ROUTES PRESERVED ---
+// --- ROUTES ---
 app.use('/auth', authLimiter, authRoutes);
 app.use('/ngos', ngoRoutes);
 app.use('/domains', domainRoutes);

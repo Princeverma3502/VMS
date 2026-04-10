@@ -9,7 +9,7 @@ const isAuthorized = (user) => {
   return user && allowed.includes((user.role || '').toLowerCase());
 };
 
-// @desc    Update Profile Photo (Cloudinary)
+// @desc    Update Profile Photo (Fixed URL / Overwrite Feature)
 // @route   PUT /users/profile-photo
 export const updateProfilePhoto = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
@@ -19,45 +19,42 @@ export const updateProfilePhoto = asyncHandler(async (req, res) => {
   }
 
   let imageToUpload;
-
-  // 1. Detect source
   if (req.file) {
     const b64 = Buffer.from(req.file.buffer).toString("base64");
     const mime = req.file.mimetype || "image/jpeg";
     imageToUpload = `data:${mime};base64,${b64}`;
-    console.log(`[Upload] Processing file buffer: ${req.file.originalname}`);
   } else if (req.body.image) {
     imageToUpload = req.body.image;
-    console.log(`[Upload] Processing base64 string from body`);
   } else {
     res.status(400);
     throw new Error('No image file or data provided');
   }
 
   try {
-    // 2. Upload to Cloudinary
+    // 2. Upload with Overwrite and Cache Invalidation
     const result = await cloudinary.uploader.upload(imageToUpload, {
       folder: 'vms-profiles',
       resource_type: 'auto',
-      public_id: `user_${user._id}`, 
-      overwrite: true,
+      public_id: `user_${user._id}`, // Fixed ID: always uses the same name
+      overwrite: true,               // Replaces the existing file
+      unique_filename: false,        // Prevents adding random characters
+      invalidate: true,              // Clears Cloudinary CDN cache for this URL
       transformation: [{ width: 500, height: 500, crop: "fill", gravity: "face", quality: "auto" }]
     });
 
-    // 3. SECURE URL CHECK: If Cloudinary fails, we STOP here
     if (!result || !result.secure_url) {
-      console.error("[Upload] Cloudinary returned empty result");
       throw new Error("Cloudinary did not return a valid URL");
     }
 
-    console.log(`[Upload] Success: ${result.secure_url}`);
+    // 3. Force Browser Refresh with Timestamp
+    // Even if URL is the same, adding ?v=... tells the browser it's a new version
+    const versionedUrl = `${result.secure_url}?v=${new Date().getTime()}`;
 
-    // 4. Save to Database
-    user.profileImage = result.secure_url;
+    user.profileImage = versionedUrl;
     const savedUser = await user.save();
 
     res.status(200).json({
-      message: 'Profile photo updated successfully',
+      message: 'Profile photo updated and overwritten successfully',
       profileImage: savedUser.profileImage,
       cloudinaryId: result.public_id
     });
@@ -68,8 +65,7 @@ export const updateProfilePhoto = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Update user profile (Self)
-// @route   PUT /users/profile
+// @desc    Update user profile (Self) - Logic to PROTECT the image URL
 export const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
@@ -77,12 +73,8 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     user.name = req.body.name || user.name;
     user.bloodGroup = req.body.bloodGroup || user.bloodGroup;
     
-    // 🔥 ULTIMATE FIX: 
-    // We completely IGNORE req.body.profileImage here. 
-    // This profile update route should NEVER change the image.
-    // The image is ONLY changed via the /profile-photo route.
-    
-    console.log(`[ProfileUpdate] Updating text fields for ${user.email}. Image remains: ${user.profileImage}`);
+    // Safety guard: Standard profile updates cannot wipe out the image URL
+    console.log(`[ProfileUpdate] Text update for ${user.email}. Image remains locked.`);
 
     const updatedUser = await user.save();
     res.json({
@@ -91,7 +83,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
       email: updatedUser.email,
       role: updatedUser.role,
       bloodGroup: updatedUser.bloodGroup,
-      profileImage: updatedUser.profileImage, // Returns existing URL from DB
+      profileImage: updatedUser.profileImage, 
       token: generateToken(updatedUser._id),
     });
   } else {
@@ -100,14 +92,11 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-// --- REMAINDER OF FILE (Keep exactly as before) ---
+// --- REMAINING FUNCTIONS (XP, Stats, Admin Actions) ---
 
 export const assignCollege = asyncHandler(async (req, res) => {
   const { collegeId } = req.body;
-  if (!collegeId) {
-    res.status(400);
-    throw new Error('collegeId is required');
-  }
+  if (!collegeId) { res.status(400); throw new Error('collegeId is required'); }
   const user = await User.findByIdAndUpdate(req.user._id, { collegeId }, { new: true });
   res.json({ message: 'College assigned', user });
 });
