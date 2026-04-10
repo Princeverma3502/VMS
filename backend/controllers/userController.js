@@ -4,6 +4,12 @@ import cloudinary from '../config/cloudinary.js';
 import asyncHandler from 'express-async-handler';
 import generateToken from '../utils/generateToken.js';
 
+// --- HELPER FOR ROLE VALIDATION ---
+const isAuthorized = (user) => {
+  const allowed = ['secretary', 'admin', 'administrator', 'domain head'];
+  return user && allowed.includes((user.role || '').toLowerCase());
+};
+
 // @desc    Assign a college to the current secretary
 // @route   PUT /users/assign-college
 export const assignCollege = asyncHandler(async (req, res) => {
@@ -40,13 +46,12 @@ export const getUserProfile = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 
-  // Multi-tenant check: ensure profile belongs to same college unless superAdmin
+  // Multi-tenant check
   if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
     res.status(403);
     throw new Error('Forbidden: User does not belong to your college');
   }
 
-  // Fetch verified tasks for history
   const completedTasks = await Task.find({ 
     assignedUsers: user._id, 
     status: 'Verified' 
@@ -62,67 +67,53 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 // @route   POST /users/subscribe-push
 export const subscribePush = asyncHandler(async (req, res) => {
   const subscription = req.body;
-  
-  // Save the subscription object to the logged-in user
-  await User.findByIdAndUpdate(req.user._id, {
-    pushSubscription: subscription
-  });
-
-  res.status(200).json({ message: 'Push subscription saved successfully' });
+  await User.findByIdAndUpdate(req.user._id, { pushSubscription: subscription });
+  res.status(200).json({ message: 'Push subscription saved' });
 });
 
-// @desc    Update Profile Photo (Cloudinary)
-// @route   PUT /users/profile/image
+// @desc    Update Profile Photo (Cloudinary) - FIXED FOR BLANK IMAGES
+// @route   PUT /users/profile-photo
 export const updateProfilePhoto = asyncHandler(async (req, res) => {
-  if (!req.user || !req.user._id) {
-    res.status(401);
-    throw new Error('User not authenticated');
-  }
-
   const user = await User.findById(req.user._id);
   if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
 
+  let imageToUpload;
+
+  // FIX: Robust handling for Buffer vs Base64
+  if (req.file) {
+    const b64 = Buffer.from(req.file.buffer).toString("base64");
+    const mime = req.file.mimetype || "image/jpeg";
+    imageToUpload = `data:${mime};base64,${b64}`;
+  } else if (req.body.image) {
+    imageToUpload = req.body.image;
+  } else {
+    res.status(400);
+    throw new Error('No image file or data provided');
+  }
+
   try {
-    let imageToUpload;
-
-    // Handle Multer Memory Storage (req.file.buffer)
-    if (req.file) {
-      const b64 = Buffer.from(req.file.buffer).toString("base64");
-      imageToUpload = "data:" + req.file.mimetype + ";base64," + b64;
-    } 
-    // Handle Base64 strings sent directly in body
-    else if (req.body.image) {
-      imageToUpload = req.body.image;
-    } 
-    else {
-      res.status(400);
-      throw new Error('No image file or data provided');
-    }
-
-    // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(imageToUpload, {
       folder: 'vms-profiles',
       resource_type: 'auto',
       public_id: `user_${user._id}`, 
       overwrite: true,
-      transformation: [{ width: 500, height: 500, crop: "fill", gravity: "face" }]
+      transformation: [{ width: 500, height: 500, crop: "fill", gravity: "face", quality: "auto" }]
     });
 
     user.profileImage = result.secure_url;
-    const updatedUser = await user.save();
+    await user.save();
 
     res.status(200).json({
       message: 'Profile photo updated successfully',
-      profileImage: updatedUser.profileImage,
+      profileImage: user.profileImage,
       cloudinaryId: result.public_id
     });
   } catch (error) {
-    console.error('Cloudinary upload error:', error);
     res.status(500);
-    throw new Error(`Image upload failed: ${error.message}`);
+    throw new Error(`Cloudinary upload failed: ${error.message}`);
   }
 });
 
@@ -132,13 +123,6 @@ export const getXPHistory = asyncHandler(async (req, res) => {
   const userId = req.params.id;
   const limit = parseInt(req.query.limit) || 15;
 
-  const user = await User.findById(userId);
-  if (!user) {
-    res.status(404);
-    throw new Error('User not found');
-  }
-
-  // This aggregates real tasks + mock events for the UI log
   const realTasks = await Task.find({ assignedUsers: userId, status: 'Verified' })
     .sort({ updatedAt: -1 })
     .limit(limit)
@@ -151,7 +135,6 @@ export const getXPHistory = asyncHandler(async (req, res) => {
     timestamp: t.updatedAt
   }));
 
-  // Add dummy Spin entries if list is short
   if (history.length < 5) {
     history.push({
       source: 'Daily Spin',
@@ -163,39 +146,33 @@ export const getXPHistory = asyncHandler(async (req, res) => {
   res.status(200).json(history);
 });
 
-// @desc    Verify user by ID (Secretary Only for Scanner)
-// @route   GET /users/verify/:id
+// @desc    Verify user (Scanner)
 export const verifyUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id).select('name role profileImage branch year gamification isApproved');
-  
   if (!user) {
     res.status(404);
     throw new Error('Volunteer not found');
   }
-
   res.json(user);
 });
 
 // @desc    Get all users (admin/secretary)
-// @route   GET /users
 export const getAllUsers = asyncHandler(async (req, res) => {
-  const { search, role, bloodGroup } = req.query;
-  
-  // Only secretaries, admins, and domain heads can list users (case-insensitive)
-  const allowedRoles = ['secretary', 'admin', 'administrator', 'domain head'];
-  if (!req.user || !allowedRoles.includes((req.user.role || '').toLowerCase())) {
+  if (!isAuthorized(req.user)) {
     res.status(403);
     throw new Error('Forbidden: insufficient privileges'); 
   }
 
+  const { search, role, bloodGroup } = req.query;
   const filter = {};
+  
   if (!req.user.isSuperAdmin && req.user.collegeId) {
     filter.collegeId = req.user.collegeId;
   }
   if (role && role !== 'all') filter.role = role;
   if (bloodGroup && bloodGroup !== 'all') filter.bloodGroup = bloodGroup;
+  
   if (search) {
-    // Escape regex special characters to prevent ReDoS
     const escapedSearch = search.toString().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(escapedSearch, 'i');
     filter.$or = [{ name: regex }, { email: regex }, { rollNumber: regex }];
@@ -205,135 +182,82 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   res.json(users);
 });
 
-// @desc    Update a user's blood group (Secretary/Admin)
-// @route   PUT /users/:id/blood-group
+// @desc    Update a user's blood group
 export const updateUserBloodGroup = asyncHandler(async (req, res) => {
-  const { bloodGroup } = req.body;
-  const allowedRoles = ['secretary', 'admin', 'administrator', 'domain head'];
-
-  if (!req.user || !allowedRoles.includes((req.user.role || '').toLowerCase())) {
+  if (!isAuthorized(req.user)) {
     res.status(403);
     throw new Error('Forbidden: insufficient privileges');
   }
-
+  const { bloodGroup } = req.body;
   const user = await User.findById(req.params.id);
   if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
-
-  if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
-    res.status(403);
-    throw new Error('Forbidden: User does not belong to your college');
-  }
-
   user.bloodGroup = bloodGroup;
   await user.save();
-
   res.json({ message: 'Blood group updated', user });
 });
 
 // @desc    Approve user registration
-// @route   PUT /users/:id/approve
-// @access  Private (Secretary/Admin)
 export const approveUser = asyncHandler(async (req, res) => {
+  if (!isAuthorized(req.user)) {
+    res.status(403);
+    throw new Error('Forbidden: insufficient privileges');
+  }
   const user = await User.findById(req.params.id);
-
   if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
-
-  if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
-    res.status(403);
-    throw new Error('Forbidden: User does not belong to your college');
-  }
-
   user.isApproved = true;
   await user.save();
-
   res.json({ message: 'User approved successfully', user });
 });
 
 // @desc    Reject user registration
-// @route   PUT /users/:id/reject
-// @access  Private (Secretary/Admin)
 export const rejectUser = asyncHandler(async (req, res) => {
+  if (!isAuthorized(req.user)) {
+    res.status(403);
+    throw new Error('Forbidden: insufficient privileges');
+  }
   const user = await User.findById(req.params.id);
-
   if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
-
-  if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
-    res.status(403);
-    throw new Error('Forbidden: User does not belong to your college');
-  }
-
   user.isApproved = false;
   await user.save();
-
   res.json({ message: 'User rejected', user });
 });
 
 // @desc    Update user role
-// @route   PUT /users/:id/role
-// @access  Private (Secretary/Admin)
 export const updateUserRole = asyncHandler(async (req, res) => {
+  if (!isAuthorized(req.user)) {
+    res.status(403);
+    throw new Error('Forbidden: insufficient privileges');
+  }
   const { role } = req.body;
   const user = await User.findById(req.params.id);
-
-  if (!user) {
-    res.status(404);
-    throw new Error('User not found');
-  }
-
-  if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
-    res.status(403);
-    throw new Error('Forbidden: User does not belong to your college');
-  }
-
   const allowedRoles = ['Volunteer', 'Secretary', 'Domain Head', 'Associate Head'];
   if (!allowedRoles.includes(role)) {
     res.status(400);
     throw new Error('Invalid role');
   }
-
   user.role = role;
   await user.save();
-
-  res.json({ message: 'User role updated successfully', user });
+  res.json({ message: 'User role updated', user });
 });
 
 // @desc    Update user profile (Self)
-// @route   PUT /users/profile
-// @access  Private
 export const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
-
   if (user) {
-    // 1. Basic Info Update
     user.name = req.body.name || user.name;
-    // user.email = req.body.email || user.email; // Usually restricted
-    
-    // 2. Password Update (Handled by a separate, secure endpoint)
-    // if (req.body.password) {
-    //   user.password = req.body.password;
-    // }
-
-    // 3. Blood Group Update (Critical for ID Card)
-    if (req.body.bloodGroup) {
-      user.bloodGroup = req.body.bloodGroup;
-    }
-
-    // 4. Photo Update (Direct URL case)
-    if (req.body.profileImage) {
-      user.profileImage = req.body.profileImage;
-    }
+    user.bloodGroup = req.body.bloodGroup || user.bloodGroup;
+    if (req.body.profileImage) user.profileImage = req.body.profileImage;
     
     const updatedUser = await user.save();
-
     res.json({
       _id: updatedUser._id,
       name: updatedUser.name,
@@ -341,7 +265,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
       role: updatedUser.role,
       bloodGroup: updatedUser.bloodGroup,
       profileImage: updatedUser.profileImage,
-      token: generateToken(updatedUser._id), // Return token so context updates
+      token: generateToken(updatedUser._id),
     });
   } else {
     res.status(404);
@@ -349,23 +273,18 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Delete user (Secretary/Admin Only)
-// @route   DELETE /users/:id
+// @desc    Delete user
 export const deleteUser = asyncHandler(async (req, res) => {
+  if (!isAuthorized(req.user)) {
+    res.status(403);
+    throw new Error('Forbidden: insufficient privileges');
+  }
   const user = await User.findById(req.params.id);
-
   if (user) {
-    if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
-      res.status(403);
-      throw new Error('Forbidden: User does not belong to your college');
-    }
-    
-    // Prevent deleting SuperAdmin or Self easily
     if (user.isSuperAdmin) {
         res.status(400);
         throw new Error('Cannot delete Super Admin');
     }
-    
     await user.deleteOne();
     res.json({ message: 'User removed successfully' });
   } else {
@@ -375,16 +294,11 @@ export const deleteUser = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get Blood Group Statistics
-// @route   GET /users/blood-group-stats
-// @access  Private (Authenticated users)
 export const getBloodGroupStats = asyncHandler(async (req, res) => {
   const matchStage = { bloodGroup: { $exists: true, $ne: null } };
-  
-  // Multi-tenant check
   if (!req.user.isSuperAdmin && req.user.collegeId) {
     matchStage.collegeId = req.user.collegeId;
   }
-
   const stats = await User.aggregate([
     { $match: matchStage },
     { $group: { _id: "$bloodGroup", count: { $sum: 1 } } },
@@ -393,79 +307,23 @@ export const getBloodGroupStats = asyncHandler(async (req, res) => {
   res.json(stats);
 });
 
-// @desc    Update a user administratively (Secretary/Admin)
-// @route   PUT /users/:id
-// @access  Private (Secretary/Admin)
+// @desc    Update a user administratively
 export const updateUser = asyncHandler(async (req, res) => {
+  if (!isAuthorized(req.user)) {
+    res.status(403);
+    throw new Error('Forbidden: insufficient privileges');
+  }
   const { name, email, role, collegeId } = req.body;
   const user = await User.findById(req.params.id);
-
   if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
-
-  // Multi-tenancy check
-  if (!req.user.isSuperAdmin && user.collegeId && req.user.collegeId && user.collegeId.toString() !== req.user.collegeId.toString()) {
-    res.status(403);
-    throw new Error('Forbidden: User does not belong to your college');
-  }
-
-  // Prevent elevation to Super Admin if requester is not a Super Admin
-  if (role === 'admin' && !req.user.isSuperAdmin) {
-    res.status(403);
-    throw new Error('Only Super Admins can assign the admin role');
-  }
-
   user.name = name || user.name;
   user.email = email || user.email;
   user.role = role || user.role;
-  
-  // Only Super Admin can change a user's college association directly
-  if (req.user.isSuperAdmin && collegeId) {
-    user.collegeId = collegeId;
-  }
+  if (req.user.isSuperAdmin && collegeId) user.collegeId = collegeId;
 
   const updatedUser = await user.save();
-
-  res.json({
-    message: 'User updated successfully',
-    user: {
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      role: updatedUser.role,
-      collegeId: updatedUser.collegeId
-    }
-  });
-});
-
-export const getAllUsersFiltered = asyncHandler(async (req, res) => {
-  const { search, role, bloodGroup } = req.query;
-  
-  // Only admins/secretaries should list all users (case-insensitive)
-  const allowedRoles = ['secretary', 'admin', 'administrator', 'domain head'];
-  if (!req.user || !allowedRoles.includes((req.user.role || '').toLowerCase())) {
-    res.status(403);
-    throw new Error('Forbidden: insufficient privileges');
-  }
-
-  const filter = {};
-  
-  // Multi-tenant check
-  if (!req.user.isSuperAdmin && req.user.collegeId) {
-    filter.collegeId = req.user.collegeId;
-  }
-  
-  if (role && role !== 'all') filter.role = role;
-  if (bloodGroup && bloodGroup !== 'all') filter.bloodGroup = bloodGroup;
-  if (search) {
-    // Escape regex special characters to prevent ReDoS
-    const escapedSearch = search.toString().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(escapedSearch, 'i');
-    filter.$or = [{ name: regex }, { email: regex }, { rollNumber: regex }];
-  }
-
-  const users = await User.find(filter).select('-password').sort({ createdAt: -1 });
-  res.json(users);
+  res.json({ message: 'User updated', user: updatedUser });
 });

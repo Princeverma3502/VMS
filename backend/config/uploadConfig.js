@@ -4,22 +4,25 @@ import path from 'path';
 // Use memoryStorage for production (Cloudinary/Render compatible)
 const storage = multer.memoryStorage();
 
-// File filter (Images and PDFs)
+// File filter (Expanded for mobile compatibility)
 const checkFileType = (file, cb) => {
-  const filetypes = /jpg|jpeg|png|pdf/;
+  // Added webp and jfif; made regex case-insensitive 'i'
+  const filetypes = /jpg|jpeg|png|pdf|webp|jfif/i; 
+  
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
 
   if (extname && mimetype) {
     return cb(null, true);
   } else {
-    cb(new Error('Images and PDFs only! (jpg, jpeg, png, pdf)'));
+    // Better error message so students know WHY it failed
+    cb(new Error('Format not supported! Use JPG, PNG, or WebP.'));
   }
 };
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5000000 }, // 5MB limit
+  limits: { fileSize: 10 * 1024 * 1024 }, // Increased to 10MB for modern phone photos
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   },
